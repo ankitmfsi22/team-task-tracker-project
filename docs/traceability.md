@@ -10,6 +10,7 @@ One row per ticket: ticket to Linear key to change to branch to PR to gates. Eve
 | DEV-1002 | DEV-6  | `openspec/changes/archive/2026-10-31-dev-1002-claude-code-setup` | `feature/infra/DEV-1002-claude-code-setup` | #2  | `0b43a25` 18:57 | `9903815` 19:00             | `83fd4aa` 19:11 |
 | DEV-1003 | DEV-7  | `openspec/changes/archive/2026-10-31-dev-1003-autonomous-agents` | `feature/infra/DEV-1003-autonomous-agents` | #3  | `553e39e` 19:34 | `69a0cc7` 19:35             | `692fd60` 19:54 |
 | DEV-1004 | DEV-8  | `openspec/changes/archive/2026-10-31-dev-1004-mcp-integration`   | `feature/infra/DEV-1004-mcp-integration`   | #5  | `b58ced6` 20:38 | `47367e8` 20:40             | `dd9c1e9` 21:46 |
+| DEV-1005 | DEV-9  | `openspec/changes/archive/2026-10-31-dev-1005-openspec-workflow` | `feature/infra/DEV-1005-openspec-workflow` | #6  | `ef6c3b5` 21:58 | `2572009` 21:59             | `a0b75c0` 22:06 |
 
 Notes:
 
