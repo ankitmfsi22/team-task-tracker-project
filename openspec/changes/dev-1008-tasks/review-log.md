@@ -1,10 +1,16 @@
 # Review log
 
 - Change: dev-1008-tasks (DEV-1008)
-- Reviewer:
+- Reviewer: reviewer sub-agent (read-only)
 - Context: fresh
-- Date:
+- Date: 2026-11-01
 
-| Severity | file:line | Issue | Fix | Status |
-| -------- | --------- | ----- | --- | ------ |
-|          |           |       |     |        |
+| Severity     | file:line                                                | Issue                                                                                                                                                                                      | Fix                                                                 | Status                                                                                      |
+| ------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| NON-BLOCKING | backend/src/controllers/tasks.controller.ts:16-45        | Controller casts `req.params` and `req.body` (`as unknown as TaskParams`, `as CreateTaskRequest`) instead of typed validated values; existing pattern, types come from shared, no `any`. | Optional: give `validate` typed output later.                        | Accepted (non-blocking): existing pattern                                                    |
+| NON-BLOCKING | backend/src/services/tasks.service.ts:32-35              | On create, past `dueDate` (400) is checked before assignee (400 `ASSIGNEE_NOT_MEMBER`); design decision 10 fixes no order. Both 400, harmless.                                              | Optionally write the order down.                                     | Accepted (non-blocking): both are 400                                                        |
+| NON-BLOCKING | backend/src/services/tasks.service.ts:56-66              | Unchanged-`dueDate` rule compares millisecond timestamps; "now" boundary uses `<`, so a value equal to now is accepted. Matches spec and is tested.                                         | None.                                                                | Accepted (non-blocking)                                                                      |
+| NON-BLOCKING | backend/src/tasks.archive.integration.test.ts:114-175    | Reviewer could not confirm the "task still returned by the get route" check is asserted.                                                                                                    | None; main session confirmed the test GETs the task (line 129).      | No change needed                                                                             |
+| NON-BLOCKING | backend/src/tasks.*.integration.test.ts                  | No 401 test for get, update, status, assign or archive; spec requires 401 only for create and all routes share `authenticate`.                                                              | Optional hardening.                                                  | Accepted (non-blocking)                                                                      |
+
+Verdict (reviewer): No blocking findings. The implementation matches the approved spec and design, and the tests pass. Ready to proceed to Gate 2, with items 1 to 5 recorded as accepted non-blocking deviations.
