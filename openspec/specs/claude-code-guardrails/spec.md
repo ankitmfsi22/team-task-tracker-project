@@ -7,7 +7,7 @@ Defines the committed Claude Code guardrails: the block-dangerous hook, the perm
 ## Requirements
 
 ### Requirement: Dangerous commands are blocked by hook
-The `block-dangerous` PreToolUse hook SHALL exit 2 with a reason on stderr for recursive forced deletes, force-push (long, short and `+refspec` forms), push to `main`/`master`, hard resets, commands touching `.env` files other than `.env.example`, `curl`/`wget` and the skip-permissions flag, and SHALL exit 0 for ordinary commands.
+The `block-dangerous` PreToolUse hook SHALL exit 2 with a reason on stderr for recursive forced deletes (combined or separate, short or long flags), force-push (long, short and `+refspec` forms), push to `main`/`master` (including `HEAD:main`, `+main` and `refs/heads/` forms), hard resets, commands touching `.env` files other than `.env.example`, `curl`/`wget` and the skip-permissions flag, and SHALL recognise these when git global options (`-C`, `-c`) precede the subcommand. It SHALL exit 0 for ordinary commands and SHALL fail closed (exit 2) on malformed input.
 
 #### Scenario: Reading .env is blocked
 - **WHEN** the hook receives a Bash command `cat .env`
@@ -25,9 +25,9 @@ The `block-dangerous` PreToolUse hook SHALL exit 2 with a reason on stderr for r
 - **WHEN** the hook receives `pnpm test`, `cat .env.example` or `git push origin feature/infra/DEV-1002-claude-code-setup`
 - **THEN** it exits 0
 
-#### Scenario: Malformed hook input does not crash
-- **WHEN** the hook receives non-JSON stdin
-- **THEN** it exits 0 without output
+#### Scenario: Malformed hook input fails closed
+- **WHEN** the hook receives non-JSON stdin, empty stdin, or JSON without a string command
+- **THEN** it exits 2 and stderr names the malformed input
 
 ### Requirement: Permissions deny secrets, force-push and push to main
 `.claude/settings.json` SHALL deny reading `.env*` and `secrets/**`, force-push and push to `main` in all supported command forms, and SHALL place `git push`, dependency installs, Prisma migrations and `docker compose` under `ask`.
