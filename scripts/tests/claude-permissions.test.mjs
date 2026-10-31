@@ -13,6 +13,10 @@ const { permissions } = JSON.parse(readFileSync(settingsPath, 'utf8'));
 const DENY = [
   'Read(./.env*)',
   'Read(./secrets/**)',
+  'Edit(./.env*)',
+  'Write(./.env*)',
+  'Edit(./secrets/**)',
+  'Write(./secrets/**)',
   'Bash(git push --force:*)',
   'Bash(git push -f:*)',
   'Bash(git push origin main:*)',

@@ -30,11 +30,11 @@ The `block-dangerous` PreToolUse hook SHALL exit 2 with a reason on stderr for r
 - **THEN** it exits 2 and stderr names the malformed input
 
 ### Requirement: Permissions deny secrets, force-push and push to main
-`.claude/settings.json` SHALL deny reading `.env*` and `secrets/**`, force-push and push to `main` in all supported command forms, and SHALL place `git push`, dependency installs, Prisma migrations and `docker compose` under `ask`.
+`.claude/settings.json` SHALL deny reading, editing and writing `.env*` and `secrets/**`, force-push and push to `main` in all supported command forms, and SHALL place `git push`, dependency installs, Prisma migrations and `docker compose` under `ask`.
 
 #### Scenario: Deny list covers secrets and risky pushes
 - **WHEN** a test parses `.claude/settings.json`
-- **THEN** `deny` contains `Read(./.env*)`, `Read(./secrets/**)`, `Bash(git push --force:*)`, `Bash(git push -f:*)` and `Bash(git push origin main:*)`
+- **THEN** `deny` contains `Read`, `Edit` and `Write` rules for `./.env*` and `./secrets/**`, `Bash(git push --force:*)`, `Bash(git push -f:*)` and `Bash(git push origin main:*)`
 
 #### Scenario: Sensitive actions require approval
 - **WHEN** a test parses `.claude/settings.json`
