@@ -1,16 +1,16 @@
-# Coordinator run (DEV-1003, task 3.1)
+# Coordinated run with the real agents (DEV-1003)
 
-The coordinator definition (`.claude/agents/coordinator.md`) was run read-only against `dev-1003-autonomous-agents` via the Explore agent, because newly created agent files are not registered until the session restarts. Gate 1 was found Approved (Ankit Singh, 2026-10-31); Gate 2 blank. The main session then delegated as planned. Plan table, condensed from the coordinator report:
+Task: add one "Agents" link line to `docs/claude-code-setup.md` (docs-only, tiny). Run on branch `feature/infra/DEV-1003-autonomous-agents` with the registered `coordinator`, `implementer` and `reviewer` sub-agents. The main session did all delegation and the commit, because sub-agents cannot spawn sub-agents.
 
-| Group                        | Tasks | Order            | Agent                         | Done check                                                  |
-| ---------------------------- | ----- | ---------------- | ----------------------------- | ----------------------------------------------------------- |
-| 1. Agent definitions         | 1.1   | 1                | test-writer                   | Test fails before implementation, failure saved; one commit |
-| 1. Agent definitions         | 1.2   | 2, after 1.1     | implementer                   | implementer/coordinator tests pass; gates green; one commit |
-| 1. Agent definitions         | 1.3   | 3, after 1.2     | implementer                   | reviewer/test-writer tests pass; gates green; one commit    |
-| 2. Documentation             | 2.1   | 4, after group 1 | test-writer, then implementer | docs test passes; gates green; one commit                   |
-| 3. Evidence and verification | 3.1   | 5                | main session                  | plan and passing run saved; one commit                      |
-| 3. Evidence and verification | 3.2   | 6                | main session                  | lint, typecheck, test, build, openspec validate pass        |
+| Step | Agent                               | Input                                                          | Output                                                                          | Result                                                                                                                                                               |
+| ---- | ----------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | coordinator (read-only)             | Task description, Gate 1 state, CLAUDE.md rules                | Delegation plan: test-writer SKIP, implementer, then reviewer; no parallelism   | Completed. Confirmed Gate 1 Approved (Ankit Singh, 2026-10-31), Gate 2 blank                                                                                         |
+| 2    | test-writer                         | None                                                           | None                                                                            | Not invoked: no spec scenario covers a docs line and CLAUDE.md forbids tests about docs files (coordinator agreed)                                                   |
+| 3    | implementer                         | Task, target line, `docs/agents.md` to confirm the link target | One added line: `- [Agents](agents.md): sub-agent overview.`                    | Completed. Reported exit codes: `pnpm format:check` 0, `pnpm lint` 0, `pnpm typecheck` 0, `pnpm test` 0. Main session re-read the diff: one added line, nothing else |
+| 4    | main session                        | Implementer diff                                               | Commit `5c71fd9` `docs(infra): add agents link to setup doc (DEV-1003)`         | lint-staged prettier check passed in the pre-commit hook                                                                                                             |
+| 5    | reviewer (read-only, fresh context) | Commit `5c71fd9`, the change folder                            | 0 Blocking; 2 Non-blocking (line duplicates the line above it; wording is thin) | Completed. Findings saved in `review-log.md`; accepted as non-blocking                                                                                               |
 
-After task 3.2: `/opsx:verify`, then the reviewer in a fresh context; the main session saves its findings verbatim in `review-log.md`. Sub-agents cannot spawn sub-agents, so the main session performed all delegation and commits.
+Notes:
 
-Coordinator flags: (1) re-verify ticked tasks by running tests (done, see `03-passing-tests.md`); (2) `scripts/tests/agents-doc.test.mjs` is a pre-existing AGENTS.md test, not part of this change.
+- The reviewer did not run `pnpm test` (docs-only commit). The implementer's exit codes are as reported by that agent; the main session did not re-run them.
+- Gate 2 remains with the human.
