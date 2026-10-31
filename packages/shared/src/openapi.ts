@@ -6,6 +6,17 @@ import {
   RegisterRequestSchema,
   UserResponseSchema,
 } from './auth.js';
+import { PaginationMetaSchema } from './common.js';
+import {
+  AddMemberRequestSchema,
+  CreateProjectRequestSchema,
+  MemberListResponseSchema,
+  MemberResponseSchema,
+  ProjectDetailResponseSchema,
+  ProjectListResponseSchema,
+  ProjectResponseSchema,
+  UpdateProjectRequestSchema,
+} from './projects.js';
 
 type JsonObject = Record<string, unknown>;
 
@@ -15,6 +26,20 @@ const errorResponse = (description: string): JsonObject => ({
   description,
   content: json(ref('ErrorResponse')),
 });
+
+const bearer = [{ bearerAuth: [] }];
+const uuidParam = (name: string): JsonObject => ({
+  name,
+  in: 'path',
+  required: true,
+  schema: { type: 'string', format: 'uuid' },
+});
+const projectIdParam = uuidParam('projectId');
+const unauthenticated = errorResponse('Missing, invalid or expired access token');
+const notFound = errorResponse('Project not found, or the caller is not a member');
+const forbidden = errorResponse('The caller is a member but not an OWNER');
+const archived = errorResponse('The project is archived and read-only');
+const invalid = errorResponse('Validation error');
 
 export function buildOpenApiDocument(): JsonObject {
   return {
@@ -74,9 +99,142 @@ export function buildOpenApiDocument(): JsonObject {
           },
         },
       },
+      '/api/v1/projects': {
+        post: {
+          summary: 'Create a project; the caller becomes its OWNER',
+          security: bearer,
+          requestBody: {
+            required: true,
+            content: json(z.toJSONSchema(CreateProjectRequestSchema, { io: 'input' })),
+          },
+          responses: {
+            '201': { description: 'Project created', content: json(ref('ProjectResponse')) },
+            '400': invalid,
+            '401': unauthenticated,
+          },
+        },
+        get: {
+          summary: "List the caller's projects (archived hidden unless includeArchived=true)",
+          security: bearer,
+          parameters: [
+            { name: 'page', in: 'query', schema: { type: 'integer', minimum: 1, default: 1 } },
+            {
+              name: 'pageSize',
+              in: 'query',
+              schema: { type: 'integer', minimum: 1, maximum: 100, default: 20 },
+            },
+            {
+              name: 'includeArchived',
+              in: 'query',
+              schema: { type: 'string', enum: ['true', 'false'], default: 'false' },
+            },
+          ],
+          responses: {
+            '200': { description: 'Projects', content: json(ref('ProjectListResponse')) },
+            '400': invalid,
+            '401': unauthenticated,
+          },
+        },
+      },
+      '/api/v1/projects/{projectId}': {
+        get: {
+          summary: 'View a project with the caller role',
+          security: bearer,
+          parameters: [projectIdParam],
+          responses: {
+            '200': { description: 'Project', content: json(ref('ProjectDetailResponse')) },
+            '400': invalid,
+            '401': unauthenticated,
+            '404': notFound,
+          },
+        },
+        patch: {
+          summary: 'Update the project name or description (OWNER)',
+          security: bearer,
+          parameters: [projectIdParam],
+          requestBody: {
+            required: true,
+            content: json(z.toJSONSchema(UpdateProjectRequestSchema, { io: 'input' })),
+          },
+          responses: {
+            '200': { description: 'Project updated', content: json(ref('ProjectResponse')) },
+            '400': invalid,
+            '401': unauthenticated,
+            '403': forbidden,
+            '404': notFound,
+            '409': archived,
+          },
+        },
+      },
+      '/api/v1/projects/{projectId}/archive': {
+        post: {
+          summary: 'Archive the project (OWNER)',
+          security: bearer,
+          parameters: [projectIdParam],
+          responses: {
+            '200': { description: 'Project archived', content: json(ref('ProjectResponse')) },
+            '400': invalid,
+            '401': unauthenticated,
+            '403': forbidden,
+            '404': notFound,
+            '409': archived,
+          },
+        },
+      },
+      '/api/v1/projects/{projectId}/members': {
+        get: {
+          summary: 'List the project members',
+          security: bearer,
+          parameters: [projectIdParam],
+          responses: {
+            '200': { description: 'Members', content: json(ref('MemberListResponse')) },
+            '400': invalid,
+            '401': unauthenticated,
+            '404': notFound,
+          },
+        },
+        post: {
+          summary: 'Add a registered user by email (OWNER)',
+          security: bearer,
+          parameters: [projectIdParam],
+          requestBody: {
+            required: true,
+            content: json(z.toJSONSchema(AddMemberRequestSchema, { io: 'input' })),
+          },
+          responses: {
+            '201': { description: 'Member added', content: json(ref('MemberResponse')) },
+            '400': invalid,
+            '401': unauthenticated,
+            '403': forbidden,
+            '404': errorResponse('Project not found, caller is not a member, or unknown email'),
+            '409': errorResponse('Already a member, or the project is archived'),
+          },
+        },
+      },
+      '/api/v1/projects/{projectId}/members/{userId}': {
+        delete: {
+          summary: 'Remove a member (OWNER); the last owner cannot be removed',
+          security: bearer,
+          parameters: [projectIdParam, uuidParam('userId')],
+          responses: {
+            '204': { description: 'Member removed' },
+            '400': invalid,
+            '401': unauthenticated,
+            '403': forbidden,
+            '404': notFound,
+            '409': errorResponse('Last owner, or the project is archived'),
+          },
+        },
+      },
     },
     components: {
       schemas: {
+        ProjectResponse: z.toJSONSchema(ProjectResponseSchema),
+        ProjectDetailResponse: z.toJSONSchema(ProjectDetailResponseSchema),
+        ProjectListResponse: z.toJSONSchema(ProjectListResponseSchema),
+        PaginationMeta: z.toJSONSchema(PaginationMetaSchema),
+        MemberResponse: z.toJSONSchema(MemberResponseSchema),
+        MemberListResponse: z.toJSONSchema(MemberListResponseSchema),
         UserResponse: z.toJSONSchema(UserResponseSchema),
         AuthTokenResponse: z.toJSONSchema(AuthTokenResponseSchema),
         ErrorResponse: z.toJSONSchema(ErrorResponseSchema),

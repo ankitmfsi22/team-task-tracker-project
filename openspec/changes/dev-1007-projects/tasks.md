@@ -4,7 +4,7 @@ Ticket: DEV-1007 (Linear DEV-11). One commit per task: `type(scope): description
 
 ## 1. Contract only (merged first; DEV-1008 and DEV-1011 build on it)
 
-- [ ] 1.1 Shared schemas and types in `packages/shared`: `ProjectRole`, project create, update and response, member add and response, project id and member id params, project list query, and `PaginationQuery`/`PaginationMeta` in `common.ts`; add the eight project paths to the OpenAPI document; rebuild `dist`. Verify: shared unit tests for valid and invalid input and for the OpenAPI paths (specs: Shared contracts and OpenAPI paths).
+- [x] 1.1 Shared schemas and types in `packages/shared`: `ProjectRole`, project create, update and response, member add and response, project id and member id params, project list query, and `PaginationQuery`/`PaginationMeta` in `common.ts`; add the eight project paths to the OpenAPI document; rebuild `dist`. Verify: shared unit tests for valid and invalid input and for the OpenAPI paths (specs: Shared contracts and OpenAPI paths).
 - [ ] 1.2 Prisma `ProjectRole`, `Project` and `ProjectMember` models and the migration; run `db-change-checker`; update `scripts/tests/prisma.test.mjs`. Verify: `prisma validate` and `migrate deploy` succeed against Compose (spec: modified Prisma requirement).
 - [ ] 1.3 `projectAccess` middleware. Verify: Supertest tests on a throwaway route for non-member 404, nonexistent project 404, MEMBER on an OWNER-only route 403, write to an archived project 409, and success setting the membership (spec: Project access rule).
 

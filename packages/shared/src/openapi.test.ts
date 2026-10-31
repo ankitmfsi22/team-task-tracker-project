@@ -3,8 +3,11 @@ import { z } from 'zod';
 import {
   buildOpenApiDocument,
   ErrorResponseSchema,
+  AddMemberRequestSchema,
+  CreateProjectRequestSchema,
   LoginRequestSchema,
   RegisterRequestSchema,
+  UpdateProjectRequestSchema,
 } from './index.js';
 
 type Json = Record<string, unknown>;
@@ -33,6 +36,11 @@ describe('buildOpenApiDocument', () => {
         '/api/v1/auth/me',
         '/api/v1/auth/refresh',
         '/api/v1/auth/register',
+        '/api/v1/projects',
+        '/api/v1/projects/{projectId}',
+        '/api/v1/projects/{projectId}/archive',
+        '/api/v1/projects/{projectId}/members',
+        '/api/v1/projects/{projectId}/members/{userId}',
       ].sort(),
     );
     expect(Object.keys(asRecord(paths['/api/v1/auth/register']))).toEqual(['post']);
@@ -40,6 +48,69 @@ describe('buildOpenApiDocument', () => {
     expect(Object.keys(asRecord(paths['/api/v1/auth/refresh']))).toEqual(['post']);
     expect(Object.keys(asRecord(paths['/api/v1/auth/logout']))).toEqual(['post']);
     expect(Object.keys(asRecord(paths['/api/v1/auth/me']))).toEqual(['get']);
+  });
+
+  it('OpenAPI lists the project paths: methods per path', () => {
+    const paths = asRecord(doc['paths']);
+    const methods = (path: string): string[] => Object.keys(asRecord(paths[path])).sort();
+    expect(methods('/api/v1/projects')).toEqual(['get', 'post']);
+    expect(methods('/api/v1/projects/{projectId}')).toEqual(['get', 'patch']);
+    expect(methods('/api/v1/projects/{projectId}/archive')).toEqual(['post']);
+    expect(methods('/api/v1/projects/{projectId}/members')).toEqual(['get', 'post']);
+    expect(methods('/api/v1/projects/{projectId}/members/{userId}')).toEqual(['delete']);
+  });
+
+  it('OpenAPI lists the project paths: request bodies equal JSON Schema of shared Zod schemas', () => {
+    const bodySchema = (path: string, method: string): unknown =>
+      asRecord(
+        asRecord(asRecord(operation(doc, path, method)['requestBody'])['content'])[
+          'application/json'
+        ],
+      )['schema'];
+    expect(bodySchema('/api/v1/projects', 'post')).toEqual(
+      z.toJSONSchema(CreateProjectRequestSchema, { io: 'input' }),
+    );
+    expect(bodySchema('/api/v1/projects/{projectId}', 'patch')).toEqual(
+      z.toJSONSchema(UpdateProjectRequestSchema, { io: 'input' }),
+    );
+    expect(bodySchema('/api/v1/projects/{projectId}/members', 'post')).toEqual(
+      z.toJSONSchema(AddMemberRequestSchema, { io: 'input' }),
+    );
+  });
+
+  it('OpenAPI lists the project paths: response status codes per operation', () => {
+    const codes = (path: string, method: string): string[] =>
+      Object.keys(asRecord(operation(doc, path, method)['responses']));
+    const p = '/api/v1/projects';
+    const all: Array<[string, string]> = [
+      [p, 'get'],
+      [p, 'post'],
+      [`${p}/{projectId}`, 'get'],
+      [`${p}/{projectId}`, 'patch'],
+      [`${p}/{projectId}/archive`, 'post'],
+      [`${p}/{projectId}/members`, 'get'],
+      [`${p}/{projectId}/members`, 'post'],
+      [`${p}/{projectId}/members/{userId}`, 'delete'],
+    ];
+    for (const [path, method] of all) {
+      expect(codes(path, method), `${method} ${path}`).toContain('401');
+      if (path.includes('{projectId}')) {
+        expect(codes(path, method), `${method} ${path}`).toContain('404');
+      }
+    }
+    const guarded: Array<[string, string]> = [
+      [`${p}/{projectId}`, 'patch'],
+      [`${p}/{projectId}/archive`, 'post'],
+      [`${p}/{projectId}/members`, 'post'],
+      [`${p}/{projectId}/members/{userId}`, 'delete'],
+    ];
+    for (const [path, method] of guarded) {
+      expect(codes(path, method), `${method} ${path}`).toEqual(
+        expect.arrayContaining(['400', '403', '404', '409']),
+      );
+    }
+    expect(codes(p, 'post')).toContain('201');
+    expect(codes(`${p}/{projectId}/members/{userId}`, 'delete')).toContain('204');
   });
 
   it('Document matches the schemas: register request body equals JSON Schema of shared Zod schema', () => {
