@@ -57,6 +57,15 @@ const checkCompose = (file, text, violations) => {
 
 const checkWorkflow = (file, text, violations) => {
   for (const line of text.split(/\r?\n/)) {
+    const runsOn = /^\s*runs-on:\s*(.+)$/.exec(line);
+    if (runsOn) {
+      for (const label of stripYamlValue(runsOn[1]).split(/[\s,[\]'"]+/)) {
+        if (/-latest$/.test(label)) {
+          violations.push(`${file}: runner label "${label}" is floating; use an exact image label`);
+        }
+      }
+      continue;
+    }
     const match = /^\s*(?:-\s*)?uses:\s*(.+)$/.exec(line);
     if (!match) continue;
     const ref = stripYamlValue(match[1]);

@@ -1,4 +1,4 @@
-# Approvals: <change-name> (DEV-XXXX)
+# Approvals: dev-1001-project-setup (DEV-1001)
 
 | Gate | Artifacts reviewed | Decision (Approved/Changes requested) | Approver | Date | Notes |
 | --- | --- | --- | --- | --- | --- |

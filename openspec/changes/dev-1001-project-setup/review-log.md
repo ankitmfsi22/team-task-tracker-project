@@ -1,6 +1,6 @@
 # Review log
 
-- Change: <change-name> (DEV-XXXX)
+- Change: dev-1001-project-setup (DEV-1001)
 - Reviewer: 
 - Context: fresh
 - Date: 

@@ -163,3 +163,28 @@ test('git ls-files contains no fixture files for the pinning tests', () => {
   );
   assert.deepEqual(offenders, [], `committed fixture files:\n${offenders.join('\n')}`);
 });
+
+// (h) floating runner labels (DEV-1001 task 3.5 follow-up)
+const WORKFLOW_RUNS_ON = (runsOn) =>
+  `name: CI\non: [push]\njobs:\n  build:\n    runs-on: ${runsOn}\n    steps:\n      - uses: actions/checkout@v4.2.2\n`;
+
+for (const [value, label] of [
+  ['ubuntu-latest', 'ubuntu-latest'],
+  ['windows-latest', 'windows-latest'],
+  ['macos-latest', 'macos-latest'],
+  ['[ubuntu-latest]', 'ubuntu-latest'],
+]) {
+  test(`runs-on: ${value} is rejected, naming workflow file and label`, () => {
+    expectFail(
+      (d) => write(d, '.github/workflows/ci.yml', WORKFLOW_RUNS_ON(value)),
+      [join('.github', 'workflows', 'ci.yml'), label],
+    );
+  });
+}
+
+test('runs-on: ubuntu-24.04 with exact action tags passes', () => {
+  withProject(
+    (d) => write(d, '.github/workflows/ci.yml', WORKFLOW_RUNS_ON('ubuntu-24.04')),
+    (r) => assert.equal(r.status, 0, `output:\n${r.out}`),
+  );
+});

@@ -109,3 +109,9 @@ test('root devDependency @fission-ai/openspec is exactly 1.16.0', () => {
   const pkg = JSON.parse(readFileSync(resolve(repoRoot, 'package.json'), 'utf8'));
   assert.equal(pkg.devDependencies?.['@fission-ai/openspec'], '1.16.0');
 });
+
+test('ci.yml has no floating "-latest" label and runs on ubuntu-24.04', () => {
+  const text = codeLines().join('\n');
+  assert.ok(!text.includes('-latest'), 'ci.yml contains a "-latest" label');
+  assert.match(text, /^\s*runs-on:\s*ubuntu-24\.04\s*$/m, 'runs-on: ubuntu-24.04 missing');
+});
