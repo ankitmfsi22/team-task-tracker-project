@@ -8,9 +8,9 @@ No HTTP API or request/response schema is introduced, so the "schemas in package
 
 ## Goals / Non-Goals
 
-**Goals:** a reproducible, exactly pinned monorepo whose four gates pass on stubs; a Postgres 16 container; Prisma connectivity; commit-time enforcement that works on Windows.
+**Goals:** a reproducible, exactly pinned monorepo whose four gates pass on stubs; a Postgres 16 container; Prisma connectivity; commit-time enforcement that works on Windows; a CI workflow that runs the same gates on every pull request.
 
-**Non-Goals:** any feature code, Prisma models/migrations, backend/frontend Compose services, CI workflow, real e2e or Lighthouse runs, Vite/Express skeletons.
+**Non-Goals:** any feature code, Prisma models/migrations, backend/frontend Compose services, deployment or release pipelines, real e2e or Lighthouse runs, Vite/Express skeletons.
 
 ## Decisions
 
@@ -25,6 +25,9 @@ No HTTP API or request/response schema is introduced, so the "schemas in package
 - **Line endings:** `.gitattributes` `* text=auto eol=lf`, `.editorconfig`, Prettier `endOfLine: lf`, and one `git add --renormalize .` commit early in apply so later diffs are clean. `core.autocrlf=true` on this machine is left alone (the attribute wins for the index); not changed globally.
 - **TypeScript and ESLint pinned to what typescript-eslint officially supports.** Registry check on 2026-10-31: `typescript-eslint@8.72.1` declares peers `typescript >=4.8.4 <6.1.0` and `eslint ^8.57.0 || ^9.0.0 || ^10.0.0`. The `latest` TypeScript is 7.0.2, which is outside that range, so TypeScript is pinned to the newest 6.0.x (6.0.3 at check time) and ESLint to 10.14.0 (inside `^10`). Exact versions are re-confirmed with `npm view` at apply time against the typescript-eslint version actually pinned, and the supported ranges are recorded in `docs/VERSIONS.md`. Alternative: TypeScript 7.0.2, rejected because typescript-eslint does not support it.
 - **Negative fixtures are generated at test time, never committed.** Tests create invalid input (misformatted, CRLF, `any`, `@ts-ignore`, `eslint-disable`, version ranges, `latest`, floating image tags) with `fs.mkdtemp` under `os.tmpdir()` and remove it in `afterEach`/`finally`. To make this possible, the checks are callable against a directory: `scripts/check-pinning.mjs` takes a root-directory argument (default: repo root); lint tests use the ESLint Node API with the repo config and `cwd`/file paths in the temp dir; format tests call Prettier's API with the repo config (Prettier config is passed explicitly because the temp dir is outside the repo). Because no invalid file is ever tracked, no ESLint, Prettier, `tsc` or pinning ignore entries for fixtures are needed. Alternative: committed `fixtures/` folders with ignore rules, rejected because they weaken the gates and risk being committed as real code.
+- **`@types/node` pinned to the newest 22.x** (exact version confirmed with `npm view` at apply time) so Node typings match the Node 22 runtime; approved by Ankit Singh. It is added in the stub-package task and recorded in `docs/VERSIONS.md`.
+- **Root tooling and config tests use `node:test`** (with `node:assert`), run through `node --test`, with no extra dependency (approved by Ankit Singh). Package stubs still use Vitest. This covers the pinning, line-ending, format, lint and version-consistency checks, which test the repo's own tooling rather than package code.
+- **CI workflow `.github/workflows/ci.yml`**, triggered on `pull_request` and on `push` to `main`. Steps, in order: checkout, pnpm setup (version from `packageManager`, not repeated in the workflow), Node setup (`node-version-file: .nvmrc`), `pnpm install --frozen-lockfile`, `pnpm format:check`, `pnpm lint` (includes the pinning check), `pnpm typecheck`, `pnpm test`, `pnpm build`, `openspec validate --all --strict`, `pnpm audit --audit-level=high`. Every action is pinned to an exact version tag (no `@latest`, `@main` or floating major tags); tags are confirmed with `gh api` at apply time (checked 2026-10-31: `actions/checkout` v7.0.1, `actions/setup-node` v7.1.0, `pnpm/action-setup` v6.1.0). The pinning check also scans workflow files for floating action refs. The OpenSpec CLI used in CI must be pinned: it is installed as a root dev dependency `@fission-ai/openspec` at the exact version in use (1.16.0 at check time), which is a new package needing Ankit Singh's approval before install. Alternative: `npx` with an exact version at run time, rejected because it bypasses the lockfile. The workflow needs a pushed branch, so its first real run happens on the PR branch.
 - **Verification evidence** for AC4 (a staged lint error blocks a commit) and AC1/AC2 is recorded under `docs/evidence/DEV-1001/`.
 
 ## Risks / Trade-offs
@@ -35,6 +38,7 @@ No HTTP API or request/response schema is introduced, so the "schemas in package
 - [`pnpm` version drift between machines] → `packageManager` pin; the local pnpm (12.11.2) may differ from the pinned one, enable via Corepack or install the pinned version.
 - [Renormalize creates a noisy diff] → isolate it in its own task and commit.
 - [Stub placeholder tests give false confidence] → names state they are placeholders; real tests arrive with feature tickets.
+- [CI action tag drift or a moved tag] → exact tags, checked by the pinning check; accepted residual risk is that a tag can be re-pointed upstream (a commit SHA is stricter but was not requested).
 - [Docker tag verified only on the apply machine] → record the exact tag and pull date in `VERSIONS.md`.
 
 ## Migration Plan

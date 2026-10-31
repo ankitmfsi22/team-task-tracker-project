@@ -95,6 +95,29 @@ The repository SHALL store text files with LF endings, enforced by `.gitattribut
 - **WHEN** a test generates a file with CRLF endings in an OS temp directory and runs the format check on it
 - **THEN** the check exits non-zero
 
+### Requirement: Continuous integration runs the gates
+A GitHub Actions workflow `.github/workflows/ci.yml` SHALL run the quality gates on every pull request and on every push to `main`, using Node and pnpm versions from the repository and only exactly pinned actions.
+
+#### Scenario: Workflow triggers and steps
+- **WHEN** `.github/workflows/ci.yml` is inspected
+- **THEN** it triggers on `pull_request` and on `push` to `main`, and runs in order: `pnpm install --frozen-lockfile`, `pnpm format:check`, `pnpm lint` (including the pinning check), `pnpm typecheck`, `pnpm test`, `pnpm build`, `openspec validate --all --strict` and `pnpm audit --audit-level=high`
+
+#### Scenario: Actions are pinned
+- **WHEN** every `uses:` reference in the workflow is inspected
+- **THEN** each is an exact version tag, with no `latest`, `main` or floating major tag
+
+#### Scenario: Versions come from the repository
+- **WHEN** the workflow's Node and pnpm setup is inspected
+- **THEN** Node is read from `.nvmrc` and pnpm from `packageManager`, with no separately hard-coded version
+
+#### Scenario: Floating action reference is rejected
+- **WHEN** a test generates a workflow file in an OS temp directory with an action ref such as `@main`, `@latest` or a floating major tag, and runs the pinning check on that directory
+- **THEN** the check exits non-zero and names the workflow file and action
+
+#### Scenario: Workflow passes on the pushed branch
+- **WHEN** the feature branch is pushed and the workflow runs
+- **THEN** every step succeeds, and the run link is saved in `docs/evidence/DEV-1001/`
+
 ### Requirement: Negative fixtures are generated, never committed
 Tests that need invalid input (misformatted, CRLF, `any`, `@ts-ignore`, `eslint-disable`, version ranges, `latest`, floating image tags) SHALL generate it in an OS temp directory at test time and remove it afterwards. The repository MUST NOT contain committed negative fixture files.
 

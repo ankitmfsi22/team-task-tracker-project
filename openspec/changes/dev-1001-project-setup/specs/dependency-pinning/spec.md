@@ -33,7 +33,7 @@ All dependency specifiers in every `package.json` SHALL be exact versions, and `
 - **THEN** the pinning check exits non-zero
 
 ### Requirement: Pinning check is part of the gates
-A pinning check script SHALL scan all `package.json` files and Docker image references, and SHALL run as part of `pnpm lint`.
+A pinning check script SHALL scan all `package.json` files, Docker image references and GitHub Actions workflow `uses:` references, and SHALL run as part of `pnpm lint`.
 
 #### Scenario: Clean repository passes
 - **WHEN** `pnpm lint` is run on the finished change
