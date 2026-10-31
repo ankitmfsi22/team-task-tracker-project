@@ -4,7 +4,9 @@ Creation in Linear approved; see `docs/tickets/README.md` for the Assignment ID 
 Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS marks it.
 
 ---
+
 ## [DEV-1001] Project setup — monorepo, Docker Compose, Prisma, OpenSpec, project instructions and quality checks
+
 - Requirement: AS §2, §3, §7 Rules 19, 21; FRS NFR-1, NFR-2, NFR-3, NFR-5, NFR-8, NFR-9
 - Acceptance criteria:
   1. pnpm workspaces with `backend/`, `frontend/`, `packages/shared/`; `pnpm build|lint|typecheck|test` run and pass.
@@ -17,6 +19,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: any feature code (auth, projects, tasks).
 
 ## [DEV-1002] Claude Code setup — skills, hooks, permissions and project instructions
+
 - Requirement: AS §4 (AI workflow), §7 Rule 8
 - Acceptance criteria:
   1. Project instructions, skills and hooks are committed under `.claude/` and documented.
@@ -26,6 +29,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: agent definitions (DEV-1003).
 
 ## [DEV-1003] Autonomous agents — implementation, testing, independent review and coordination
+
 - Requirement: AS §7 Rules 6, 7, 23, 24
 - Acceptance criteria:
   1. Agents defined for implementation, test writing, review and coordination, each with scope, permitted actions, expected outputs and restrictions.
@@ -36,6 +40,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: production deployment automation (AS §5).
 
 ## [DEV-1004] MCP — Context7 and issue-tracker integration, permissions and failure handling
+
 - Requirement: AS §3, §7 Rules 1, 5, 17, 18, 19
 - Acceptance criteria:
   1. Context7 and Linear MCP are configured; no tokens committed.
@@ -47,6 +52,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: custom MCP server (AS §5).
 
 ## [DEV-1005] OpenSpec workflow — ticket-to-change traceability, approval gates, verification and archival
+
 - Requirement: AS §7 Rules 1–4, 25, 26; CLAUDE.md workflow
 - Acceptance criteria:
   1. Each change links ticket key, branch and spec; folder contains `proposal.md`, `design.md`, `tasks.md`, `specs/`, `approvals.md`, `review-log.md`.
@@ -57,6 +63,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: application feature work.
 
 ## [DEV-1006] Authentication — registration, login, logout and token handling
+
 - Requirement: FRS §1 FR-AUTH-1…10; SDS §5, §6
 - Acceptance criteria:
   1. Register with unique email + name succeeds; invalid input → 400; duplicate email rejected (FR-AUTH-1/2/8).
@@ -69,6 +76,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: OAuth/social login, email delivery.
 
 ## [DEV-1007] Projects — CRUD, membership and access control [PARALLEL after approved contracts]
+
 - Requirement: FRS §2 FR-PRJ-1…8; FR-AUTH-10; SDS §6
 - Acceptance criteria:
   1. Creator becomes OWNER; list returns only caller's projects, archived hidden by default (FR-PRJ-1/7).
@@ -80,6 +88,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: tasks and comments logic.
 
 ## [DEV-1008] Tasks — CRUD, assignment, status, priority and deadlines [PARALLEL after auth and API contracts]
+
 - Requirement: FRS §3 FR-TSK-1…6
 - Acceptance criteria:
   1. Member creates task (title, optional description, status, priority, optional dueDate) in a non-archived project; non-member → 404.
@@ -92,6 +101,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: list filtering/pagination (DEV-1009), comments.
 
 ## [DEV-1009] Task filtering — pagination, sorting and filtering
+
 - Requirement: FRS §4 FR-FLT-1…5; SDS §4
 - Acceptance criteria:
   1. Filter by status, priority, assignee and due-date range.
@@ -103,6 +113,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: full-text search.
 
 ## [DEV-1010] Comments and activity history
+
 - Requirement: FRS §5 FR-CMT-1…5, FR-ACT-1…3
 - Acceptance criteria:
   1. Member adds comment; non-member → 404; empty comment → 400.
@@ -114,6 +125,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: file attachments, real-time updates.
 
 ## [DEV-1011] Frontend — authentication and project pages [PARALLEL after API contracts]
+
 - Requirement: FRS §6 FR-FE-1, 2, 3, 8, 9, 10
 - Acceptance criteria:
   1. Register, login and logout pages work against the API; access token in memory, refresh via httpOnly cookie.
@@ -125,6 +137,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: task pages.
 
 ## [DEV-1012] Frontend — task list, filters and detail pages [PARALLEL after API contracts]
+
 - Requirement: FRS §6 FR-FE-4, 5, 8, 9, 10
 - Acceptance criteria:
   1. Task list with filter, sort and pagination controls using TanStack Query.
@@ -135,6 +148,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: task editing, comments (DEV-1013).
 
 ## [DEV-1013] Frontend — comments, activity history and task editing
+
 - Requirement: FRS §6 FR-FE-6, 7, 8, 10
 - Acceptance criteria:
   1. Create/edit tasks with assignee, status, priority and due date; invalid transition (409) and past date (400) errors shown.
@@ -144,6 +158,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: real-time updates.
 
 ## [DEV-1014] Git worktrees — parallel development, integration and conflict resolution
+
 - Requirement: AS §7 Rules 9, 10, 11
 - Acceptance criteria:
   1. Separate worktrees/branches (`feature/{domain}/DEV-XXXX-{name}`) used for the `[PARALLEL]` tickets.
@@ -153,6 +168,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: new feature work.
 
 ## [DEV-1015] Codebase graph setup — Code Review Graph and Graphify, generation, queries and token-efficiency evaluation
+
 - Requirement: AS §7 Rules 12–16
 - Acceptance criteria:
   1. Both tools installed per official docs; versions and setup steps recorded.
@@ -164,6 +180,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: custom graph tooling.
 
 ## [DEV-1016] Testing — unit, integration, authorization, regression and end-to-end tests
+
 - Requirement: FRS NFR-4, NFR-5, NFR-6, NFR-7, NFR-7a; SDS §8
 - Acceptance criteria:
   1. Vitest unit tests (validation, status transitions, permissions) and Supertest integration tests on a test PostgreSQL DB.
@@ -175,6 +192,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: load/performance testing beyond Lighthouse.
 
 ## [DEV-1017] Independent review — specification compliance, security, graph-assisted impact analysis and test coverage
+
 - Requirement: AS §7 Rules 7, 14, 16, 23, 24
 - Acceptance criteria:
   1. Review in a fresh context against the approved spec and test evidence.
@@ -185,6 +203,7 @@ Dependencies follow the AS section 6 order; `[PARALLEL]` is marked only where AS
 - Out of scope: fixing non-blocking findings.
 
 ## [DEV-1018] Final integration — end-to-end user journey, issue-to-PR traceability and workflow demonstration
+
 - Requirement: AS §8, §9, §7 Rules 21, 26; FRS NFR-5, NFR-6
 - Acceptance criteria:
   1. `pnpm build`, `lint`, `typecheck`, `test` and Playwright journey all pass on the integrated branch.

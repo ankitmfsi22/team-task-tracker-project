@@ -11,13 +11,17 @@ Access is role-based and scoped per project (OWNER, MEMBER). Built as a pnpm mon
 - Current behaviour: `openspec/specs/`
 - `docs/reference/ASSIGNMENT.md` is background only.
 
-## Repo structure (planned, not yet created)
-- `backend/`: Express 5 REST API, Prisma, PostgreSQL
-- `frontend/`: React SPA
-- `packages/shared/`: Zod schemas and TypeScript types
-- `docs/`: FRS, SDS, VERSIONS, reference
+## Repo structure
+- `backend/`: Express 5 REST API, Prisma, PostgreSQL (stub package plus Prisma datasource config; no models yet)
+- `frontend/`: React SPA (stub package)
+- `packages/shared/`: Zod schemas and TypeScript types (stub package)
+- `scripts/`: pinning check (`check-pinning.mjs`), placeholder script and `node:test` tooling tests in `scripts/tests/`
+- `docs/`: FRS, SDS, VERSIONS, reference, evidence
 - `openspec/`: specs and changes
 - `.claude/`: Claude Code commands and skills
+- `.github/workflows/`: CI workflow (`ci.yml`)
+- `.husky/`: pre-commit hook (lint-staged)
+- `docker-compose.yml`: local PostgreSQL 16 (copy `.env.example` to `.env`)
 
 ## Tech stack (versions: pinned in docs/VERSIONS.md)
 - Frontend: React 19 + TypeScript + Vite
@@ -32,13 +36,13 @@ Access is role-based and scoped per project (OWNER, MEMBER). Built as a pnpm mon
 - Local infrastructure: Docker Compose
 
 ## Key commands
-- `pnpm build` (created in DEV-1001)
-- `pnpm lint` (created in DEV-1001)
-- `pnpm typecheck` (created in DEV-1001)
-- `pnpm test` (created in DEV-1001)
-- `pnpm test:e2e` (created in DEV-1001)
-- `pnpm format` (created in DEV-1001)
-- `pnpm lighthouse` (created in DEV-1001)
+- `pnpm build`
+- `pnpm lint` (ESLint plus the pinning check)
+- `pnpm typecheck`
+- `pnpm test` (root `node:test` tooling tests, then each package's Vitest)
+- `pnpm test:e2e` (placeholder until DEV-1016)
+- `pnpm format` / `pnpm format:check`
+- `pnpm lighthouse` (placeholder until DEV-1011)
 - `openspec validate --strict`
 - Build, lint, typecheck and test MUST all pass at integration checkpoints.
 

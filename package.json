@@ -1,0 +1,39 @@
+{
+  "name": "team-task-tracker",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Team Task Tracker monorepo",
+  "type": "module",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "pnpm -r run build",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "node --test \"scripts/tests/*.test.mjs\" && pnpm -r run test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . && node scripts/check-pinning.mjs",
+    "prepare": "husky",
+    "test:e2e": "node scripts/not-implemented.mjs test:e2e DEV-1016",
+    "lighthouse": "node scripts/not-implemented.mjs lighthouse DEV-1011"
+  },
+  "devDependencies": {
+    "@fission-ai/openspec": "1.16.0",
+    "eslint": "10.14.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "prettier": "3.9.10",
+    "typescript-eslint": "8.72.1"
+  },
+  "lint-staged": {
+    "*.{ts,js,mjs}": [
+      "eslint --max-warnings 0",
+      "prettier --check"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --check"
+    ]
+  }
+}

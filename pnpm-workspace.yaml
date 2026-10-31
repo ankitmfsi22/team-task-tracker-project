@@ -1,0 +1,11 @@
+packages:
+  - backend
+  - frontend
+  - packages/*
+# Install scripts are denied for Prisma: validate and db execute work without them (DEV-1001).
+allowBuilds:
+  '@prisma/engines': false
+  prisma: false
+minimumReleaseAgeExclude:
+  - eslint@10.14.0
+  - '@fission-ai/openspec@1.16.0'
