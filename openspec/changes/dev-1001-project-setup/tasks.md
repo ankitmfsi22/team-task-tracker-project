@@ -23,7 +23,7 @@ Ticket: DEV-1001 (Linear DEV-5). One commit per task: `type(scope): description 
 
 ## 4. Local database and Prisma
 
-- [ ] 4.1 Add `docker-compose.yml` (postgres only, exact `16.<minor>-alpine` tag verified with `docker pull`, named volume, healthcheck, `${POSTGRES_PASSWORD:?}`) and `.env.example` with placeholders only; verify `docker compose config --services` prints only `postgres`, `docker compose up -d` reaches healthy, `docker compose up` without the password var fails naming it, and `git check-ignore .env` matches.
+- [x] 4.1 Add `docker-compose.yml` (postgres only, exact `16.<minor>-alpine` tag verified with `docker pull`, named volume, healthcheck, `${POSTGRES_PASSWORD:?}`) and `.env.example` with placeholders only; verify `docker compose config --services` prints only `postgres`, `docker compose up -d` reaches healthy, `docker compose up` without the password var fails naming it, and `git check-ignore .env` matches.
 - [ ] 4.2 Add Prisma to `backend` (pinned stable 7.x, `prisma.config.ts`, `schema.prisma` with datasource and no models, `DATABASE_URL` from env only); verify Prisma validate passes with `DATABASE_URL` set, a connectivity check succeeds against the Compose database, and it fails naming `DATABASE_URL` when unset.
 
 ## 5. Documentation
