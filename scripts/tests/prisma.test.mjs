@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
+import { createServer } from 'node:net';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -65,12 +66,25 @@ test('Missing DATABASE_URL: db:check fails naming DATABASE_URL', () => {
   assert.match(r.out, /DATABASE_URL/);
 });
 
-test('Prisma reaches the database (throwaway Compose project)', { timeout: 180000 }, () => {
+// Ask the OS for a free port so a busy fixed port (CI runners use 32768-60999 for ephemeral
+// ports) cannot make the test flaky.
+const freePort = () =>
+  new Promise((resolvePort, reject) => {
+    const server = createServer();
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const { port } = server.address();
+      server.close(() => resolvePort(port));
+    });
+  });
+
+test('Prisma reaches the database (throwaway Compose project)', { timeout: 180000 }, async () => {
   const project = 'ttt-prisma-test';
+  const port = await freePort();
   const composeEnv = {
     ...process.env,
     POSTGRES_PASSWORD: 'test-only-pw',
-    POSTGRES_PORT: '55432',
+    POSTGRES_PORT: String(port),
     POSTGRES_USER: 'tasktracker',
     POSTGRES_DB: 'tasktracker',
   };
@@ -86,7 +100,7 @@ test('Prisma reaches the database (throwaway Compose project)', { timeout: 18000
     const up = compose('up -d --wait');
     assert.equal(up.status, 0, `${up.stdout}${up.stderr}`);
     const r = runScript('db:check', {
-      DATABASE_URL: 'postgresql://tasktracker:test-only-pw@localhost:55432/tasktracker',
+      DATABASE_URL: `postgresql://tasktracker:test-only-pw@localhost:${port}/tasktracker`,
     });
     assert.equal(r.status, 0, r.out);
   } finally {
