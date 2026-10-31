@@ -2,13 +2,12 @@
 
 ## Workflow (MANDATORY)
 - Features, API and schema changes: use only the installed OpenSpec commands: /opsx:explore, /opsx:propose, /opsx:update, /opsx:apply, /opsx:verify, /opsx:sync, /opsx:archive. Never create or use custom-named workflow commands.
-- Every ticket: fetch the ticket from the issue tracker via MCP first. Until DEV-1004, use the labelled fixture in `docs/tickets/` and say so explicitly.
+- Every ticket: fetch the ticket via Linear MCP; use a labelled fixture in `docs/tickets/` only if MCP is unavailable, and say so.
 - /opsx:propose MUST produce all four artifacts together: `proposal.md`, `design.md`, `tasks.md`, `specs/<capability>/spec.md`. Then run `openspec validate <change> --strict`.
 - Gate 1: STOP after propose. No production code until the human adds a Gate 1 entry in the change's `approvals.md` and commits it.
 - /opsx:apply: for every task, FIRST invoke the test-writer sub-agent to write failing tests from the spec scenarios, THEN implement, then run lint, typecheck and test, then make one commit per task.
 - After apply: run /opsx:verify, then invoke the reviewer sub-agent in a fresh context. The reviewer sub-agent (read-only) returns its findings; the main session saves them verbatim to `review-log.md` in the change folder. Blocking findings MUST be fixed before the PR.
 - Gate 2: the human approves the PR; a Gate 2 entry is added to `approvals.md`.
-- After merge: run /opsx:sync, then /opsx:archive.
 - Fast lane (direct change without OpenSpec) is allowed only for a typo, config change or dependency patch.
 - Keep artifacts brief: max ~6 tasks per ticket, tests only for spec scenarios, no tests about docs/evidence files. Non-blocking findings go to the PR as accepted deviations; only blocking ones get fixed. Because pushing to main is forbidden, run /opsx:sync and /opsx:archive on the feature branch right after Gate 2, before merge.
 

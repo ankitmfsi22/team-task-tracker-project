@@ -10,6 +10,7 @@ Access is role-based and scoped per project (OWNER, MEMBER). Built as a pnpm mon
 - Design: `docs/SDS.md`
 - Current behaviour: `openspec/specs/`
 - `docs/reference/ASSIGNMENT.md` is background only.
+- Accepted deviations: `docs/deviations.md` (every ticket appends its deviations).
 
 ## Repo structure
 - `backend/`: Express 5 REST API, Prisma, PostgreSQL (stub package plus Prisma datasource config; no models yet)
