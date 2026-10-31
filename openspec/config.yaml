@@ -1,0 +1,23 @@
+schema: spec-driven
+
+context: |
+  Stack: pnpm monorepo (backend/, frontend/, packages/shared/); React 19 + Vite, Express 5 + Prisma + PostgreSQL 16, Zod; versions in docs/VERSIONS.md.
+  API: base path /api/v1; errors { error: { code, message, details? } }; status codes 400, 401, 403, 404 (non-members), 409; pagination ?page&pageSize with { data, meta }.
+  Auth: access + refresh JWT, argon2id passwords, rotating hashed refresh tokens, roles OWNER/MEMBER per project.
+  Testing: Vitest (unit), Vitest + Supertest (integration), Playwright (e2e), including authorization-denied cases.
+  Sources: requirements in docs/FRS.md, design in docs/SDS.md; all Zod schemas and types live in packages/shared.
+
+rules:
+  proposal:
+    - Link the ticket ID (DEV-XXXX)
+    - Include impact and rollback plan
+  specs:
+    - Use WHEN/THEN scenarios
+    - Always include an authorization-denied and a validation-failure scenario
+    - Use SHALL/MUST
+  design:
+    - Define request/response schemas in packages/shared first
+  tasks:
+    - Write tests before implementation
+    - Keep API and web tasks separate so they can run in parallel
+    - Last task group is verification
