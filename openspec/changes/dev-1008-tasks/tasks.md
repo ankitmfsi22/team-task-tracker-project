@@ -16,4 +16,4 @@ Ticket: DEV-1008 (Linear DEV-12). One commit per task: `type(scope): description
 
 ## 3. Verification
 
-- [ ] 3.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1008-tasks --strict`; run `security-auditor`; record new deviations in `docs/deviations.md`.
+- [x] 3.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1008-tasks --strict`; run `security-auditor`; record new deviations in `docs/deviations.md`.
