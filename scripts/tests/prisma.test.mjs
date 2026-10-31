@@ -79,7 +79,9 @@ const freePort = () =>
   });
 
 test('Prisma reaches the database (throwaway Compose project)', { timeout: 180000 }, async () => {
-  const project = 'ttt-prisma-test';
+  // Unique per run: concurrent test runs (CI, hooks, reviewers) must not share, and so
+  // tear down, each other's containers.
+  const project = `ttt-prisma-${process.pid}-${Date.now().toString(36)}`;
   const port = await freePort();
   const composeEnv = {
     ...process.env,
@@ -96,14 +98,21 @@ test('Prisma reaches the database (throwaway Compose project)', { timeout: 18000
       encoding: 'utf8',
       timeout: 150000,
     });
+  let down;
   try {
     const up = compose('up -d --wait');
-    assert.equal(up.status, 0, `${up.stdout}${up.stderr}`);
+    if (up.status !== 0) {
+      const logs = compose('logs --no-color --tail 40');
+      assert.fail(
+        `compose up failed:\n${up.stdout}${up.stderr}\n--- container logs ---\n${logs.stdout}`,
+      );
+    }
     const r = runScript('db:check', {
       DATABASE_URL: `postgresql://tasktracker:test-only-pw@localhost:${port}/tasktracker`,
     });
     assert.equal(r.status, 0, r.out);
   } finally {
-    compose('down -v');
+    down = compose('down -v');
   }
+  assert.equal(down.status, 0, `compose down failed:\n${down.stdout}${down.stderr}`);
 });
