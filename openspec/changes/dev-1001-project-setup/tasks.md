@@ -28,7 +28,7 @@ Ticket: DEV-1001 (Linear DEV-5). One commit per task: `type(scope): description 
 
 ## 5. Documentation
 
-- [ ] 5.1 Create `docs/VERSIONS.md` with every exact version (Node, pnpm, TypeScript, ESLint, typescript-eslint, Prettier, Husky, lint-staged, Vitest, Prisma, Postgres image tag), the Prisma rationale, the typescript-eslint supported TypeScript/ESLint ranges and the npm check date; verify `scripts/check-pinning.mjs` (extended) or a test confirms the documented versions (including `@types/node` and the CI action tags) match `package.json`, `.nvmrc`, `docker-compose.yml` and `.github/workflows/ci.yml`, and that the pinned TypeScript and ESLint satisfy the typescript-eslint peer ranges.
+- [x] 5.1 Create `docs/VERSIONS.md` with every exact version (Node, pnpm, TypeScript, ESLint, typescript-eslint, Prettier, Husky, lint-staged, Vitest, Prisma, Postgres image tag), the Prisma rationale, the typescript-eslint supported TypeScript/ESLint ranges and the npm check date; verify `scripts/check-pinning.mjs` (extended) or a test confirms the documented versions (including `@types/node` and the CI action tags) match `package.json`, `.nvmrc`, `docker-compose.yml` and `.github/workflows/ci.yml`, and that the pinned TypeScript and ESLint satisfy the typescript-eslint peer ranges.
 - [ ] 5.2 Update AGENTS.md "Repo structure (planned, not yet created)" and key-command notes to the real state; verify the commands listed in AGENTS.md all run.
 
 ## 6. Verification
