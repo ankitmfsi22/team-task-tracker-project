@@ -1,0 +1,11 @@
+DEV-1006 - startServer failing tests (spec: "Separate signing secrets from the environment" / "Missing secret")
+File: backend/src/server.test.ts (4 tests: missing JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, DATABASE_URL; complete env listens, openapi.json 200, auth/me 401)
+Command: pnpm --filter @team-task-tracker/backend test
+
+ FAIL  src/server.test.ts [ src/server.test.ts ]
+Error: Cannot find module './server.js' imported from backend/src/server.test.ts
+
+ Test Files  1 failed | 5 passed (6)
+      Tests  49 passed (49)
+
+Reason: ./server.js does not exist (missing behaviour); no other test regressed.

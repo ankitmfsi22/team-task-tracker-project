@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/prepare.mjs && tsc -p tsconfig.build.json",
+    "start": "node dist/main.js",
     "typecheck": "node scripts/prepare.mjs && tsc -p tsconfig.json --noEmit",
     "test": "node scripts/prepare.mjs && vitest run",
     "prisma:generate": "prisma generate",
