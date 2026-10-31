@@ -98,7 +98,8 @@ test('pnpm-lock.yaml has importers for all three packages', () => {
 
 test('pnpm install --frozen-lockfile succeeds without modifying pnpm-lock.yaml', () => {
   const before = sha(abs('pnpm-lock.yaml'));
-  const r = pnpm('install --frozen-lockfile --offline --ignore-scripts');
+  // No --offline: the scenario is a fresh clone, so the store may be cold and packages are fetched.
+  const r = pnpm('install --frozen-lockfile --ignore-scripts');
   assert.equal(r.status, 0, `frozen install failed:\n${r.stdout}${r.stderr}`);
   assert.equal(sha(abs('pnpm-lock.yaml')), before, 'lockfile was modified');
 });
