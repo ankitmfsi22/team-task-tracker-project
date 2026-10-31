@@ -7,11 +7,15 @@ import {
   hashToken,
   signAccessToken,
   signRefreshToken,
+  verifyRefreshToken,
   type TokenSecrets,
 } from './token.service.js';
 
 // argon2id is the default algorithm of @node-rs/argon2.
 const INVALID_CREDENTIALS = new AppError(401, 'INVALID_CREDENTIALS', 'Invalid email or password');
+
+const UNAUTHENTICATED = (): AppError =>
+  new AppError(401, 'UNAUTHENTICATED', 'Authentication required');
 
 export interface IssuedTokens {
   accessToken: string;
@@ -58,14 +62,45 @@ export class AuthService {
 
   async getUser(userId: string): Promise<UserResponse> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new AppError(401, 'UNAUTHENTICATED', 'Authentication required');
+    if (!user) throw UNAUTHENTICATED();
     return toUser(user);
   }
 
-  async issueTokens(userId: string): Promise<IssuedTokens> {
+  // Rotation: the presented token is revoked and a new one issued in one transaction. The revoke is
+  // conditional on revokedAt being null, so two concurrent uses of one token cannot both succeed.
+  async refresh(token: string): Promise<IssuedTokens> {
+    const userId = await verifyRefreshToken(token, this.secrets);
+    if (!userId) throw UNAUTHENTICATED();
+    return this.prisma.$transaction(async (tx) => {
+      const revoked = await tx.refreshToken.updateMany({
+        where: {
+          tokenHash: hashToken(token),
+          userId,
+          revokedAt: null,
+          expiresAt: { gt: new Date() },
+        },
+        data: { revokedAt: new Date() },
+      });
+      if (revoked.count !== 1) throw UNAUTHENTICATED();
+      return this.issueTokens(userId, tx);
+    });
+  }
+
+  // Idempotent: an unknown, invalid or already revoked token revokes nothing.
+  async logout(token: string): Promise<void> {
+    await this.prisma.refreshToken.updateMany({
+      where: { tokenHash: hashToken(token), revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+  }
+
+  async issueTokens(
+    userId: string,
+    db: Pick<PrismaClient, 'refreshToken'> = this.prisma,
+  ): Promise<IssuedTokens> {
     const accessToken = await signAccessToken(userId, this.secrets);
     const refreshToken = await signRefreshToken(userId, this.secrets);
-    await this.prisma.refreshToken.create({
+    await db.refreshToken.create({
       data: {
         userId,
         tokenHash: hashToken(refreshToken),

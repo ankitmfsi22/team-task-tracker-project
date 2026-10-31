@@ -11,6 +11,8 @@ export function createAuthRouter(service: AuthService, secrets: TokenSecrets): R
   const router = Router();
   router.post('/register', validate({ body: RegisterRequestSchema }), controller.register);
   router.post('/login', validate({ body: LoginRequestSchema }), controller.login);
+  router.post('/refresh', controller.refresh);
+  router.post('/logout', controller.logout);
   router.get('/me', authenticate(secrets), controller.me);
   return router;
 }

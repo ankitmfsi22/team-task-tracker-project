@@ -19,7 +19,7 @@ Ticket: DEV-1006 (Linear DEV-10). One commit per task: `type(scope): description
 ## 4. Auth endpoints
 
 - [x] 4.1 Add `@node-rs/argon2` and `jose`; implement register, login and `authenticate` plus `GET /auth/me`. Verify: integration tests for 201, 400, 409 (case-insensitive), argon2id stored hash, generic 401 for both wrong-credential cases, cookie flags, `me` 200 and 401 for missing, malformed, wrong-secret, expired and refresh-as-access tokens, and no secrets in output or logs (specs: registration, hashed passwords, login, protected endpoints).
-- [ ] 4.2 Implement refresh rotation and logout. Verify: integration tests for rotation, reuse of a rotated token and a logged-out token (401), invalid, expired and missing cookie (401), only the hash stored, logout 204 with and without a token (specs: Refresh rotates, Refresh tokens are stored hashed, Logout revokes).
+- [x] 4.2 Implement refresh rotation and logout. Verify: integration tests for rotation, reuse of a rotated token and a logged-out token (401), invalid, expired and missing cookie (401), only the hash stored, logout 204 with and without a token (specs: Refresh rotates, Refresh tokens are stored hashed, Logout revokes).
 
 ## 5. Verification
 

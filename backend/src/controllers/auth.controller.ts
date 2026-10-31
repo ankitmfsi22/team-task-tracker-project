@@ -34,7 +34,7 @@ export const readRefreshCookie = (req: Request): string | undefined => {
 
 export function createAuthController(
   service: AuthService,
-): Record<'register' | 'login' | 'me', RequestHandler> {
+): Record<'register' | 'login' | 'refresh' | 'logout' | 'me', RequestHandler> {
   return {
     register: async (req, res) => {
       const user = await service.register(req.body as RegisterRequest);
@@ -45,6 +45,20 @@ export function createAuthController(
       setRefreshCookie(res, refreshToken);
       const body: AuthTokenResponse = { accessToken };
       res.status(200).json(body);
+    },
+    refresh: async (req, res) => {
+      const token = readRefreshCookie(req);
+      if (!token) throw new AppError(401, 'UNAUTHENTICATED', 'Authentication required');
+      const { accessToken, refreshToken } = await service.refresh(token);
+      setRefreshCookie(res, refreshToken);
+      const body: AuthTokenResponse = { accessToken };
+      res.status(200).json(body);
+    },
+    logout: async (req, res) => {
+      const token = readRefreshCookie(req);
+      if (token) await service.logout(token);
+      clearRefreshCookie(res);
+      res.status(204).end();
     },
     me: async (_req, res) => {
       const userId: unknown = res.locals['userId'];

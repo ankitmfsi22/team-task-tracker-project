@@ -1,0 +1,11 @@
+DEV-1006 task 4.2 - failing tests for refresh rotation and logout (before implementation)
+File: backend/src/auth.refresh-logout.integration.test.ts
+Command: pnpm --filter @team-task-tracker/backend test
+Result: Test Files 1 failed | 4 passed (5); Tests 15 failed | 34 passed (49)
+All 15 new tests fail with "expected 404 to be 401" (refresh) or "expected 404 to be 204" (logout):
+the routes POST /api/v1/auth/refresh and /logout do not exist yet (missing behaviour).
+Scenarios covered: Refresh rotates the token (successful rotation, new access token works on /me,
+reused rotated token, revoked-by-logout, no cookie, malformed, wrong secret, expired JWT, hash not in DB,
+access token in cookie, expired DB row); Logout revokes the refresh token (revoke + clear + refresh 401,
+no cookie, invalid token, other session unaffected).
+Cleanup: no ttt- containers remain after teardown (verified with docker ps -a).
