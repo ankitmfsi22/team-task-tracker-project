@@ -15,7 +15,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint . && node scripts/check-pinning.mjs",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:e2e": "node scripts/not-implemented.mjs test:e2e DEV-1016",
+    "lighthouse": "node scripts/not-implemented.mjs lighthouse DEV-1011"
   },
   "devDependencies": {
     "eslint": "10.14.0",
