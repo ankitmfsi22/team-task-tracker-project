@@ -7,7 +7,7 @@ Defines the committed Claude Code guardrails: the block-dangerous hook, the perm
 ## Requirements
 
 ### Requirement: Dangerous commands are blocked by hook
-The `block-dangerous` PreToolUse hook SHALL exit 2 with a reason on stderr for recursive forced deletes (combined or separate, short or long flags), force-push (long, short and `+refspec` forms), push to `main`/`master` (including `HEAD:main`, `+main` and `refs/heads/` forms), hard resets, commands touching `.env` files other than `.env.example`, `curl`/`wget` and the skip-permissions flag, and SHALL recognise these when git global options (`-C`, `-c`) precede the subcommand. It SHALL exit 0 for ordinary commands and SHALL fail closed (exit 2) on malformed input.
+The `block-dangerous` PreToolUse hook SHALL exit 2 with a reason on stderr for recursive forced deletes, force-push, push to `main`/`master`, hard resets, commands touching `.env` files other than `.env.example`, `curl`/`wget` and the skip-permissions flag, and SHALL exit 0 for ordinary commands.
 
 #### Scenario: Reading .env is blocked
 - **WHEN** the hook receives a Bash command `cat .env`
@@ -24,6 +24,17 @@ The `block-dangerous` PreToolUse hook SHALL exit 2 with a reason on stderr for r
 #### Scenario: Allowed commands pass
 - **WHEN** the hook receives `pnpm test`, `cat .env.example` or `git push origin feature/infra/DEV-1002-claude-code-setup`
 - **THEN** it exits 0
+
+### Requirement: Hook resists command-form bypasses and fails closed
+The hook SHALL detect force-push (long, short, `+refspec`), push to `main`/`master` (`HEAD:main`, `+main`, `refs/heads/` forms) and hard resets when git global options (`-C`, `-c`) precede the subcommand, SHALL detect recursive forced deletes given as combined or separate, short or long flags, and SHALL exit 2 on malformed input.
+
+#### Scenario: Git global options do not bypass the hook
+- **WHEN** the hook receives `git -C . push --force origin feature/x` or `git -c k=v push -f origin feature/x`
+- **THEN** it exits 2 and stderr names the force-push rule
+
+#### Scenario: Alternative main and delete forms are blocked
+- **WHEN** the hook receives `git push origin HEAD:main`, `git push origin +main`, a delete command with separate recursive and force flags, `git reset --hard`, `curl`, `wget` or `--dangerously-skip-permissions`
+- **THEN** it exits 2
 
 #### Scenario: Malformed hook input fails closed
 - **WHEN** the hook receives non-JSON stdin, empty stdin, or JSON without a string command
