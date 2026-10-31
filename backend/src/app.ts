@@ -5,7 +5,9 @@ import type { AppConfig } from './config.js';
 import { createPrismaClient, type PrismaClient } from './db.js';
 import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
 import { createAuthRouter } from './routes/auth.routes.js';
+import { createTasksRouter } from './routes/tasks.routes.js';
 import { AuthService } from './services/auth.service.js';
+import { TasksService } from './services/tasks.service.js';
 
 export interface AppOptions {
   // Registers extra routes under /api/v1, before the 404 handler.
@@ -28,6 +30,10 @@ export function createApp(config: AppConfig, options: AppOptions = {}): Express 
     res.json(buildOpenApiDocument());
   });
   api.use('/auth', createAuthRouter(authService, config));
+  api.use(
+    '/projects/:projectId/tasks',
+    createTasksRouter(new TasksService(prisma), prisma, config),
+  );
   options.extraRoutes?.(api);
   app.use('/api/v1', api);
 
