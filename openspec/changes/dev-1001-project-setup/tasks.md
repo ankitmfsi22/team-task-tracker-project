@@ -37,7 +37,7 @@ Ticket: DEV-1001 (Linear DEV-5). One commit per task: `type(scope): description 
 - [x] 6.2 Map each Linear DEV-5 acceptance criterion (1-6) to evidence in `docs/evidence/DEV-1001/ac-checklist.md`; verify every criterion has a command or file reference and no `latest` or range exists (pinning check passes).
 - [x] 6.3 Run `openspec validate dev-1001-project-setup --strict`; verify it passes.
 
-- [ ] 6.4 Push the branch and verify the CI workflow passes (all steps green, including `openspec validate --all --strict` and `pnpm audit --audit-level=high`); save the run link and result in `docs/evidence/DEV-1001/ci-run.md`.
+- [x] 6.4 Push the branch and verify the CI workflow passes (all steps green, including `openspec validate --all --strict` and `pnpm audit --audit-level=high`); save the run link and result in `docs/evidence/DEV-1001/ci-run.md`.
 
 ## Workflow follow-up
 
