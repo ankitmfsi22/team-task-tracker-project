@@ -59,5 +59,12 @@ export function createTasksRouter(
     projectAccess(prisma, { write: true }),
     controller.assign,
   );
+  router.post(
+    '/:taskId/archive',
+    auth,
+    validate({ params: TaskParamsSchema }),
+    projectAccess(prisma, { write: true }),
+    controller.archive,
+  );
   return router;
 }

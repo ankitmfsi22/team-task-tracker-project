@@ -10,7 +10,7 @@ import type { TasksService } from '../services/tasks.service.js';
 
 export function createTasksController(
   service: TasksService,
-): Record<'create' | 'get' | 'update' | 'assign' | 'changeStatus', RequestHandler> {
+): Record<'create' | 'get' | 'update' | 'assign' | 'changeStatus' | 'archive', RequestHandler> {
   return {
     create: async (req, res) => {
       const projectId = req.params['projectId'] as string;
@@ -34,6 +34,10 @@ export function createTasksController(
       const { projectId, taskId } = req.params as unknown as TaskParams;
       const { status } = req.body as ChangeTaskStatusRequest;
       res.status(200).json(await service.changeStatus(projectId, taskId, status));
+    },
+    archive: async (req, res) => {
+      const { projectId, taskId } = req.params as unknown as TaskParams;
+      res.status(200).json(await service.archive(projectId, taskId));
     },
     get: async (req, res) => {
       const { projectId, taskId } = req.params as unknown as TaskParams;

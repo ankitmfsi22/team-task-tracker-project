@@ -100,6 +100,15 @@ export class TasksService {
     return toTaskResponse(updated);
   }
 
+  async archive(projectId: string, taskId: string): Promise<TaskResponse> {
+    const task = await this.findEditable(projectId, taskId);
+    const updated = await this.prisma.task.update({
+      where: { id: task.id },
+      data: { archivedAt: new Date() },
+    });
+    return toTaskResponse(updated);
+  }
+
   private async findEditable(projectId: string, taskId: string): Promise<Task> {
     const task = await this.find(projectId, taskId);
     if (task.archivedAt !== null) throw new AppError(409, 'TASK_ARCHIVED', 'Task is archived');
