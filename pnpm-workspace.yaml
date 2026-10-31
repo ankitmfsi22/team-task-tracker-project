@@ -2,3 +2,5 @@ packages:
   - backend
   - frontend
   - packages/*
+minimumReleaseAgeExclude:
+  - eslint@10.14.0

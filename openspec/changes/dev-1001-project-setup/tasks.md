@@ -15,7 +15,7 @@ Ticket: DEV-1001 (Linear DEV-5). One commit per task: `type(scope): description 
 ## 3. Lint, format and commit enforcement
 
 - [x] 3.1 Add Prettier (`endOfLine: lf`), `format` and `format:check` scripts; write tests first that generate a misformatted file and a CRLF file in an OS temp directory (never committed, cleaned up); verify the check fails on both, `pnpm format` fixes the repo, and `pnpm format:check` passes.
-- [ ] 3.2 Add ESLint flat config (forbid `any`, `@ts-ignore`, `eslint-disable` without a ticket ID) and root `lint` that also runs the pinning check; write tests first that generate each forbidden construct in an OS temp directory (never committed, cleaned up) and lint it; verify each fails, `pnpm lint` exits 0 on the repo, and no ignore entries exist for fixtures.
+- [x] 3.2 Add ESLint flat config (forbid `any`, `@ts-ignore`, `eslint-disable` without a ticket ID) and root `lint` that also runs the pinning check; write tests first that generate each forbidden construct in an OS temp directory (never committed, cleaned up) and lint it; verify each fails, `pnpm lint` exits 0 on the repo, and no ignore entries exist for fixtures.
 - [ ] 3.3 Add Husky and lint-staged (`prepare` script, `.husky/pre-commit`); verify from both PowerShell and Git Bash that a staged file with a lint error aborts `git commit` and a clean staged file commits. Save the transcript in `docs/evidence/DEV-1001/`.
 - [ ] 3.4 Add `test:e2e` and `lighthouse` placeholder scripts; verify output contains "not implemented — DEV-1016" and "not implemented — DEV-1011" and both exit 0.
 
