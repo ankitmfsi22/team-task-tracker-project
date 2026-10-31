@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run",
+    "build": "node scripts/prisma-generate.mjs && tsc -p tsconfig.build.json",
+    "typecheck": "node scripts/prisma-generate.mjs && tsc -p tsconfig.json --noEmit",
+    "test": "node scripts/prisma-generate.mjs && vitest run",
+    "prisma:generate": "node scripts/prisma-generate.mjs",
     "prisma:validate": "prisma validate",
     "db:check": "prisma db execute --file prisma/check.sql"
   },
@@ -15,5 +16,9 @@
     "prisma": "7.10.1",
     "typescript": "6.0.3",
     "vitest": "5.0.5"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1"
   }
 }

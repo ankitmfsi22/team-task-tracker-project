@@ -18,6 +18,9 @@ Registry and image tags were checked against the npm registry, GitHub and Docker
 | lint-staged        | 17.6.0                | root `package.json`                          |
 | Vitest             | 5.0.5                 | `backend`, `frontend`, `packages/shared`     |
 | Prisma             | 7.10.1                | `backend/package.json`                       |
+| @prisma/client     | 7.10.1                | `backend/package.json`                       |
+| @prisma/adapter-pg | 7.10.1                | `backend/package.json`                       |
+| Zod                | 4.6.7                 | `packages/shared/package.json`               |
 | @types/node        | 22.20.5               | `backend`, `frontend`, `packages/shared`     |
 | OpenSpec CLI       | 1.16.0                | root `package.json` (`@fission-ai/openspec`) |
 | PostgreSQL image   | postgres:16.15-alpine | `docker-compose.yml`                         |

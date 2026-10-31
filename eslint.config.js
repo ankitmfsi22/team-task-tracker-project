@@ -27,7 +27,7 @@ const requireTicketId = {
 };
 
 export default defineConfig(
-  { ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**'] },
+  { ignores: ['**/node_modules/**', '**/dist/**', '**/coverage/**', '**/generated/**'] },
   tseslint.configs.recommended,
   {
     files: ['**/*.{ts,js,mjs}'],
