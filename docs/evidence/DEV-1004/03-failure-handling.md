@@ -7,7 +7,7 @@ Date: 2026-10-31. All observations are from this project and session; "not teste
 | Missing ticket        | Observed   | `get_issue DEV-9999`, below                                |
 | Unsupported operation | Observed   | no delete-issue tool exists, below                         |
 | Server unavailable    | Observed   | temporary local-scope entry with an unreachable URL, below |
-| Auth failure          | Not tested | `plugin:engineering:linear` does not exist here, see below |
+| Auth failure          | Observed   | temporary local-scope `linear-auth-test`, below            |
 | Malformed response    | Not tested | cannot be induced safely; handling rule below              |
 
 ## Missing ticket
@@ -41,7 +41,22 @@ Removed MCP server unreachable-test from local config
 
 ## Auth failure
 
-The requested source, `plugin:engineering:linear`, is not configured in this environment (`claude mcp list` shows no such server). Evidence from other servers was deliberately not substituted. The project-level `context7` server shows a related real state: `⏸ Pending approval` (see `02-context7-lookup.md`). The auth-failure case is therefore **not tested**. Handling rule: when a server reports "needs authentication", Claude stops, reports it, and tells the human to authenticate through `/mcp`; Claude never asks for tokens in chat and never reads `.env` files.
+The `plugin:engineering:linear` server named in the original task does not exist in this environment, so the state was reproduced from this project: a temporary local-scope entry (stored in the user's `~/.claude.json`, never in `.mcp.json`, never committed) pointing at the Linear URL with no OAuth completed. It was added, observed and removed:
+
+```
+$ claude mcp add --scope local --transport http linear-auth-test https://mcp.linear.app/mcp
+Added HTTP MCP server linear-auth-test with URL: https://mcp.linear.app/mcp to local config
+$ claude mcp list
+linear: https://mcp.linear.app/mcp (HTTP) - ✔ Connected
+linear-auth-test: https://mcp.linear.app/mcp (HTTP) - ! Needs authentication
+$ claude mcp get linear-auth-test
+  Scope: Local config (private to you in this project)
+  Status: ! Needs authentication
+$ claude mcp remove linear-auth-test -s local
+Removed MCP server linear-auth-test from local config
+```
+
+`git status` showed no config changes afterwards. The already-authenticated `linear` server stayed connected. Handling rule: when a server reports "Needs authentication", Claude stops, reports it, and tells the human to authenticate through `/mcp`; Claude never asks for tokens in chat and never reads `.env` files.
 
 ## Malformed response
 
