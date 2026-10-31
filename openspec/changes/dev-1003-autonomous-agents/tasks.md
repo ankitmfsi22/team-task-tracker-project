@@ -10,7 +10,7 @@ Ticket: DEV-1003 (Linear DEV-7). One commit per task: `type(scope): description 
 
 ## 2. Documentation
 
-- [ ] 2.1 Add `docs/agents.md` table for all agents and update the agents line in `docs/claude-code-setup.md` (spec: Agents are documented in one table).
+- [x] 2.1 Add `docs/agents.md` table for all agents and update the agents line in `docs/claude-code-setup.md` (spec: Agents are documented in one table).
 
 ## 3. Evidence and verification
 
