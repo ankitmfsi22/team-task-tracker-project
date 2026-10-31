@@ -10,7 +10,7 @@ Defines tasks inside a project: creation, viewing, update, assignment, status tr
 `packages/shared` SHALL export the `TaskStatus` and `TaskPriority` enums, the task request and response schemas and types, the status transition table, and the OpenAPI document SHALL describe the six task routes.
 
 #### Scenario: Schemas accept valid and reject invalid input
-- **WHEN** the create, update, status and assign schemas parse a valid body, an empty title, an unknown status or priority, a non-UTC or malformed `dueDate`, a non-UUID `assigneeId`, or an empty update body
+- **WHEN** the create, update, status and assign schemas parse a valid body, an empty title, an unknown status or priority, a `dueDate` that is not a UTC ISO 8601 timestamp, a create body with a `status` field, a non-UUID `assigneeId`, or an empty update body
 - **THEN** the valid body passes and every invalid one fails
 
 #### Scenario: OpenAPI describes the task routes
@@ -18,14 +18,14 @@ Defines tasks inside a project: creation, viewing, update, assignment, status tr
 - **THEN** it contains the six task paths under `/api/v1/projects/{projectId}/tasks`, with their request bodies and the 400, 401, 404 and 409 responses
 
 ### Requirement: Create task
-`POST /api/v1/projects/:projectId/tasks` SHALL let any member of a non-archived project create a task with a title, optional description, status, priority and due date, and return 201 with the task.
+`POST /api/v1/projects/:projectId/tasks` SHALL let any member of a non-archived project create a task with a title, optional description, priority and due date, and return 201 with the task. A new task SHALL always start with status TODO; the request has no status field. `dueDate` SHALL be a UTC ISO 8601 timestamp.
 
 #### Scenario: Member creates a task
-- **WHEN** a member posts a valid title with optional description, status, priority and a future `dueDate`
-- **THEN** the response is 201 with the task, `createdById` is the caller, and status defaults to TODO and priority to MEDIUM when omitted
+- **WHEN** a member posts a valid title with optional description, priority and a future UTC `dueDate`
+- **THEN** the response is 201 with the task, `createdById` is the caller, status is TODO and priority defaults to MEDIUM when omitted
 
 #### Scenario: Invalid input is rejected
-- **WHEN** a member posts an empty or over-long title, an unknown status or priority, or a malformed `dueDate`
+- **WHEN** a member posts an empty or over-long title, an unknown priority, a `status` field, or a `dueDate` that is not a UTC ISO 8601 timestamp (for example a date only, or with an offset)
 - **THEN** the response is 400 `VALIDATION_ERROR` and no task is created
 
 #### Scenario: Non-member is denied

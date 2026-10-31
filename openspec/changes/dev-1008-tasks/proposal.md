@@ -10,8 +10,8 @@ Tasks are the core resource of the tracker. DEV-1009 (filtering), DEV-1010 (comm
 
 - Shared contracts in `packages/shared`: `TaskStatus` and `TaskPriority` enums, schemas and types for create, update, status change, assign, params and response, and OpenAPI paths for the task routes.
 - Prisma `TaskStatus`, `TaskPriority` enums and `Task` model with a migration.
-- Endpoints under `/api/v1/projects/:projectId/tasks`: create, get, update, change status, assign or unassign, archive. All sit behind `authenticate`, `validate` and `projectAccess` (`write: true` on mutations, so an archived project gives 409).
-- Rules: assignee must be a current project member (400); status transitions follow the FRS table (409 otherwise); a past `dueDate` is rejected (400) when set or changed, an unchanged one is accepted; any member can archive; an archived task cannot be edited (409).
+- Endpoints under `/api/v1/projects/:projectId/tasks`: create (a new task always starts as TODO), get, update, change status, assign or unassign, archive. All sit behind `authenticate`, `validate` and `projectAccess` (`write: true` on mutations, so an archived project gives 409).
+- Rules: assignee must be a current project member (400); status transitions follow the FRS table (409 otherwise); `dueDate` is a UTC ISO 8601 timestamp and a past one is rejected (400) when set or changed, an unchanged one is accepted; any member can archive; an archived task cannot be edited (409).
 - Supertest integration tests against PostgreSQL, including 400, 401, 404 and 409 cases and a non-member denial on every route.
 
 ## Capabilities
