@@ -1,10 +1,10 @@
 # Review log
 
 - Change: <change-name> (DEV-XXXX)
-- Reviewer: 
+- Reviewer:
 - Context: fresh
-- Date: 
+- Date:
 
 | Severity | file:line | Issue | Fix | Status |
-| --- | --- | --- | --- | --- |
-| | | | | |
+| -------- | --------- | ----- | --- | ------ |
+|          |           |       |     |        |

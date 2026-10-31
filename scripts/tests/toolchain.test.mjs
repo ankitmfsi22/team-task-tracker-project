@@ -10,8 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
-const git = (...args) =>
-  execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' });
+const git = (...args) => execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' });
 
 const lines = (text) => text.split(/\r?\n/);
 
@@ -58,7 +57,10 @@ test('pnpm-workspace.yaml lists backend, frontend and packages/*', () => {
     .map((l) => /^\s*-\s*['"]?([^'"#\s]+)['"]?\s*(?:#.*)?$/.exec(l)?.[1])
     .filter((e) => e !== undefined);
   for (const expected of ['backend', 'frontend', 'packages/*']) {
-    assert.ok(entries.includes(expected), `pnpm-workspace.yaml must list "${expected}"; found [${entries}]`);
+    assert.ok(
+      entries.includes(expected),
+      `pnpm-workspace.yaml must list "${expected}"; found [${entries}]`,
+    );
   }
 });
 

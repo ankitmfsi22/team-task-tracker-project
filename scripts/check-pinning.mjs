@@ -20,11 +20,16 @@ const walk = (dir, files = []) => {
   return files;
 };
 
-const isPackageJson = (file) => file.endsWith('package.json') && /(^|[\\/])package\.json$/.test(file);
+const isPackageJson = (file) =>
+  file.endsWith('package.json') && /(^|[\\/])package\.json$/.test(file);
 const isCompose = (file) => /(^|[\\/])(docker-)?compose(\.[\w-]+)?\.ya?ml$/.test(file);
 const isWorkflow = (file) => /[\\/]\.github[\\/]workflows[\\/][^\\/]+\.ya?ml$/.test(file);
 
-const stripYamlValue = (raw) => raw.replace(/\s+#.*$/, '').trim().replace(/^['"]|['"]$/g, '');
+const stripYamlValue = (raw) =>
+  raw
+    .replace(/\s+#.*$/, '')
+    .trim()
+    .replace(/^['"]|['"]$/g, '');
 
 const checkPackageJson = (file, text, violations) => {
   const pkg = JSON.parse(text);
@@ -58,7 +63,9 @@ const checkWorkflow = (file, text, violations) => {
     if (ref.startsWith('./') || ref.startsWith('docker://')) continue;
     const [action, version] = ref.split('@');
     if (version === undefined || !EXACT_ACTION_REF.test(version)) {
-      violations.push(`${file}: action "${action}" ref "${version ?? ''}" is not an exact version tag`);
+      violations.push(
+        `${file}: action "${action}" ref "${version ?? ''}" is not an exact version tag`,
+      );
     }
   }
 };

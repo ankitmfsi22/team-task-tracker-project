@@ -9,17 +9,14 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
-const git = (...args) =>
-  execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' });
+const git = (...args) => execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' });
 
 const lines = (text) => text.split(/\r?\n/);
 
 test('.gitattributes exists and enforces "* text=auto eol=lf"', () => {
   const path = resolve(repoRoot, '.gitattributes');
   assert.ok(existsSync(path), '.gitattributes is missing');
-  const found = lines(readFileSync(path, 'utf8')).some(
-    (l) => l.trim() === '* text=auto eol=lf',
-  );
+  const found = lines(readFileSync(path, 'utf8')).some((l) => l.trim() === '* text=auto eol=lf');
   assert.ok(found, '.gitattributes must contain the line "* text=auto eol=lf"');
 });
 
@@ -33,9 +30,7 @@ test('.editorconfig exists and sets end_of_line = lf', () => {
 });
 
 test('git ls-files --eol shows no i/crlf text files', () => {
-  const offenders = lines(git('ls-files', '--eol')).filter((l) =>
-    /^i\/crlf\b/.test(l.trim()),
-  );
+  const offenders = lines(git('ls-files', '--eol')).filter((l) => /^i\/crlf\b/.test(l.trim()));
   assert.deepEqual(offenders, [], `CRLF files in index:\n${offenders.join('\n')}`);
 });
 

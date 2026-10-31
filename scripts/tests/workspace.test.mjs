@@ -16,8 +16,7 @@ const PACKAGES = ['backend', 'frontend', 'packages/shared'];
 const abs = (...p) => resolve(repoRoot, ...p);
 const readJson = (...p) => JSON.parse(readFileSync(abs(...p), 'utf8'));
 // shell:true so `pnpm` (pnpm.cmd) resolves on Windows.
-const pnpm = (args) =>
-  spawnSync(`pnpm ${args}`, { cwd: repoRoot, encoding: 'utf8', shell: true });
+const pnpm = (args) => spawnSync(`pnpm ${args}`, { cwd: repoRoot, encoding: 'utf8', shell: true });
 const sha = (p) => createHash('sha256').update(readFileSync(p)).digest('hex');
 
 test('tsconfig.base.json exists with compilerOptions.strict === true', () => {
@@ -54,7 +53,9 @@ for (const dir of PACKAGES) {
     const tests = files.filter((f) => f.endsWith('.test.ts'));
     assert.ok(tests.length > 0, `${dir}/src needs a *.test.ts placeholder test`);
     assert.ok(
-      tests.some((f) => /placeholder/i.test(f) || /placeholder/i.test(readFileSync(join(src, f), 'utf8'))),
+      tests.some(
+        (f) => /placeholder/i.test(f) || /placeholder/i.test(readFileSync(join(src, f), 'utf8')),
+      ),
       `${dir} test file name or description must say "placeholder"`,
     );
   });

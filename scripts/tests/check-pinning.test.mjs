@@ -57,10 +57,10 @@ for (const [label, spec] of [
   ['less-than', '<4.0.0'],
 ]) {
   test(`range (${label}) in package.json is rejected, naming package and file`, () => {
-    expectFail((d) => write(d, 'package.json', pkg({ dependencies: { zod: spec } })), [
-      'zod',
-      'package.json',
-    ]);
+    expectFail(
+      (d) => write(d, 'package.json', pkg({ dependencies: { zod: spec } })),
+      ['zod', 'package.json'],
+    );
   });
 }
 
@@ -79,9 +79,10 @@ for (const section of [
   'peerDependencies',
 ]) {
   test(`range in ${section} is rejected`, () => {
-    expectFail((d) => write(d, 'package.json', pkg({ [section]: { leftpad: '^1.0.0' } })), [
-      'leftpad',
-    ]);
+    expectFail(
+      (d) => write(d, 'package.json', pkg({ [section]: { leftpad: '^1.0.0' } })),
+      ['leftpad'],
+    );
   });
 }
 
@@ -106,12 +107,7 @@ test('package.json files under node_modules are ignored', () => {
 });
 
 // (c) docker images
-for (const image of [
-  'postgres:latest',
-  'postgres',
-  'postgres:16',
-  'postgres:16-alpine',
-]) {
+for (const image of ['postgres:latest', 'postgres', 'postgres:16', 'postgres:16-alpine']) {
   test(`floating docker image "${image}" is rejected, naming the image`, () => {
     expectFail((d) => write(d, 'docker-compose.yml', COMPOSE_OK(image)), [image]);
   });
@@ -161,7 +157,9 @@ test('git ls-files contains no fixture files for the pinning tests', () => {
     .split(/\r?\n/)
     .filter(Boolean);
   const offenders = files.filter(
-    (f) => /(^|\/)(fixtures?|__fixtures__)\//i.test(f) || /^scripts\/tests\/.*(fixture|invalid|bad)/i.test(f),
+    (f) =>
+      /(^|\/)(fixtures?|__fixtures__)\//i.test(f) ||
+      /^scripts\/tests\/.*(fixture|invalid|bad)/i.test(f),
   );
   assert.deepEqual(offenders, [], `committed fixture files:\n${offenders.join('\n')}`);
 });

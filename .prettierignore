@@ -1,0 +1,13 @@
+node_modules
+dist
+coverage
+pnpm-lock.yaml
+.claude
+openspec
+# governance and source-of-truth documents are not reflowed by tooling
+CLAUDE.md
+AGENTS.md
+.mcp.json
+docs/FRS.md
+docs/SDS.md
+docs/reference

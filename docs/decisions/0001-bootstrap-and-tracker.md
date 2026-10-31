@@ -3,10 +3,12 @@
 Status: Accepted (2026-10-31)
 
 ## Context
+
 The AI development infrastructure has to exist before any ticket can flow through OpenSpec.
 The assignment names Plane as the tracker but allows an alternative, and time is limited.
 
 ## Decision
+
 - **One-time bootstrap before the ticket flow**, as the SDD guide prescribes: `openspec init` with the
   expanded profile, FRS and SDS, AGENTS.md, CLAUDE.md with layer files, `config.yaml`, 4 agents,
   3 hooks, permissions and templates. DEV-1001 onward follows the full `/opsx:*` flow.
@@ -21,6 +23,7 @@ The assignment names Plane as the tracker but allows an alternative, and time is
   Ankit Singh on 2026-10-31.
 
 ## Consequences
+
 - Branches and commits carry assignment IDs, so the tracker key must be looked up in the mapping table.
 - The Linear MCP is not yet formally permissioned or failure-tested until DEV-1004.
 - The direct-to-main commit is a one-time exception and must not be repeated.
