@@ -18,7 +18,7 @@ The assignment names Plane as the tracker but allows an alternative, and time is
 - **Initial commit goes directly to main** as the repository-initialization exception.
   All later work uses feature branches and PRs.
 - **Approvals recorded:** FRS, SDS, AGENTS.md, CLAUDE.md and ticket creation, approved by
-  Kush Kumar on 2026-10-31.
+  Ankit Singh on 2026-10-31.
 
 ## Consequences
 - Branches and commits carry assignment IDs, so the tracker key must be looked up in the mapping table.
