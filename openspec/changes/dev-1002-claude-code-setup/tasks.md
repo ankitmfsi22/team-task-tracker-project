@@ -4,7 +4,7 @@ Ticket: DEV-1002 (Linear DEV-6). One commit per task: `type(scope): description 
 
 ## 1. Guardrails
 
-- [ ] 1.1 Write failing tests for the settings deny/ask lists, then extend `permissions.deny` in `.claude/settings.json` (spec: Permissions deny secrets, force-push and push to main).
+- [x] 1.1 Write failing tests for the settings deny/ask lists, then extend `permissions.deny` in `.claude/settings.json` (spec: Permissions deny secrets, force-push and push to main).
 - [ ] 1.2 Write `node:test` tests for the `block-dangerous` hook scenarios (blocked, allowed, malformed input); fix the hook only if a scenario fails (spec: Dangerous commands are blocked by hook).
 
 ## 2. Skill and documentation
