@@ -3,9 +3,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -41,18 +40,23 @@ test('git ls-files --eol shows no i/crlf text files', () => {
 });
 
 test('git add --renormalize . stages nothing further', () => {
-  // Run on a throwaway copy of the index so the real index is never touched.
-  const dir = mkdtempSync(join(tmpdir(), 'renorm-'));
-  try {
-    const indexCopy = join(dir, 'index');
-    copyFileSync(resolve(repoRoot, git('rev-parse', '--git-path', 'index').trim()), indexCopy);
-    const env = { ...process.env, GIT_INDEX_FILE: indexCopy };
-    const staged = () =>
-      execFileSync('git', ['ls-files', '-s'], { cwd: repoRoot, encoding: 'utf8', env });
-    const before = staged();
-    execFileSync('git', ['add', '--renormalize', '.'], { cwd: repoRoot, env });
-    assert.equal(staged(), before, 'renormalize changed staged entries');
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
+  // Renormalizing re-hashes each tracked blob through the attribute rules. Doing that on the
+  // indexed content itself (not the working tree) keeps the check independent of unstaged
+  // edits and never touches the real index: every blob must already hash to itself.
+  const entries = git('ls-files', '-s', '-z')
+    .split('\0')
+    .filter(Boolean)
+    .map((e) => /^\d+ ([0-9a-f]+) \d\t(.+)$/s.exec(e))
+    .filter((m) => m !== null);
+  const changed = [];
+  for (const [, sha, path] of entries) {
+    const content = execFileSync('git', ['cat-file', 'blob', sha], { cwd: repoRoot });
+    const normalized = execFileSync('git', ['hash-object', '--stdin', '--path', path], {
+      cwd: repoRoot,
+      input: content,
+      encoding: 'utf8',
+    }).trim();
+    if (normalized !== sha) changed.push(path);
   }
+  assert.deepEqual(changed, [], `renormalize would change:\n${changed.join('\n')}`);
 });
