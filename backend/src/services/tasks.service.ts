@@ -1,4 +1,4 @@
-import type { CreateTaskRequest, TaskResponse } from '@team-task-tracker/shared';
+import type { CreateTaskRequest, TaskResponse, UpdateTaskRequest } from '@team-task-tracker/shared';
 import type { PrismaClient } from '../db.js';
 import { AppError } from '../errors.js';
 import type { Task } from '../generated/prisma/client.js';
@@ -43,6 +43,37 @@ export class TasksService {
 
   async get(projectId: string, taskId: string): Promise<TaskResponse> {
     return toTaskResponse(await this.find(projectId, taskId));
+  }
+
+  async update(projectId: string, taskId: string, input: UpdateTaskRequest): Promise<TaskResponse> {
+    const task = await this.findEditable(projectId, taskId);
+    let dueDate: Date | null | undefined;
+    if (input.dueDate === null) {
+      dueDate = null;
+    } else if (input.dueDate !== undefined) {
+      const requested = new Date(input.dueDate);
+      // An unchanged due date is accepted even after it has passed.
+      dueDate =
+        task.dueDate?.getTime() === requested.getTime()
+          ? requested
+          : this.parseFutureDueDate(input.dueDate);
+    }
+    const updated = await this.prisma.task.update({
+      where: { id: task.id },
+      data: {
+        title: input.title,
+        description: input.description,
+        priority: input.priority,
+        dueDate,
+      },
+    });
+    return toTaskResponse(updated);
+  }
+
+  private async findEditable(projectId: string, taskId: string): Promise<Task> {
+    const task = await this.find(projectId, taskId);
+    if (task.archivedAt !== null) throw new AppError(409, 'TASK_ARCHIVED', 'Task is archived');
+    return task;
   }
 
   // A task of another project is reported as missing so ids never leak across projects.

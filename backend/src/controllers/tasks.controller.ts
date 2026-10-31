@@ -1,10 +1,10 @@
 import type { RequestHandler } from 'express';
-import type { CreateTaskRequest, TaskParams } from '@team-task-tracker/shared';
+import type { CreateTaskRequest, TaskParams, UpdateTaskRequest } from '@team-task-tracker/shared';
 import type { TasksService } from '../services/tasks.service.js';
 
 export function createTasksController(
   service: TasksService,
-): Record<'create' | 'get', RequestHandler> {
+): Record<'create' | 'get' | 'update', RequestHandler> {
   return {
     create: async (req, res) => {
       const projectId = req.params['projectId'] as string;
@@ -14,6 +14,10 @@ export function createTasksController(
         req.body as CreateTaskRequest,
       );
       res.status(201).json(task);
+    },
+    update: async (req, res) => {
+      const { projectId, taskId } = req.params as unknown as TaskParams;
+      res.status(200).json(await service.update(projectId, taskId, req.body as UpdateTaskRequest));
     },
     get: async (req, res) => {
       const { projectId, taskId } = req.params as unknown as TaskParams;

@@ -3,6 +3,7 @@ import {
   CreateTaskRequestSchema,
   ProjectIdParamsSchema,
   TaskParamsSchema,
+  UpdateTaskRequestSchema,
 } from '@team-task-tracker/shared';
 import { createTasksController } from '../controllers/tasks.controller.js';
 import type { PrismaClient } from '../db.js';
@@ -34,6 +35,13 @@ export function createTasksRouter(
     validate({ params: TaskParamsSchema }),
     projectAccess(prisma),
     controller.get,
+  );
+  router.patch(
+    '/:taskId',
+    auth,
+    validate({ params: TaskParamsSchema, body: UpdateTaskRequestSchema }),
+    projectAccess(prisma, { write: true }),
+    controller.update,
   );
   return router;
 }
