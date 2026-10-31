@@ -1,6 +1,7 @@
 import type { RequestHandler } from 'express';
 import {
   ProjectListQuerySchema,
+  type AddMemberRequest,
   type CreateProjectRequest,
   type ProjectRole,
   type UpdateProjectRequest,
@@ -9,7 +10,10 @@ import type { ProjectsService } from '../services/projects.service.js';
 
 export function createProjectsController(
   service: ProjectsService,
-): Record<'create' | 'list' | 'get' | 'update' | 'archive', RequestHandler> {
+): Record<
+  'create' | 'list' | 'get' | 'update' | 'archive' | 'listMembers' | 'addMember' | 'removeMember',
+  RequestHandler
+> {
   return {
     create: async (req, res) => {
       const project = await service.create(
@@ -35,6 +39,20 @@ export function createProjectsController(
     },
     archive: async (req, res) => {
       res.status(200).json(await service.archive(req.params['projectId'] as string));
+    },
+    listMembers: async (req, res) => {
+      res.status(200).json(await service.listMembers(req.params['projectId'] as string));
+    },
+    addMember: async (req, res) => {
+      const member = await service.addMember(
+        req.params['projectId'] as string,
+        req.body as AddMemberRequest,
+      );
+      res.status(201).json(member);
+    },
+    removeMember: async (req, res) => {
+      await service.removeMember(req.params['projectId'] as string, req.params['userId'] as string);
+      res.status(204).end();
     },
   };
 }

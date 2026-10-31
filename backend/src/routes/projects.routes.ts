@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import {
+  AddMemberRequestSchema,
   CreateProjectRequestSchema,
+  MemberParamsSchema,
   ProjectIdParamsSchema,
   ProjectListQuerySchema,
   UpdateProjectRequestSchema,
@@ -37,6 +39,20 @@ export function createProjectsRouter(
     params,
     projectAccess(prisma, { roles: ['OWNER'], write: true }),
     controller.archive,
+  );
+  router.get('/:projectId/members', params, projectAccess(prisma), controller.listMembers);
+  router.post(
+    '/:projectId/members',
+    params,
+    validate({ body: AddMemberRequestSchema }),
+    projectAccess(prisma, { roles: ['OWNER'], write: true }),
+    controller.addMember,
+  );
+  router.delete(
+    '/:projectId/members/:userId',
+    validate({ params: MemberParamsSchema }),
+    projectAccess(prisma, { roles: ['OWNER'], write: true }),
+    controller.removeMember,
   );
   return router;
 }

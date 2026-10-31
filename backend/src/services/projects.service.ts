@@ -1,5 +1,8 @@
 import type {
+  AddMemberRequest,
   CreateProjectRequest,
+  MemberListResponse,
+  MemberResponse,
   ProjectDetailResponse,
   ProjectListQuery,
   ProjectListResponse,
@@ -8,7 +11,7 @@ import type {
   UpdateProjectRequest,
 } from '@team-task-tracker/shared';
 import { AppError } from '../errors.js';
-import type { PrismaClient } from '../generated/prisma/client.js';
+import { Prisma, type PrismaClient } from '../generated/prisma/client.js';
 
 const toProject = (project: {
   id: string;
@@ -88,5 +91,58 @@ export class ProjectsService {
       data: { archivedAt: new Date() },
     });
     return toProject(project);
+  }
+
+  async listMembers(projectId: string): Promise<MemberListResponse> {
+    const members = await this.prisma.projectMember.findMany({
+      where: { projectId },
+      include: { user: { select: { email: true, name: true } } },
+      orderBy: [{ createdAt: 'asc' }, { userId: 'asc' }],
+    });
+    return {
+      data: members.map((m) => ({
+        userId: m.userId,
+        email: m.user.email,
+        name: m.user.name,
+        role: m.role,
+      })),
+    };
+  }
+
+  async addMember(projectId: string, input: AddMemberRequest): Promise<MemberResponse> {
+    const user = await this.prisma.user.findUnique({ where: { email: input.email } });
+    if (!user) throw new AppError(404, 'USER_NOT_FOUND', 'No registered user with that email');
+    try {
+      const member = await this.prisma.projectMember.create({
+        data: { projectId, userId: user.id, role: input.role },
+      });
+      return { userId: user.id, email: user.email, name: user.name, role: member.role };
+    } catch (err) {
+      if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+        throw new AppError(409, 'ALREADY_MEMBER', 'User is already a member of this project');
+      }
+      throw err;
+    }
+  }
+
+  // The owner count and the delete run in one serializable transaction so two concurrent
+  // removals cannot both pass the last-owner check.
+  async removeMember(projectId: string, userId: string): Promise<void> {
+    await this.prisma.$transaction(
+      async (tx) => {
+        const target = await tx.projectMember.findUnique({
+          where: { projectId_userId: { projectId, userId } },
+        });
+        if (!target) throw new AppError(404, 'MEMBER_NOT_FOUND', 'Member not found');
+        if (target.role === 'OWNER') {
+          const owners = await tx.projectMember.count({ where: { projectId, role: 'OWNER' } });
+          if (owners <= 1) {
+            throw new AppError(409, 'LAST_OWNER', 'The last owner cannot be removed');
+          }
+        }
+        await tx.projectMember.delete({ where: { projectId_userId: { projectId, userId } } });
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
+    );
   }
 }
