@@ -11,7 +11,7 @@ Ticket: DEV-1008 (Linear DEV-12). One commit per task: `type(scope): description
 
 - [x] 2.1 Create and get task with routes, controller and service, mounted behind `projectAccess` (`write: true` on create), including the assignee-membership and due-date rules on create. Verify: integration tests for 201 with status TODO and default priority, 400 invalid input, 400 past due date, 400 non-member assignee, 404 non-member, nonexistent and cross-project task, 409 archived project, 401 (specs: Create task, View task, Due date rule).
 - [x] 2.2 Update task (title, description, priority, due date). Verify: integration tests for 200 partial update, unchanged past due date 200, past due date 400, clear with null, strict body 400, non-member 404, archived task 409 (specs: Update task, Due date rule).
-- [ ] 2.3 Assign and change status. Verify: integration tests for assign, unassign, non-member assignee 400, every allowed transition 200, a sample of invalid transitions and same-status 409, invalid value 400, non-member 404, archived task 409 (specs: Assign task, Status transitions).
+- [x] 2.3 Assign and change status. Verify: integration tests for assign, unassign, non-member assignee 400, every allowed transition 200, a sample of invalid transitions and same-status 409, invalid value 400, non-member 404, archived task 409 (specs: Assign task, Status transitions).
 - [ ] 2.4 Archive task. Verify: integration tests for MEMBER and OWNER 200, still readable, second archive 409, non-member and unknown task 404, archived project 409 (spec: Archive task).
 
 ## 3. Verification

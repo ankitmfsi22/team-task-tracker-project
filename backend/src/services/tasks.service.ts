@@ -1,4 +1,10 @@
-import type { CreateTaskRequest, TaskResponse, UpdateTaskRequest } from '@team-task-tracker/shared';
+import {
+  TASK_STATUS_TRANSITIONS,
+  type CreateTaskRequest,
+  type TaskResponse,
+  type TaskStatus,
+  type UpdateTaskRequest,
+} from '@team-task-tracker/shared';
 import type { PrismaClient } from '../db.js';
 import { AppError } from '../errors.js';
 import type { Task } from '../generated/prisma/client.js';
@@ -67,6 +73,30 @@ export class TasksService {
         dueDate,
       },
     });
+    return toTaskResponse(updated);
+  }
+
+  async assign(
+    projectId: string,
+    taskId: string,
+    assigneeId: string | null,
+  ): Promise<TaskResponse> {
+    const task = await this.findEditable(projectId, taskId);
+    if (assigneeId !== null) await this.assertMember(projectId, assigneeId);
+    const updated = await this.prisma.task.update({ where: { id: task.id }, data: { assigneeId } });
+    return toTaskResponse(updated);
+  }
+
+  async changeStatus(projectId: string, taskId: string, status: TaskStatus): Promise<TaskResponse> {
+    const task = await this.findEditable(projectId, taskId);
+    if (!TASK_STATUS_TRANSITIONS[task.status].includes(status)) {
+      throw new AppError(
+        409,
+        'INVALID_TRANSITION',
+        `Cannot move a task from ${task.status} to ${status}`,
+      );
+    }
+    const updated = await this.prisma.task.update({ where: { id: task.id }, data: { status } });
     return toTaskResponse(updated);
   }
 

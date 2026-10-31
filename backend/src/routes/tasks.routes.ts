@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import {
+  AssignTaskRequestSchema,
+  ChangeTaskStatusRequestSchema,
   CreateTaskRequestSchema,
   ProjectIdParamsSchema,
   TaskParamsSchema,
@@ -42,6 +44,20 @@ export function createTasksRouter(
     validate({ params: TaskParamsSchema, body: UpdateTaskRequestSchema }),
     projectAccess(prisma, { write: true }),
     controller.update,
+  );
+  router.post(
+    '/:taskId/status',
+    auth,
+    validate({ params: TaskParamsSchema, body: ChangeTaskStatusRequestSchema }),
+    projectAccess(prisma, { write: true }),
+    controller.changeStatus,
+  );
+  router.put(
+    '/:taskId/assignee',
+    auth,
+    validate({ params: TaskParamsSchema, body: AssignTaskRequestSchema }),
+    projectAccess(prisma, { write: true }),
+    controller.assign,
   );
   return router;
 }
