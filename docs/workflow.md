@@ -12,7 +12,7 @@ Every ticket follows one lifecycle. Rules: `CLAUDE.md`. Evidence per ticket: `do
 6. `/opsx:verify`, then the reviewer sub-agent in a fresh context. The main session saves its findings verbatim in `review-log.md`. Blocking findings are fixed; non-blocking ones are marked "Accepted (non-blocking): reason" and listed in the PR and `docs/deviations.md`.
 7. Open the PR from `.github/pull_request_template.md`.
 8. **Gate 2**: the human approves the PR and adds a Gate 2 entry (`Approved`) to `approvals.md`.
-9. `/opsx:sync`, then `/opsx:archive`, then append the row to `docs/traceability.md`. `node scripts/check-changes.mjs` (run by `pnpm test`) fails if an archived change lacks an artifact, a gate approval or has an `Open` finding.
+9. `/opsx:sync`, then `/opsx:archive`, then append the row to `docs/traceability.md`. `node scripts/check-changes.mjs` (run through its node:test in `pnpm test` and CI) fails if an archived change lacks an artifact, a gate approval or has an `Open` finding.
 
 ## Why sync and archive run on the feature branch
 
