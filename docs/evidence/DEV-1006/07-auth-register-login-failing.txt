@@ -1,0 +1,30 @@
+DEV-1006 task 4.1 failing run: pnpm --filter @team-task-tracker/backend test
+globalSetup: Compose started, migrate deploy ok, torn down (docker ps -a shows no ttt-* project).
+Existing tests pass (app, config, index: 20 passed). New file fails 14/14 with 404 (auth routes not mounted):
+     × Successful registration: 201 with id, email, name and no password or hash field
+     × Invalid input is rejected: invalid email -> 400 VALIDATION_ERROR and no user
+     × Invalid input is rejected: 7-character password -> 400 VALIDATION_ERROR and no user
+     × Invalid input is rejected: missing name -> 400 VALIDATION_ERROR and no user
+     × Duplicate email is rejected in any letter case and the existing user is unchanged
+     × Stored value is an argon2id hash that does not contain the password
+     × Secrets never appear in responses or log output
+     × Successful login: access token, hardened refresh cookie, stored hash only
+     × Wrong credentials give one generic 401 for unknown email and wrong password
+     × Invalid login input: missing password -> 400 VALIDATION_ERROR
+     × Invalid login input: malformed email -> 400 VALIDATION_ERROR
+     × Valid access token: 200 with the caller id, email and name
+     × Missing, malformed, wrongly signed or expired token: 401 with error shape
+     × Refresh token is not an access token: 401
+AssertionError: expected 404 to be 201 // Object.is equality
+AssertionError: expected 404 to be 400 // Object.is equality
+AssertionError: expected 404 to be 201 // Object.is equality
+AssertionError: expected 404 to be 201 // Object.is equality
+AssertionError: Set-Cookie must carry refresh_token: expected undefined to be defined
+AssertionError: expected 404 to be 200 // Object.is equality
+AssertionError: expected 404 to be 401 // Object.is equality
+AssertionError: expected 404 to be 400 // Object.is equality
+AssertionError: expected 404 to be 200 // Object.is equality
+AssertionError: expected 404 to be 401 // Object.is equality
+AssertionError: Set-Cookie must carry refresh_token: expected undefined to be defined
+  × "pnpm recursive run" failed in C:\Users\kkomt\Downloads\team-task-tracker-
+Test Files 1 failed | 3 passed; Tests 14 failed | 20 passed

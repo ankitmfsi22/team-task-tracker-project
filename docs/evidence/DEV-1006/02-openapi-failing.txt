@@ -1,0 +1,4 @@
+Task 1.2 failing run: pnpm --filter @team-task-tracker/shared test
+FAIL src/openapi.test.ts: TypeError: buildOpenApiDocument is not a function (src/openapi.test.ts:24)
+Test Files 1 failed | 2 passed (3); Tests 17 passed (existing, unaffected)
+Reason: buildOpenApiDocument is not yet exported from ./index.js (missing behaviour).

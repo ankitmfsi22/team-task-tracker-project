@@ -77,13 +77,10 @@ test('Governance and source-of-truth files are not reflowed', () => {
   assert.ok(!/fixture/i.test(read('.prettierignore')), '.prettierignore has no fixture entries');
 });
 
+// Spec local-dev-environment / "Prisma connects to PostgreSQL" was MODIFIED by DEV-1006: the client
+// package arrives with the first models, only in the backend, at exact versions.
 test('Client package is deferred', () => {
-  const pkgs = [
-    'package.json',
-    'backend/package.json',
-    'frontend/package.json',
-    'packages/shared/package.json',
-  ];
+  const pkgs = ['package.json', 'frontend/package.json', 'packages/shared/package.json'];
   const sections = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies'];
   for (const p of pkgs) {
     const json = JSON.parse(read(p));
@@ -95,6 +92,6 @@ test('Client package is deferred', () => {
     }
   }
   const backend = JSON.parse(read('backend/package.json'));
-  const prisma = { ...backend.dependencies, ...backend.devDependencies }.prisma;
-  assert.equal(prisma, '7.10.1');
+  assert.equal(backend.devDependencies.prisma, '7.10.1');
+  assert.equal(backend.dependencies['@prisma/client'], '7.10.1');
 });

@@ -44,11 +44,11 @@ The Compose file SHALL define only the PostgreSQL service and its data volume; b
 - **THEN** Compose fails with an error naming the missing variable instead of starting with a default secret
 
 ### Requirement: Prisma connects to PostgreSQL
-The backend SHALL configure Prisma with a PostgreSQL datasource read from the `DATABASE_URL` environment variable and SHALL define no models in this change.
+The backend SHALL configure Prisma with a PostgreSQL datasource read from the `DATABASE_URL` environment variable. Models are added by the tickets that need them; this change adds `User` and `RefreshToken`.
 
 #### Scenario: Client package is deferred
 - **WHEN** the backend dependencies are inspected
-- **THEN** only the `prisma` CLI is present and `@prisma/client` is absent until the first ticket that adds models
+- **THEN** `@prisma/client` and `@prisma/adapter-pg` are present at exact versions only because the first models exist, and the schema defines only `User` and `RefreshToken`
 
 #### Scenario: Prisma validates
 - **WHEN** a developer runs the Prisma validate command in `backend` with `DATABASE_URL` set
@@ -61,3 +61,14 @@ The backend SHALL configure Prisma with a PostgreSQL datasource read from the `D
 #### Scenario: Missing DATABASE_URL
 - **WHEN** Prisma commands run without `DATABASE_URL`
 - **THEN** they fail with an error naming `DATABASE_URL` and no default connection string is used
+
+### Requirement: Postgres is published on loopback only
+The Compose `postgres` service SHALL publish its port on `127.0.0.1` only, so the database is not reachable from other hosts.
+
+#### Scenario: Port binding is loopback
+- **WHEN** `docker compose config` is rendered with a valid `.env`
+- **THEN** the published port for `postgres` has host IP `127.0.0.1`
+
+#### Scenario: Local clients still connect
+- **WHEN** a client connects to `127.0.0.1` on the configured port with the configured credentials
+- **THEN** the connection succeeds

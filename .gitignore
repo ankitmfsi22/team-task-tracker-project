@@ -8,3 +8,4 @@ test-results/
 !.env.example
 .claude/settings.local.json
 *.log
+backend/src/generated

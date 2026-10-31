@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -38,13 +38,64 @@ test('Prisma files and configuration exist with no literal connection string', (
 
   const schema = read('prisma/schema.prisma');
   assert.match(schema, /provider\s*=\s*"postgresql"/);
-  assert.doesNotMatch(schema, /^\s*model\s/m);
   assert.doesNotMatch(schema, /postgres(ql)?:\/\//);
 
   const config = read('prisma.config.ts');
   assert.match(config, /env\(\s*['"]DATABASE_URL['"]\s*\)/);
   assert.match(config, /from ['"]prisma\/config['"]/);
   assert.doesNotMatch(config, /postgres(ql)?:\/\//);
+});
+
+// Spec (DEV-1006, MODIFIED): "Client package is deferred" -- client and adapter are present
+// at exact versions because the first models exist; the schema defines only User and RefreshToken.
+const modelBlock = (schema, name) =>
+  schema.match(new RegExp(`^model\\s+${name}\\s*\\{([\\s\\S]*?)^\\}`, 'm'))?.[1];
+
+test('Client package is deferred: client and adapter pinned, schema has only User and RefreshToken', () => {
+  const pkg = JSON.parse(read('package.json'));
+  assert.equal(pkg.dependencies?.['@prisma/client'], '7.10.1');
+  assert.equal(pkg.dependencies?.['@prisma/adapter-pg'], '7.10.1');
+
+  const schema = read('prisma/schema.prisma');
+  const models = [...schema.matchAll(/^\s*model\s+(\w+)\s*\{/gm)].map((m) => m[1]).sort();
+  assert.deepEqual(models, ['RefreshToken', 'User']);
+});
+
+test('Schema: User model fields', () => {
+  const user = modelBlock(read('prisma/schema.prisma'), 'User');
+  assert.ok(user, 'model User must exist');
+  assert.match(user, /^\s*id\s+String\s+@id\b.*@default\(uuid\(\)\)/m);
+  assert.match(user, /^\s*email\s+String\s+@unique\b/m);
+  assert.match(user, /^\s*name\s+String\b/m);
+  assert.match(user, /^\s*passwordHash\s+String\b/m);
+  assert.match(user, /^\s*createdAt\s+DateTime\b/m);
+});
+
+test('Schema: RefreshToken model fields, cascade relation and userId index', () => {
+  const rt = modelBlock(read('prisma/schema.prisma'), 'RefreshToken');
+  assert.ok(rt, 'model RefreshToken must exist');
+  assert.match(rt, /^\s*id\s+String\s+@id\b.*@default\(uuid\(\)\)/m);
+  assert.match(rt, /^\s*userId\s+String\b/m);
+  assert.match(rt, /^\s*tokenHash\s+String\s+@unique\b/m);
+  assert.match(rt, /^\s*expiresAt\s+DateTime\b/m);
+  assert.match(rt, /^\s*revokedAt\s+DateTime\?/m);
+  assert.match(rt, /^\s*createdAt\s+DateTime\b/m);
+  assert.match(rt, /^\s*\w+\s+User\s+@relation\(.*onDelete:\s*Cascade/m);
+  assert.match(rt, /^\s*@@index\(\[userId\]\)/m);
+});
+
+test('Migration directory creates User and RefreshToken tables', () => {
+  const dir = resolve(backend, 'prisma', 'migrations');
+  assert.ok(existsSync(dir), 'backend/prisma/migrations must exist');
+  const sqls = readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => resolve(dir, d.name, 'migration.sql'))
+    .filter((f) => existsSync(f))
+    .map((f) => readFileSync(f, 'utf8'));
+  assert.ok(sqls.length > 0, 'at least one migration.sql must exist');
+  const all = sqls.join('\n');
+  assert.match(all, /CREATE TABLE "User"/);
+  assert.match(all, /CREATE TABLE "RefreshToken"/);
 });
 
 test('Prisma validates with DATABASE_URL set', () => {

@@ -59,7 +59,7 @@ Access is role-based and scoped per project (OWNER, MEMBER). Built as a pnpm mon
 - No `@ts-ignore`.
 - No `eslint-disable` without a ticket ID.
 - Conventional commits that reference the ticket key (for example `feat(auth): add login (DEV-1006)`).
-- Commit scopes: auth, projects, tasks, comments, activity, web, shared, infra, docs.
+- Commit scopes: auth, projects, tasks, comments, activity, web, backend, shared, infra, docs.
 - Pin versions. Never use `@latest` or unpinned Docker images.
 
 ## Auth approach

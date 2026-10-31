@@ -1,0 +1,13 @@
+DEV-1006 task 2.1: failing tests (before implementation)
+Command: node --test scripts/tests/prisma.test.mjs
+Result: 9 tests, 5 pass, 4 fail
+
+Unchanged and passing: config/no literal URL; Prisma validates; missing DATABASE_URL (x2); Prisma reaches the database.
+(The obsolete "no model" assertion was removed from the first test; the new tests cover the MODIFIED scenario.)
+
+FAIL  Client package is deferred ... : dependencies['@prisma/client'] is undefined, expected '7.10.1'
+FAIL  Schema: User model fields              : 'model User must exist' (schema has no models)
+FAIL  Schema: RefreshToken model ...         : 'model RefreshToken must exist'
+FAIL  Migration directory creates tables     : 'backend/prisma/migrations must exist'
+
+All failures are missing behaviour, not syntax/import/setup errors.

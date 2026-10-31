@@ -188,3 +188,25 @@ test('runs-on: ubuntu-24.04 with exact action tags passes', () => {
     (r) => assert.equal(r.status, 0, `output:\n${r.out}`),
   );
 });
+
+// (i) in-repo workspace protocol (DEV-1006 task 3.1)
+test('workspace:* for an in-repo package passes the pinning check', () => {
+  withProject(
+    (d) =>
+      write(
+        d,
+        'package.json',
+        pkg({ dependencies: { '@team-task-tracker/shared': 'workspace:*', zod: '4.6.7' } }),
+      ),
+    (r) => assert.equal(r.status, 0, `workspace:* must pass; output:\n${r.out}`),
+  );
+});
+
+for (const spec of ['workspace:^1.0.0', 'workspace:~1.0.0']) {
+  test(`${spec} is still rejected, naming the dependency`, () => {
+    expectFail(
+      (d) => write(d, 'package.json', pkg({ dependencies: { '@team-task-tracker/shared': spec } })),
+      ['@team-task-tracker/shared'],
+    );
+  });
+}
