@@ -17,6 +17,8 @@ Tickets: DEV-1006
 - FR-AUTH-10: The system SHALL enforce role-based permissions and respond 403 when the role is not allowed.
 - DECISION: Registration identifies users by unique email plus a display name.
 - DECISION: Roles are `OWNER` and `MEMBER`, scoped per project (see SDS authorization table). No global admin role.
+- DECISION: A password is 8 to 128 characters. (Approved by Ankit Singh, DEV-1006 Gate 1.)
+- DECISION: A display name is 1 to 100 characters. (Approved by Ankit Singh, DEV-1006 Gate 1.)
 
 ## 2. Projects
 Tickets: DEV-1007
