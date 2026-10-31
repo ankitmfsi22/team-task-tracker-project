@@ -33,7 +33,7 @@ Ticket: DEV-1001 (Linear DEV-5). One commit per task: `type(scope): description 
 
 ## 6. Verification
 
-- [ ] 6.1 Run `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm format:check` from a fresh `pnpm install --frozen-lockfile`; verify all exit 0 and save output in `docs/evidence/DEV-1001/`.
+- [x] 6.1 Run `pnpm build`, `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm format:check` from a fresh `pnpm install --frozen-lockfile`; verify all exit 0 and save output in `docs/evidence/DEV-1001/`.
 - [ ] 6.2 Map each Linear DEV-5 acceptance criterion (1-6) to evidence in `docs/evidence/DEV-1001/ac-checklist.md`; verify every criterion has a command or file reference and no `latest` or range exists (pinning check passes).
 - [ ] 6.3 Run `openspec validate dev-1001-project-setup --strict`; verify it passes.
 
