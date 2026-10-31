@@ -115,3 +115,30 @@ test('ci.yml has no floating "-latest" label and runs on ubuntu-24.04', () => {
   assert.ok(!text.includes('-latest'), 'ci.yml contains a "-latest" label');
   assert.match(text, /^\s*runs-on:\s*ubuntu-24\.04\s*$/m, 'runs-on: ubuntu-24.04 missing');
 });
+
+// Shallow clones (actions/checkout default depth 1) break tests that inspect git history.
+test('actions/checkout step has a with: block containing fetch-depth: 0', () => {
+  const lines = codeLines();
+  const idx = lines.findIndex((l) => /^\s*(?:-\s*)?uses:\s*['"]?actions\/checkout@/.test(l));
+  assert.notEqual(idx, -1, 'actions/checkout step missing');
+  // The step's keys sit at the indent of "uses:" (after an optional "- ").
+  const stepIndent = lines[idx].match(/^\s*(?:-\s*)?/)[0].length;
+  const stepLines = [];
+  for (const l of lines.slice(idx + 1)) {
+    if (l.trim() === '') continue;
+    if (l.match(/^\s*/)[0].length < stepIndent) break; // next step ("- ") or outer block
+    stepLines.push(l);
+  }
+  const withIdx = stepLines.findIndex((l) => /^\s*with\s*:\s*$/.test(l));
+  assert.notEqual(withIdx, -1, 'actions/checkout step has no with: block');
+  const withIndent = stepLines[withIdx].match(/^\s*/)[0].length;
+  const withBlock = [];
+  for (const l of stepLines.slice(withIdx + 1)) {
+    if (l.match(/^\s*/)[0].length <= withIndent) break;
+    withBlock.push(l);
+  }
+  assert.ok(
+    withBlock.some((l) => /^\s*fetch-depth:\s*['"]?0['"]?\s*$/.test(l)),
+    `fetch-depth: 0 missing in checkout with: block; found ${JSON.stringify(withBlock)}`,
+  );
+});
