@@ -15,4 +15,4 @@ Ticket: DEV-1003 (Linear DEV-7). One commit per task: `type(scope): description 
 ## 3. Evidence and verification
 
 - [x] 3.1 Run the coordinator on this change; save its delegation plan and the failing-then-passing test runs in `docs/evidence/DEV-1003/`.
-- [ ] 3.2 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1003-autonomous-agents --strict`.
+- [x] 3.2 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1003-autonomous-agents --strict`.
