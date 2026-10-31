@@ -32,5 +32,11 @@ export function createProjectsRouter(
     projectAccess(prisma, { roles: ['OWNER'], write: true }),
     controller.update,
   );
+  router.post(
+    '/:projectId/archive',
+    params,
+    projectAccess(prisma, { roles: ['OWNER'], write: true }),
+    controller.archive,
+  );
   return router;
 }

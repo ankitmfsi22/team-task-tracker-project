@@ -80,4 +80,13 @@ export class ProjectsService {
     });
     return toProject(project);
   }
+
+  // projectAccess (write: true) already rejected an already archived project with 409.
+  async archive(projectId: string): Promise<ProjectResponse> {
+    const project = await this.prisma.project.update({
+      where: { id: projectId },
+      data: { archivedAt: new Date() },
+    });
+    return toProject(project);
+  }
 }

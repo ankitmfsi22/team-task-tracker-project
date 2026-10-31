@@ -9,7 +9,7 @@ import type { ProjectsService } from '../services/projects.service.js';
 
 export function createProjectsController(
   service: ProjectsService,
-): Record<'create' | 'list' | 'get' | 'update', RequestHandler> {
+): Record<'create' | 'list' | 'get' | 'update' | 'archive', RequestHandler> {
   return {
     create: async (req, res) => {
       const project = await service.create(
@@ -32,6 +32,9 @@ export function createProjectsController(
         req.body as UpdateProjectRequest,
       );
       res.status(200).json(project);
+    },
+    archive: async (req, res) => {
+      res.status(200).json(await service.archive(req.params['projectId'] as string));
     },
   };
 }
