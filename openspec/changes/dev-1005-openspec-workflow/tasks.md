@@ -15,4 +15,4 @@ Ticket: DEV-1005 (Linear DEV-9). One commit per task: `type(scope): description 
 
 ## 3. Verification
 
-- [ ] 3.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1005-openspec-workflow --strict`.
+- [x] 3.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1005-openspec-workflow --strict`.
