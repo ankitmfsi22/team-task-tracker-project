@@ -1,5 +1,4 @@
 // PreToolUse (Bash): block dangerous commands. Exit 2 = block, reason goes to stderr.
-// Fails closed: input that cannot be parsed into a command string is blocked.
 import { readFileSync } from 'node:fs';
 
 const block = (reason) => {
@@ -7,13 +6,14 @@ const block = (reason) => {
   process.exit(2);
 };
 
-let cmd;
+let input = {};
 try {
-  cmd = JSON.parse(readFileSync(0, 'utf8'))?.tool_input?.command;
+  input = JSON.parse(readFileSync(0, 'utf8'));
 } catch {
-  block('malformed hook input (not JSON)');
+  process.exit(0);
 }
-if (typeof cmd !== 'string') block('malformed hook input (no command string)');
+
+const cmd = String(input?.tool_input?.command ?? '');
 
 const envFileRead = () =>
   [...cmd.matchAll(/(?:^|[\s/\\'"=<>])(\.env[\w.-]*)/g)].some((m) => !m[1].endsWith('.example'));

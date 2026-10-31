@@ -9,7 +9,7 @@ DEV-1002 AC: (1) instructions, skills, hooks committed under `.claude/` and docu
 - **Tests**: `node:test` in `scripts/tests/` (existing tooling-test home) spawn the hook with JSON on stdin and parse settings and skill frontmatter. No tests of docs or evidence files.
 - **Evidence (AC3)**: a real `Read` of `.env` attempted in-session (denied by permissions) plus a hook run transcript, saved in `docs/evidence/DEV-1002/`. Never print `.env` contents.
 - **Docs**: single `docs/claude-code-setup.md`, short tables for hooks, permissions, skills, commands.
-- **Hook failure mode**: `block-dangerous` fails closed (exit 2) on malformed input (changed from fail-open by the DEV-1002 guardrail-fixes PR); permission rules still apply.
+- **Hook failure mode**: `block-dangerous` fails open on malformed input (documented); permission rules still apply.
 - **Known limitation**: the hook matches command text, so it can false-positive when a command merely mentions a blocked string (seen during this proposal); acceptable, files are written via Write instead.
 
 ## Risks

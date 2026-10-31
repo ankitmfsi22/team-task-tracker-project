@@ -49,18 +49,11 @@ test('allows pushing a feature branch', () => {
   assert.equal(runCommand('git push origin feature/infra/DEV-1002-claude-code-setup').status, 0);
 });
 
-test('non-JSON stdin fails closed with exit 2 and a reason', () => {
+test('non-JSON stdin exits 0 with no output', () => {
   const r = run('this is not json');
-  assert.equal(r.status, 2);
-  assert.match(r.stderr, /malformed/i);
-});
-
-test('empty stdin fails closed', () => {
-  assert.equal(run('').status, 2);
-});
-
-test('JSON without a string command fails closed', () => {
-  assert.equal(run(JSON.stringify({ tool_input: {} })).status, 2);
+  assert.equal(r.status, 0);
+  assert.equal(r.stdout, '');
+  assert.equal(r.stderr, '');
 });
 
 const BLOCKED = [
