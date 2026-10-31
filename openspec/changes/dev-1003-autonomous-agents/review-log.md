@@ -17,7 +17,7 @@ Test verdict (reviewer): `pnpm test` root `node:test` run 179 tests, 179 pass, 0
 
 | Severity | file:line | Issue | Fix | Status |
 | -------- | --------- | ----- | --- | ------ |
-| Non-blocking | docs/claude-code-setup.md:32 | The new bullet `- [Agents](agents.md): sub-agent overview.` repeats line 31, which already points to `docs/agents.md`. The link target is correct. It sits under "Commands and agents" as if it were a third directory entry. | Merge into line 31 and drop line 32. Leaving it as is would be acceptable. | Accepted (non-blocking): the line exists only as the tiny task for the coordinated-run evidence. |
-| Non-blocking | docs/claude-code-setup.md:32 | Wording is thin: "sub-agent overview" does not say the page holds the table of all agents. | Use "table of all sub-agents with scope, actions, outputs and restrictions". | Accepted (non-blocking). |
+| Non-blocking | docs/claude-code-setup.md:32 | The new bullet `- [Agents](agents.md): sub-agent overview.` repeats line 31, which already points to `docs/agents.md`. The link target is correct. It sits under "Commands and agents" as if it were a third directory entry. | Merge into line 31 and drop line 32. Leaving it as is would be acceptable. | Fixed (8135bab) |
+| Non-blocking | docs/claude-code-setup.md:32 | Wording is thin: "sub-agent overview" does not say the page holds the table of all agents. | Use "table of all sub-agents with scope, actions, outputs and restrictions". | Fixed (8135bab): line removed, wording point no longer applies. |
 
 Blocking: none. The reviewer did not run `pnpm test` (docs-only commit).
