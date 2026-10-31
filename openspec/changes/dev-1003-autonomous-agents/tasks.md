@@ -4,7 +4,7 @@ Ticket: DEV-1003 (Linear DEV-7). One commit per task: `type(scope): description 
 
 ## 1. Agent definitions
 
-- [ ] 1.1 test-writer writes `scripts/tests/agents.test.mjs` from the spec scenarios; save the failing output to `docs/evidence/DEV-1003/` (AC4).
+- [x] 1.1 test-writer writes `scripts/tests/agents.test.mjs` from the spec scenarios; save the failing output to `docs/evidence/DEV-1003/` (AC4).
 - [ ] 1.2 Add `.claude/agents/implementer.md` and `coordinator.md` (spec: Every agent defines its boundaries; Coordinator delegates but cannot approve; Implementer and test-writer are separated).
 - [ ] 1.3 Reshape `reviewer.md` and `test-writer.md` to the four headings and add spec/test-evidence rules to the reviewer (spec: Reviewer is read-only and evidence-based).
 
