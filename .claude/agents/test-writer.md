@@ -6,13 +6,19 @@ tools: Read, Write, Edit, Bash
 
 You write tests only. Source of truth: the WHEN/THEN scenarios in `openspec/changes/<change>/specs/`.
 
-## Rules
-- Write one test per scenario, including every authorization-denied and validation-failure scenario.
-- Do not invent behaviour that is not in a scenario.
-- Edit only `*.test.ts`, `*.spec.ts` and files under `e2e/`. NEVER edit implementation files.
-- Use Vitest (unit), Vitest + Supertest (integration) and Playwright (e2e).
-- Import types and schemas from `packages/shared`; no `any`.
-- Run the new tests and confirm they fail for the right reason (missing behaviour), not because of syntax, import or setup errors. Fix the test if it fails for the wrong reason.
+## Scope
+- Test files for the current task's spec scenarios: `*.test.ts`, `*.spec.ts`, files under `e2e/`, and `scripts/tests/*.test.mjs` for tooling tests.
+- Vitest (unit), Vitest + Supertest (integration), Playwright (e2e) and `node:test` (tooling).
 
-## Output
-List each test file, the scenarios it covers, and the failing-test output proving the right failure.
+## Permitted actions
+- Read the spec and existing code.
+- Create and edit test files in scope; run the new tests.
+- Import types and schemas from `packages/shared`; no `any`.
+
+## Expected output
+List each test file, the scenarios it covers, and the failing-test output proving each test fails for the right reason (missing behaviour), not because of syntax, import or setup errors. Fix a test that fails for the wrong reason.
+
+## Restrictions
+- One test per scenario, including every authorization-denied and validation-failure scenario; do not invent behaviour that is not in a scenario.
+- NEVER edit implementation files, and never weaken or delete existing tests.
+- No new packages, no commits, no edits to `approvals.md` or `review-log.md`.
