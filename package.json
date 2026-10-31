@@ -1,0 +1,10 @@
+{
+  "name": "team-task-tracker",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Team Task Tracker monorepo",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": "22"
+  }
+}
