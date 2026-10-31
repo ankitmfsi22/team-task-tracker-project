@@ -10,7 +10,7 @@ Ticket: DEV-1007 (Linear DEV-11). One commit per task: `type(scope): description
 
 ## 2. Project routes (backend, behaviour)
 
-- [ ] 2.1 Create, list, get and update project with routes, controller and service. Verify: integration tests for creator becomes OWNER, list shows only own projects and hides archived by default, pagination meta, get 200 for a member and 404 for a non-member, update 200 for OWNER and 403 for MEMBER, 400 for invalid body, id or query (specs: Create, List, View, Update).
+- [x] 2.1 Create, list, get and update project with routes, controller and service. Verify: integration tests for creator becomes OWNER, list shows only own projects and hides archived by default, pagination meta, get 200 for a member and 404 for a non-member, update 200 for OWNER and 403 for MEMBER, 400 for invalid body, id or query (specs: Create, List, View, Update).
 - [ ] 2.2 Archive project. Verify: integration tests for OWNER 200 and MEMBER 403, hidden from the default list but listed with `includeArchived`, readable, and update or member change on it 409 (spec: Archive and read-only).
 - [ ] 2.3 Members: list, add and remove with the last-owner rule. Verify: integration tests for OWNER adds by email 201, MEMBER 403, non-member 404, unknown email 404, duplicate 409, invalid 400, remove 204, last owner 409, and a removed user then gets 404 (spec: Members).
 
