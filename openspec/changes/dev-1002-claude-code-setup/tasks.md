@@ -14,5 +14,5 @@ Ticket: DEV-1002 (Linear DEV-6). One commit per task: `type(scope): description 
 
 ## 3. Evidence and verification
 
-- [ ] 3.1 Attempt a denied action live (read `.env`, force-push) and save the blocked transcript plus a hook run in `docs/evidence/DEV-1002/` (AC3).
+- [x] 3.1 Attempt a denied action live (read `.env`, force-push) and save the blocked transcript plus a hook run in `docs/evidence/DEV-1002/` (AC3).
 - [ ] 3.2 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1002-claude-code-setup --strict`.
