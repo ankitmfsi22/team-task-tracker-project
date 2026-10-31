@@ -4,7 +4,7 @@ Ticket: DEV-1006 (Linear DEV-10). One commit per task: `type(scope): description
 
 ## 1. Shared contract (first, unblocks DEV-1011)
 
-- [ ] 1.1 Add `zod` 4.6.7 to `packages/shared`; define auth schemas, inferred types and the error shape; build `dist`. Verify: shared unit tests cover valid and invalid register and login input (spec: User registration, Login issues tokens).
+- [x] 1.1 Add `zod` 4.6.7 to `packages/shared`; define auth schemas, inferred types and the error shape; build `dist`. Verify: shared unit tests cover valid and invalid register and login input (spec: User registration, Login issues tokens).
 - [ ] 1.2 Generate the OpenAPI 3.1 document for the five auth routes from the schemas. Verify: unit test checks the `3.1` version, the five paths and that request schemas equal `z.toJSONSchema` output (spec: Shared contracts and OpenAPI document).
 
 ## 2. Database and Compose

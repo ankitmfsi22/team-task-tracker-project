@@ -1,0 +1,233 @@
+$ vitest run
+
+ RUN  v5.0.5 C:/Users/kkomt/Downloads/team-task-tracker-v2/packages/shared
+
+ ❯ src/auth.test.ts (16 tests | 16 failed) 28ms
+   ❯ RegisterRequestSchema (9)
+     × parses a valid body and trims and lowercases the email 13ms
+     × rejects an invalid email 1ms
+     × rejects a password of 7 characters 1ms
+     × accepts a password of 8 characters 1ms
+     × accepts a password of 128 characters 0ms
+     × rejects a password of 129 characters 1ms
+     × rejects an empty name 1ms
+     × rejects a name of 101 characters 0ms
+     × rejects missing fields 2ms
+   ❯ LoginRequestSchema (3)
+     × parses a valid body and lowercases the email 1ms
+     × rejects a missing password 0ms
+     × rejects a malformed email 0ms
+   ❯ UserResponseSchema (1)
+     × does not return a password hash or other extra keys 0ms
+   ❯ AuthTokenResponseSchema (1)
+     × parses an access token body 0ms
+   ❯ ErrorResponseSchema (2)
+     × accepts an error with and without details 0ms
+     × rejects an error with a missing code 0ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 16 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/auth.test.ts > RegisterRequestSchema > parses a valid body and trims and lowercases the email
+TypeError: Cannot read properties of undefined (reading 'parse')
+ ❯ src/auth.test.ts:25:59
+     23| describe('RegisterRequestSchema', () => {
+     24|   it('parses a valid body and trims and lowercases the email', () => {
+     25|     const result: RegisterRequest = RegisterRequestSchema.parse({
+       |                                                           ^
+     26|       ...validRegister,
+     27|       email: '  User@Example.COM ',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/16]⎯
+
+ FAIL  src/auth.test.ts > RegisterRequestSchema > rejects an invalid email
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:37:29
+     35|   it('rejects an invalid email', () => {
+     36|     expect(
+     37|       RegisterRequestSchema.safeParse({ ...validRegister, email: 'not-…
+       |                             ^
+     38|     ).toBe(false);
+     39|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/16]⎯
+
+ FAIL  src/auth.test.ts > RegisterRequestSchema > rejects a password of 7 characters
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:43:29
+     41|   it('rejects a password of 7 characters', () => {
+     42|     expect(
+     43|       RegisterRequestSchema.safeParse({ ...validRegister, password: 'a…
+       |                             ^
+     44|     ).toBe(false);
+     45|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/16]⎯
+
+ FAIL  src/auth.test.ts > RegisterRequestSchema > accepts a password of 8 characters
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:49:29
+     47|   it('accepts a password of 8 characters', () => {
+     48|     expect(
+     49|       RegisterRequestSchema.safeParse({ ...validRegister, password: 'a…
+       |                             ^
+     50|     ).toBe(true);
+     51|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/16]⎯
+
+ FAIL  src/auth.test.ts > RegisterRequestSchema > accepts a password of 128 characters
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:55:29
+     53|   it('accepts a password of 128 characters', () => {
+     54|     expect(
+     55|       RegisterRequestSchema.safeParse({ ...validRegister, password: 'a…
+       |                             ^
+     56|     ).toBe(true);
+     57|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/16]⎯
+
+ FAIL  src/auth.test.ts > RegisterRequestSchema > rejects a password of 129 characters
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:61:29
+     59|   it('rejects a password of 129 characters', () => {
+     60|     expect(
+     61|       RegisterRequestSchema.safeParse({ ...validRegister, password: 'a…
+       |                             ^
+     62|     ).toBe(false);
+     63|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/16]⎯
+
+ FAIL  src/auth.test.ts > RegisterRequestSchema > rejects an empty name
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:66:34
+     64|
+     65|   it('rejects an empty name', () => {
+     66|     expect(RegisterRequestSchema.safeParse({ ...validRegister, name: '…
+       |                                  ^
+     67|   });
+     68|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/16]⎯
+
+ FAIL  src/auth.test.ts > RegisterRequestSchema > rejects a name of 101 characters
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:71:29
+     69|   it('rejects a name of 101 characters', () => {
+     70|     expect(
+     71|       RegisterRequestSchema.safeParse({ ...validRegister, name: 'n'.re…
+       |                             ^
+     72|     ).toBe(false);
+     73|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/16]⎯
+
+ FAIL  src/auth.test.ts > RegisterRequestSchema > rejects missing fields
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:76:34
+     74|
+     75|   it('rejects missing fields', () => {
+     76|     expect(RegisterRequestSchema.safeParse({ name: 'Ada', password: 'p…
+       |                                  ^
+     77|       false,
+     78|     );
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/16]⎯
+
+ FAIL  src/auth.test.ts > LoginRequestSchema > parses a valid body and lowercases the email
+TypeError: Cannot read properties of undefined (reading 'parse')
+ ❯ src/auth.test.ts:90:53
+     88| describe('LoginRequestSchema', () => {
+     89|   it('parses a valid body and lowercases the email', () => {
+     90|     const result: LoginRequest = LoginRequestSchema.parse({
+       |                                                     ^
+     91|       email: 'User@Example.com',
+     92|       password: 'x',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/16]⎯
+
+ FAIL  src/auth.test.ts > LoginRequestSchema > rejects a missing password
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:98:31
+     96|
+     97|   it('rejects a missing password', () => {
+     98|     expect(LoginRequestSchema.safeParse({ email: 'user@example.com' })…
+       |                               ^
+     99|   });
+    100|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/16]⎯
+
+ FAIL  src/auth.test.ts > LoginRequestSchema > rejects a malformed email
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:102:31
+    100|
+    101|   it('rejects a malformed email', () => {
+    102|     expect(LoginRequestSchema.safeParse({ email: 'nope', password: 'x'…
+       |                               ^
+    103|   });
+    104| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/16]⎯
+
+ FAIL  src/auth.test.ts > UserResponseSchema > does not return a password hash or other extra keys
+TypeError: Cannot read properties of undefined (reading 'parse')
+ ❯ src/auth.test.ts:108:53
+    106| describe('UserResponseSchema', () => {
+    107|   it('does not return a password hash or other extra keys', () => {
+    108|     const result: UserResponse = UserResponseSchema.parse({
+       |                                                     ^
+    109|       id: '3f2b8c1e-6d4a-4b7e-9a10-2c5d8e7f1a90',
+    110|       email: 'user@example.com',
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/16]⎯
+
+ FAIL  src/auth.test.ts > AuthTokenResponseSchema > parses an access token body
+TypeError: Cannot read properties of undefined (reading 'parse')
+ ❯ src/auth.test.ts:126:63
+    124| describe('AuthTokenResponseSchema', () => {
+    125|   it('parses an access token body', () => {
+    126|     const result: AuthTokenResponse = AuthTokenResponseSchema.parse({ …
+       |                                                               ^
+    127|     expect(result.accessToken).toBe('abc');
+    128|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/16]⎯
+
+ FAIL  src/auth.test.ts > ErrorResponseSchema > accepts an error with and without details
+TypeError: Cannot read properties of undefined (reading 'parse')
+ ❯ src/auth.test.ts:133:60
+    131| describe('ErrorResponseSchema', () => {
+    132|   it('accepts an error with and without details', () => {
+    133|     const withDetails: ErrorResponse = ErrorResponseSchema.parse({
+       |                                                            ^
+    134|       error: { code: 'VALIDATION_ERROR', message: 'Invalid', details: …
+    135|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/16]⎯
+
+ FAIL  src/auth.test.ts > ErrorResponseSchema > rejects an error with a missing code
+TypeError: Cannot read properties of undefined (reading 'safeParse')
+ ❯ src/auth.test.ts:143:32
+    141|
+    142|   it('rejects an error with a missing code', () => {
+    143|     expect(ErrorResponseSchema.safeParse({ error: { message: 'oops' } …
+       |                                ^
+    144|   });
+    145| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/16]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  16 failed | 1 passed (17)
+   Start at  22:36:54
+   Duration  1.00s (transform 44%, import 37%, tests 11%, worker 7%)
+
+[ELIFECYCLE] Test failed. See above for more details.
+Error: ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL
+
+  × "pnpm recursive run" failed in C:\Users\kkomt\Downloads\team-task-tracker-
+  │ v2\packages\shared
+
