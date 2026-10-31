@@ -1,0 +1,15 @@
+DEV-1006 task 3.1 - failing tests before implementation (2026-10-31)
+
+pnpm --filter @team-task-tracker/backend exec vitest run
+  FAIL src/config.test.ts : Cannot find module './config.js'   (missing behaviour: loadConfig)
+  FAIL src/app.test.ts    : Failed to resolve entry for package "@team-task-tracker/shared"
+       (packages/shared/package.json has no main/exports/types yet, so the import fails before
+        reaching './app.js', './errors.js', './middleware/validate.js', which are also missing)
+  Test Files 2 failed | 1 passed (3)
+
+node --test scripts/tests/check-pinning.test.mjs
+  not ok - workspace:* for an in-repo package passes the pinning check
+           (check-pinning.mjs rejects workspace:* today)
+  ok - workspace:^1.0.0 / workspace:~1.0.0 are rejected, naming the dependency (regression guards,
+       already pass; they must keep passing after the script change)
+  # pass 30  # fail 1

@@ -14,7 +14,7 @@ Ticket: DEV-1006 (Linear DEV-10). One commit per task: `type(scope): description
 
 ## 3. App skeleton
 
-- [ ] 3.1 Add `express`, `cookie-parser`, `supertest` and types; implement `createApp`, config, `AppError`, `validate`, error and 404 handlers, and serve `GET /api/v1/openapi.json`. Verify: Supertest tests for 400 `VALIDATION_ERROR`, 404, 500 without stack, missing-secret startup failure and the served document (specs: Unknown routes, Separate signing secrets, Shared contracts).
+- [x] 3.1 Add `express`, `cookie-parser`, `supertest` and types; implement `createApp`, config, `AppError`, `validate`, error and 404 handlers, and serve `GET /api/v1/openapi.json`. Verify: Supertest tests for 400 `VALIDATION_ERROR`, 404, 500 without stack, missing-secret startup failure and the served document (specs: Unknown routes, Separate signing secrets, Shared contracts).
 
 ## 4. Auth endpoints
 

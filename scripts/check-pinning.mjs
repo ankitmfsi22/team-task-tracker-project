@@ -8,6 +8,8 @@ const DEP_FIELDS = ['dependencies', 'devDependencies', 'optionalDependencies', '
 const SKIP_DIRS = new Set(['node_modules', '.git']);
 const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 const EXACT_IMAGE_TAG = /^\d+\.\d+(?:\.\d+)?(?:-[0-9A-Za-z.]+)*$/;
+// In-repo workspace links are pinned by the workspace itself (DEV-1006).
+const WORKSPACE_LINK = /^workspace:\*$/;
 const EXACT_ACTION_REF = /^v?\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 
 const walk = (dir, files = []) => {
@@ -35,7 +37,7 @@ const checkPackageJson = (file, text, violations) => {
   const pkg = JSON.parse(text);
   for (const field of DEP_FIELDS) {
     for (const [name, spec] of Object.entries(pkg[field] ?? {})) {
-      if (!EXACT_VERSION.test(spec)) {
+      if (!EXACT_VERSION.test(spec) && !WORKSPACE_LINK.test(spec)) {
         violations.push(`${file}: ${field}.${name} has non-exact version "${spec}"`);
       }
     }

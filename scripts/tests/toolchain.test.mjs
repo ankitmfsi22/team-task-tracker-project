@@ -80,7 +80,7 @@ test('every package.json uses exact dependency versions (no ranges or tags)', ()
     const pkg = JSON.parse(readText(file));
     for (const field of DEP_FIELDS) {
       for (const [name, spec] of Object.entries(pkg[field] ?? {})) {
-        if (EXACT.test(spec)) continue;
+        if (EXACT.test(spec) || spec === 'workspace:*') continue; // in-repo link (DEV-1006)
         offenders.push(`${file}: ${field}.${name} = "${spec}"`);
       }
     }
