@@ -4,7 +4,7 @@ Ticket: DEV-1001 (Linear DEV-5). One commit per task: `type(scope): description 
 
 ## 1. Line endings and repo hygiene
 
-- [ ] 1.1 Add `.gitattributes` (`* text=auto eol=lf`), `.editorconfig`, and run `git add --renormalize .` in its own commit; verify `git ls-files --eol` shows no `i/crlf` text files and `git add --renormalize .` stages nothing further.
+- [x] 1.1 Add `.gitattributes` (`* text=auto eol=lf`), `.editorconfig`, and run `git add --renormalize .` in its own commit; verify `git ls-files --eol` shows no `i/crlf` text files and `git add --renormalize .` stages nothing further.
 
 ## 2. Pinned toolchain and workspace skeleton
 
