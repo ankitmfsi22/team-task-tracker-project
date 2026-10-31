@@ -5,9 +5,18 @@
 - Context: fresh
 - Date: 2026-10-31
 
-| Severity | file:line | Issue | Fix | Status |
-| --- | --- | --- | --- | --- |
-| | | | | |
+| # | Severity | file:line | Issue | Fix | Status |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Blocking | scripts/tests/prisma.test.mjs:81-109 | Local `pnpm test` red: the Prisma connectivity test failed with exit 137 | Root cause was a fixed Compose project name, so concurrent runs (my gate run, the Stop hook, the reviewer) tore down each other's container. Fixed in b017cac: per-run project name, container logs in the failure message, teardown status asserted. Two concurrent runs pass, no containers left, `pnpm test` 160/160 green. | Fixed (b017cac) |
+| 2 | Non-blocking | scripts/tests/prisma.test.mjs:81-109 | Fixed project name, ignored `down` status, Docker dependence | Per-run name and `down` assertion done with #1. Not adding a skip when Docker is absent: the test is the only evidence for the "Prisma reaches the database" scenario and CI always has Docker, so a silent skip would hide a gap. | Fixed in b017cac (skip declined) |
+| 3 | Non-blocking | docker-compose.yml:8-9 | Postgres port published on all host interfaces | Accepted for this ticket: local-development database only, a password is required (`:?`), and the host port is configurable. Binding to 127.0.0.1 is a cheap hardening to schedule with the first backend ticket. | Accepted |
+| 4 | Non-blocking | pnpm-workspace.yaml:9-11 | `minimumReleaseAgeExclude` bypasses the cooldown for two versions | Accepted: exact versions approved at Gate 1, documented in design.md and VERSIONS.md. Remove the entries once the versions pass the default cooldown (follow-up). | Accepted |
+| 5 | Non-blocking | .github/workflows/ci.yml:16-30 | Actions pinned by tag, not SHA; no `timeout-minutes`; `pnpm audit` can flake | Accepted: exact version tags were the approved pinning level. SHA pinning, a job timeout and splitting the audit are optional hardening for a later CI ticket. | Accepted |
+| 6 | Non-blocking | scripts/check-pinning.mjs | Line-regex YAML parsing is brittle; `overrides`/SHA refs not handled | Accepted: it covers the files this repo actually has, and each rejection case has a test. Extend it (overrides, catalogs, SHA refs, matrix runners) when those constructs appear. | Accepted |
+| 7 | Non-blocking | eslint.config.js:4-5, 20 | Rule misses a JSDoc-style block comment with a leading `*` | Accepted: `/* eslint-disable ... */` and line forms are covered and tested; the `/** eslint-disable */` form is not a recognised ESLint directive anyway. | Accepted |
+| 8 | Non-blocking | .husky/pre-commit; package.json | Reviewer could not confirm `.env` is git-ignored | Confirmed by `scripts/tests/compose.test.mjs` ("git: .env is ignored and .env.example is not ignored"), which passes locally and in CI. No action. | Accepted (verified) |
+| 9 | Non-blocking | git log main..HEAD | Commit conventions | No issue found. | No change needed |
+| 10 | Non-blocking | review-log.md | Template still empty | The report is saved verbatim below (5686eb0). | Done |
 
 ## Reviewer report (verbatim)
 
