@@ -23,4 +23,4 @@ Ticket: DEV-1006 (Linear DEV-10). One commit per task: `type(scope): description
 
 ## 5. Verification
 
-- [ ] 5.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1006-auth --strict`; run `security-auditor`; record new deviations in `docs/deviations.md`.
+- [x] 5.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1006-auth --strict`; run `security-auditor`; record new deviations in `docs/deviations.md`.
