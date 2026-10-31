@@ -3,6 +3,7 @@
 ## Workflow (MANDATORY)
 - Features, API and schema changes: use only the installed OpenSpec commands: /opsx:explore, /opsx:propose, /opsx:update, /opsx:apply, /opsx:verify, /opsx:sync, /opsx:archive. Never create or use custom-named workflow commands.
 - Every ticket: fetch the ticket via Linear MCP; use a labelled fixture in `docs/tickets/` only if MCP is unavailable, and say so.
+- Check library APIs with Context7 MCP before using them; if it fails, note it and use official docs (Rule 5).
 - /opsx:propose MUST produce all four artifacts together: `proposal.md`, `design.md`, `tasks.md`, `specs/<capability>/spec.md`. Then run `openspec validate <change> --strict`.
 - Gate 1: STOP after propose. No production code until the human adds a Gate 1 entry in the change's `approvals.md` and commits it.
 - /opsx:apply: for every task, FIRST invoke the test-writer sub-agent to write failing tests from the spec scenarios, THEN implement, then run lint, typecheck and test, then make one commit per task.

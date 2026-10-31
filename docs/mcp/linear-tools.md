@@ -1,7 +1,7 @@
 # Linear MCP tools
 
 Source: tool names exposed by the `linear` MCP server in Claude Code (session of 2026-10-31).
-Read/write classification is inferred from tool names; only `list_teams`/`get_team` were actually called (read-only).
+Read/write classification is inferred from tool names. Actually called (read-only): `list_teams`, `get_team`, `get_issue` (DEV-8 found; DEV-9999 not found, see `docs/evidence/DEV-1004/`). No write tool was called. Permissions and failure handling: [README.md](README.md).
 Per ASSIGNMENT Rule 17, no write tool may be used without explicit approval.
 
 | tool                                                                                                                    | read/write | used for                                                            |
