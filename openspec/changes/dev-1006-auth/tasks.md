@@ -10,7 +10,7 @@ Ticket: DEV-1006 (Linear DEV-10). One commit per task: `type(scope): description
 ## 2. Database and Compose
 
 - [x] 2.1 Add `@prisma/client` and `@prisma/adapter-pg`; add `User` and `RefreshToken` models and the migration; run `db-change-checker`; update `scripts/tests/prisma.test.mjs`, `docs/VERSIONS.md`. Verify: `prisma validate` and `migrate deploy` succeed against Compose; confirm `generate` works under D-002 (spec: Prisma connects to PostgreSQL).
-- [ ] 2.2 Bind Postgres to `127.0.0.1` in `docker-compose.yml`; mark D-008 Fixed in `docs/deviations.md`. Verify: compose test asserts the host IP and a client still connects (spec: Postgres is published on loopback only).
+- [x] 2.2 Bind Postgres to `127.0.0.1` in `docker-compose.yml`; mark D-008 Fixed in `docs/deviations.md`. Verify: compose test asserts the host IP and a client still connects (spec: Postgres is published on loopback only).
 
 ## 3. App skeleton
 

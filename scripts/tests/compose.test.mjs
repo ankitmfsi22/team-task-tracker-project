@@ -5,6 +5,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createServer, connect } from 'node:net';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -93,3 +94,89 @@ test('git: .env is ignored and .env.example is not ignored', () => {
     '.env.example must not be ignored',
   );
 });
+
+// Spec: local-dev-environment / "Postgres is published on loopback only" (DEV-1006 task 2.2).
+test('compose: Port binding is loopback', () => {
+  readCompose();
+  const r = compose(['config', '--format', 'json'], {
+    POSTGRES_PASSWORD: 'test-only-value',
+    POSTGRES_PORT: '54329',
+  });
+  assert.equal(r.error, undefined, String(r.error));
+  assert.equal(r.status, 0, r.stderr);
+  const config = JSON.parse(r.stdout);
+  const ports = config.services?.postgres?.ports ?? [];
+  const entry = ports.find((p) => Number(p.target) === 5432);
+  assert.ok(entry, 'postgres has no published port entry for 5432');
+  assert.equal(String(entry.published), '54329');
+  assert.equal(entry.host_ip, '127.0.0.1', 'postgres port must be bound to 127.0.0.1 only');
+});
+
+const freePort = () =>
+  new Promise((resolvePort, reject) => {
+    const server = createServer();
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const { port } = server.address();
+      server.close(() => resolvePort(port));
+    });
+  });
+
+const tcpConnect = (port) =>
+  new Promise((resolveConn, reject) => {
+    const socket = connect({ host: '127.0.0.1', port });
+    socket.setTimeout(5000, () => socket.destroy(new Error('connect timeout')));
+    socket.once('connect', () => {
+      socket.end();
+      resolveConn();
+    });
+    socket.once('error', reject);
+  });
+
+test(
+  'compose: Local clients still connect (throwaway Compose project)',
+  { timeout: 180000 },
+  async () => {
+    const project = `ttt-loopback-${process.pid}-${Date.now().toString(36)}`;
+    const port = await freePort();
+    const composeEnv = {
+      ...process.env,
+      POSTGRES_PASSWORD: 'test-only-pw',
+      POSTGRES_PORT: String(port),
+      POSTGRES_USER: 'tasktracker',
+      POSTGRES_DB: 'tasktracker',
+    };
+    const dc = (args) =>
+      spawnSync(`docker compose -p ${project} ${args}`, {
+        cwd: repoRoot,
+        env: composeEnv,
+        shell: true,
+        encoding: 'utf8',
+        timeout: 150000,
+      });
+    let down;
+    try {
+      const up = dc('up -d --wait');
+      if (up.status !== 0) {
+        assert.fail(`compose up failed:
+${up.stdout}${up.stderr}`);
+      }
+      await tcpConnect(port);
+      const bound = dc('port postgres 5432');
+      assert.equal(bound.status, 0, bound.stderr);
+      assert.match(
+        bound.stdout.trim(),
+        new RegExp(`^127\.0\.0\.1:${port}$`),
+        'postgres must not be published on all interfaces',
+      );
+    } finally {
+      down = dc('down -v');
+    }
+    assert.equal(
+      down.status,
+      0,
+      `compose down failed:
+${down.stdout}${down.stderr}`,
+    );
+  },
+);

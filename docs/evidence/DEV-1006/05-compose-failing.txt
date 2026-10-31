@@ -1,0 +1,8 @@
+DEV-1006 task 2.2: node --test scripts/tests/compose.test.mjs (before implementation)
+Result: 8 tests, 6 pass, 2 fail (expected)
+
+FAIL compose: Port binding is loopback
+  AssertionError: postgres port must be bound to 127.0.0.1 only (actual host_ip undefined, expected '127.0.0.1')
+
+FAIL compose: Local clients still connect (throwaway Compose project)
+  TCP connect to 127.0.0.1 succeeded; then AssertionError: postgres must not be published on all interfaces (actual '0.0.0.0:62692')
