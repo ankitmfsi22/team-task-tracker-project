@@ -4,3 +4,4 @@ packages:
   - packages/*
 minimumReleaseAgeExclude:
   - eslint@10.14.0
+  - '@fission-ai/openspec@1.16.0'

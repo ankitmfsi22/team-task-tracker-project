@@ -20,6 +20,7 @@
     "lighthouse": "node scripts/not-implemented.mjs lighthouse DEV-1011"
   },
   "devDependencies": {
+    "@fission-ai/openspec": "1.16.0",
     "eslint": "10.14.0",
     "husky": "9.1.7",
     "lint-staged": "17.6.0",

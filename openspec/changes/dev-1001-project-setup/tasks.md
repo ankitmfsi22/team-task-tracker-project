@@ -19,7 +19,7 @@ Ticket: DEV-1001 (Linear DEV-5). One commit per task: `type(scope): description 
 - [x] 3.3 Add Husky and lint-staged (`prepare` script, `.husky/pre-commit`); verify from both PowerShell and Git Bash that a staged file with a lint error aborts `git commit` and a clean staged file commits. Save the transcript in `docs/evidence/DEV-1001/`.
 - [x] 3.4 Add `test:e2e` and `lighthouse` placeholder scripts; verify output contains "not implemented — DEV-1016" and "not implemented — DEV-1011" and both exit 0.
 
-- [ ] 3.5 Write a failing `node:test` first that parses `.github/workflows/ci.yml` (triggers, ordered gate commands, `node-version-file: .nvmrc`, no hard-coded Node/pnpm version, exact action tags), then add the workflow and the pinned `@fission-ai/openspec` dev dependency (ask before install); confirm action tags with `gh api` and record them in `docs/VERSIONS.md` later; verify the test passes, the pinning check passes on the workflow, and each gate command in the workflow runs locally.
+- [x] 3.5 Write a failing `node:test` first that parses `.github/workflows/ci.yml` (triggers, ordered gate commands, `node-version-file: .nvmrc`, no hard-coded Node/pnpm version, exact action tags), then add the workflow and the pinned `@fission-ai/openspec` dev dependency (ask before install); confirm action tags with `gh api` and record them in `docs/VERSIONS.md` later; verify the test passes, the pinning check passes on the workflow, and each gate command in the workflow runs locally.
 
 ## 4. Local database and Prisma
 
