@@ -11,7 +11,7 @@ Ticket: DEV-1005 (Linear DEV-9). One commit per task: `type(scope): description 
 
 - [x] 2.1 Add `.github/pull_request_template.md` with the seven fields (spec: Pull requests carry traceability fields).
 - [x] 2.2 Add `docs/traceability.md` with rows for DEV-1001..1004 (PR numbers, Gate 1 commit and date, first implementation commit and date, and Gate 2 commit, all from `git log`) and the append rule (spec: A traceability register links ticket to PR).
-- [ ] 2.3 Add `docs/workflow.md`, the `CLAUDE.md` pointer line and deviation D-033 (spec: The lifecycle is documented).
+- [x] 2.3 Add `docs/workflow.md`, the `CLAUDE.md` pointer line and deviation D-033 (spec: The lifecycle is documented).
 
 ## 3. Verification
 

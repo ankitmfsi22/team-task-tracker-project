@@ -10,6 +10,7 @@
 - After apply: run /opsx:verify, then invoke the reviewer sub-agent in a fresh context. The reviewer sub-agent (read-only) returns its findings; the main session saves them verbatim to `review-log.md` in the change folder. Blocking findings MUST be fixed before the PR.
 - Gate 2: the human approves the PR; a Gate 2 entry is added to `approvals.md`.
 - Fast lane (direct change without OpenSpec) is allowed only for a typo, config change or dependency patch.
+- Lifecycle summary and the in-branch sync/archive reason: `docs/workflow.md`; every archived ticket appends a row to `docs/traceability.md`.
 - Keep artifacts brief: max ~6 tasks per ticket, tests only for spec scenarios, no tests about docs/evidence files. Non-blocking findings go to the PR as accepted deviations; only blocking ones get fixed. Because pushing to main is forbidden, run /opsx:sync and /opsx:archive on the feature branch right after Gate 2, before merge.
 
 ## Every change folder MUST contain
