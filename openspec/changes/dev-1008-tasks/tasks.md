@@ -5,7 +5,7 @@ Ticket: DEV-1008 (Linear DEV-12). One commit per task: `type(scope): description
 ## 1. Contract only (merged first; DEV-1009, DEV-1010, DEV-1012 build on it)
 
 - [x] 1.1 Shared schemas and types in `packages/shared/src/tasks.ts`: `TaskStatus`, `TaskPriority`, `TASK_STATUS_TRANSITIONS`, task create, update (strict), status, assign, params and response; one export line in `index.ts`; the six task paths in the OpenAPI document; rebuild `dist`. Verify: shared unit tests for valid and invalid input and for the OpenAPI paths (spec: Shared contracts and OpenAPI paths).
-- [ ] 1.2 Prisma `TaskStatus`, `TaskPriority` and `Task` model, relations on `User` and `Project`, and the migration; run `db-change-checker`; update `scripts/tests/prisma.test.mjs`. Verify: `prisma validate` and `migrate deploy` succeed against Compose (spec: modified Prisma requirement).
+- [x] 1.2 Prisma `TaskStatus`, `TaskPriority` and `Task` model, relations on `User` and `Project`, and the migration; run `db-change-checker`; update `scripts/tests/prisma.test.mjs`. Verify: `prisma validate` and `migrate deploy` succeed against Compose (spec: modified Prisma requirement).
 
 ## 2. Task routes (backend, behaviour)
 
