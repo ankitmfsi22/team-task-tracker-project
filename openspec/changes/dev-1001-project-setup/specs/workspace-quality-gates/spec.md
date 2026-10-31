@@ -39,6 +39,10 @@ The root SHALL provide `format` (writes Prettier changes) and `format:check` (fa
 - **WHEN** a test generates a non-Prettier-formatted file in an OS temp directory and runs the format check on it
 - **THEN** the check exits non-zero and lists the file
 
+#### Scenario: Governance and source-of-truth files are not reflowed
+- **WHEN** `pnpm format` is run
+- **THEN** `CLAUDE.md`, `AGENTS.md`, `.mcp.json`, `docs/FRS.md`, `docs/SDS.md`, `docs/reference`, `.claude` and `openspec` are unchanged because `.prettierignore` lists them, and no ignore entry exists for any test fixture
+
 #### Scenario: Format fixes drift
 - **WHEN** `pnpm format` is run and then `pnpm format:check`
 - **THEN** both exit with code 0
@@ -67,7 +71,11 @@ All packages SHALL compile with TypeScript strict mode, and lint SHALL reject `a
 
 #### Scenario: eslint-disable without a ticket ID is rejected
 - **WHEN** a test generates a source file with an `eslint-disable` comment that has no ticket ID in an OS temp directory and lints it
-- **THEN** linting fails
+- **THEN** linting fails, reported by an inline local rule in `eslint.config.js` (no extra plugin package)
+
+#### Scenario: eslint-disable with a ticket ID is accepted
+- **WHEN** a test generates a source file whose `eslint-disable` comment cites a ticket ID such as `DEV-1001` and lints it
+- **THEN** the local rule reports nothing
 
 ### Requirement: Pre-commit enforcement
 A Git pre-commit hook SHALL run lint and Prettier checks on staged files and abort the commit when any check fails.
@@ -109,6 +117,10 @@ A GitHub Actions workflow `.github/workflows/ci.yml` SHALL run the quality gates
 #### Scenario: Versions come from the repository
 - **WHEN** the workflow's Node and pnpm setup is inspected
 - **THEN** Node is read from `.nvmrc` and pnpm from `packageManager`, with no separately hard-coded version
+
+#### Scenario: Runner and history are pinned for reproducibility
+- **WHEN** the workflow's job and checkout step are inspected
+- **THEN** the job runs on an exact runner label (`ubuntu-24.04`, never a `*-latest` label) and the checkout step fetches full history with `fetch-depth: 0`, because tests assert git history
 
 #### Scenario: Floating action reference is rejected
 - **WHEN** a test generates a workflow file in an OS temp directory with an action ref such as `@main`, `@latest` or a floating major tag, and runs the pinning check on that directory

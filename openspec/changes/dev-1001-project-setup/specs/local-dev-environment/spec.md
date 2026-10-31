@@ -13,6 +13,10 @@ Defines the local development environment: a pinned PostgreSQL 16 started by Doc
 - **WHEN** a developer runs `docker compose up -d` with a valid `.env`
 - **THEN** the `postgres` service reaches a healthy state and accepts connections on the configured port
 
+#### Scenario: Healthy means accepting TCP connections
+- **WHEN** the `postgres` service reports healthy
+- **THEN** its healthcheck probed TCP on `127.0.0.1` (not only the unix socket), so a client connecting over TCP right after "healthy" succeeds
+
 #### Scenario: Floating tag is rejected by the check
 - **WHEN** a test generates a Compose file in an OS temp directory with an image that has no exact version tag or uses `latest`, and runs the pinning check on it
 - **THEN** the pinning check exits non-zero and names the offending image
@@ -41,6 +45,10 @@ The Compose file SHALL define only the PostgreSQL service and its data volume; b
 
 ### Requirement: Prisma connects to PostgreSQL
 The backend SHALL configure Prisma with a PostgreSQL datasource read from the `DATABASE_URL` environment variable and SHALL define no models in this change.
+
+#### Scenario: Client package is deferred
+- **WHEN** the backend dependencies are inspected
+- **THEN** only the `prisma` CLI is present and `@prisma/client` is absent until the first ticket that adds models
 
 #### Scenario: Prisma validates
 - **WHEN** a developer runs the Prisma validate command in `backend` with `DATABASE_URL` set

@@ -33,7 +33,11 @@ All dependency specifiers in every `package.json` SHALL be exact versions, and `
 - **THEN** the pinning check exits non-zero
 
 ### Requirement: Pinning check is part of the gates
-A pinning check script SHALL scan all `package.json` files, Docker image references and GitHub Actions workflow `uses:` references, and SHALL run as part of `pnpm lint`.
+A pinning check script SHALL scan all `package.json` files, Docker image references, and GitHub Actions workflow `uses:` and `runs-on:` values, and SHALL run as part of `pnpm lint`.
+
+#### Scenario: Floating runner label is rejected
+- **WHEN** a test generates a workflow in an OS temp directory with `runs-on: ubuntu-latest` (or another `*-latest` label, including list form) and runs the pinning check on that directory
+- **THEN** the check exits non-zero and names the workflow file and the label, while an exact label such as `ubuntu-24.04` passes
 
 #### Scenario: Clean repository passes
 - **WHEN** `pnpm lint` is run on the finished change
@@ -49,6 +53,17 @@ The pinned TypeScript and ESLint versions SHALL fall within the peer-dependency 
 #### Scenario: Pinned versions satisfy typescript-eslint peers
 - **WHEN** the pinned `typescript` and `eslint` versions are compared with the peer ranges of the pinned `typescript-eslint` package
 - **THEN** both versions satisfy those ranges and `pnpm install` reports no peer-dependency warning for them
+
+### Requirement: Package-manager policy exceptions are explicit
+Exceptions to pnpm's install-script and release-age policies SHALL be declared in `pnpm-workspace.yaml` and listed in `docs/VERSIONS.md`, so `pnpm install --frozen-lockfile` exits 0 without prompting.
+
+#### Scenario: Install scripts are decided, not ignored
+- **WHEN** `pnpm install --frozen-lockfile` is run on a fresh clone
+- **THEN** it exits 0, with `prisma` and `@prisma/engines` set to `false` under `allowBuilds`
+
+#### Scenario: Release-age exclusions are documented
+- **WHEN** `pnpm-workspace.yaml` lists `minimumReleaseAgeExclude` entries
+- **THEN** each entry is an exact `name@version` of a version approved for this ticket and appears in `docs/VERSIONS.md`
 
 ### Requirement: Versions are documented
 `docs/VERSIONS.md` SHALL list the exact version of every runtime, tool, library and image in the tech stack, and SHALL record the reason for the chosen Prisma major version.
