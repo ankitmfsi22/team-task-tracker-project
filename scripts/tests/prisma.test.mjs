@@ -46,19 +46,59 @@ test('Prisma files and configuration exist with no literal connection string', (
   assert.doesNotMatch(config, /postgres(ql)?:\/\//);
 });
 
-// Spec (DEV-1006, MODIFIED): "Client package is deferred" -- client and adapter are present
-// at exact versions because the first models exist; the schema defines only User and RefreshToken.
+// Spec (DEV-1007, MODIFIED): "Client package is deferred" -- client and adapter are present
+// at exact versions because models exist; the schema defines only User, RefreshToken, Project
+// and ProjectMember.
 const modelBlock = (schema, name) =>
   schema.match(new RegExp(`^model\\s+${name}\\s*\\{([\\s\\S]*?)^\\}`, 'm'))?.[1];
 
-test('Client package is deferred: client and adapter pinned, schema has only User and RefreshToken', () => {
+test('Client package is deferred: client and adapter pinned, schema has only User, RefreshToken, Project and ProjectMember', () => {
   const pkg = JSON.parse(read('package.json'));
   assert.equal(pkg.dependencies?.['@prisma/client'], '7.10.1');
   assert.equal(pkg.dependencies?.['@prisma/adapter-pg'], '7.10.1');
 
   const schema = read('prisma/schema.prisma');
   const models = [...schema.matchAll(/^\s*model\s+(\w+)\s*\{/gm)].map((m) => m[1]).sort();
-  assert.deepEqual(models, ['RefreshToken', 'User']);
+  assert.deepEqual(models, ['Project', 'ProjectMember', 'RefreshToken', 'User']);
+});
+
+test('Schema: ProjectRole enum has OWNER and MEMBER', () => {
+  const body = read('prisma/schema.prisma').match(/^enum\s+ProjectRole\s*\{([\s\S]*?)^\}/m)?.[1];
+  assert.ok(body, 'enum ProjectRole must exist');
+  const values = body
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith('//'));
+  assert.deepEqual(values, ['OWNER', 'MEMBER']);
+});
+
+test('Schema: Project model fields', () => {
+  const project = modelBlock(read('prisma/schema.prisma'), 'Project');
+  assert.ok(project, 'model Project must exist');
+  assert.match(project, /^\s*id\s+String\s+@id\b.*@default\(uuid\(\)\).*@db\.Uuid/m);
+  assert.match(project, /^\s*name\s+String\b/m);
+  assert.match(project, /^\s*description\s+String\?/m);
+  assert.match(project, /^\s*archivedAt\s+DateTime\?/m);
+  assert.match(project, /^\s*createdAt\s+DateTime\s+@default\(now\(\)\)/m);
+  assert.match(project, /^\s*members\s+ProjectMember\[\]/m);
+});
+
+test('Schema: ProjectMember model fields, cascade relations, composite key and userId index', () => {
+  const schema = read('prisma/schema.prisma');
+  const pm = modelBlock(schema, 'ProjectMember');
+  assert.ok(pm, 'model ProjectMember must exist');
+  assert.match(pm, /^\s*projectId\s+String\s+@db\.Uuid/m);
+  assert.match(pm, /^\s*userId\s+String\s+@db\.Uuid/m);
+  assert.match(pm, /^\s*role\s+ProjectRole\b/m);
+  assert.match(pm, /^\s*createdAt\s+DateTime\s+@default\(now\(\)\)/m);
+  assert.match(pm, /^\s*project\s+Project\s+@relation\(.*onDelete:\s*Cascade/m);
+  assert.match(pm, /^\s*user\s+User\s+@relation\(.*onDelete:\s*Cascade/m);
+  assert.match(pm, /^\s*@@id\(\[projectId,\s*userId\]\)/m);
+  assert.match(pm, /^\s*@@index\(\[userId\]\)/m);
+
+  const user = modelBlock(schema, 'User');
+  assert.ok(user, 'model User must exist');
+  assert.match(user, /^\s*memberships\s+ProjectMember\[\]/m);
 });
 
 test('Schema: User model fields', () => {
@@ -84,7 +124,7 @@ test('Schema: RefreshToken model fields, cascade relation and userId index', () 
   assert.match(rt, /^\s*@@index\(\[userId\]\)/m);
 });
 
-test('Migration directory creates User and RefreshToken tables', () => {
+test('Migration directory creates User, RefreshToken, Project and ProjectMember', () => {
   const dir = resolve(backend, 'prisma', 'migrations');
   assert.ok(existsSync(dir), 'backend/prisma/migrations must exist');
   const sqls = readdirSync(dir, { withFileTypes: true })
@@ -96,6 +136,18 @@ test('Migration directory creates User and RefreshToken tables', () => {
   const all = sqls.join('\n');
   assert.match(all, /CREATE TABLE "User"/);
   assert.match(all, /CREATE TABLE "RefreshToken"/);
+  assert.match(all, /CREATE TYPE "ProjectRole"/);
+  assert.match(all, /CREATE TABLE "Project"/);
+  assert.match(all, /CREATE TABLE "ProjectMember"/);
+  assert.match(all, /PRIMARY KEY \("projectId",\s*"userId"\)/);
+  assert.match(
+    all,
+    /ALTER TABLE "ProjectMember" ADD CONSTRAINT "[^"]+" FOREIGN KEY \("projectId"\)[^;]*ON DELETE CASCADE/,
+  );
+  assert.match(
+    all,
+    /ALTER TABLE "ProjectMember" ADD CONSTRAINT "[^"]+" FOREIGN KEY \("userId"\)[^;]*ON DELETE CASCADE/,
+  );
 });
 
 test('Prisma validates with DATABASE_URL set', () => {
