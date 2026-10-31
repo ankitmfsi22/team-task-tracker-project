@@ -10,7 +10,7 @@ Ticket: DEV-1002 (Linear DEV-6). One commit per task: `type(scope): description 
 ## 2. Skill and documentation
 
 - [x] 2.1 Write a failing frontmatter test, then add `.claude/skills/api-conventions/SKILL.md` (spec: Project skill for API conventions).
-- [ ] 2.2 Add `docs/claude-code-setup.md` describing each hook, permission group, skill and command set.
+- [x] 2.2 Add `docs/claude-code-setup.md` describing each hook, permission group, skill and command set.
 
 ## 3. Evidence and verification
 
