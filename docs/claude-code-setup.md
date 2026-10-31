@@ -29,7 +29,6 @@ The hook and the deny list overlap on purpose: two layers for the same risks.
 
 - `.claude/commands/opsx/`: the 12 `/opsx:*` commands (explore, propose, update, apply, verify, sync, archive, and others). These are the only workflow commands.
 - `.claude/agents/`: sub-agent definitions (scope, actions, outputs, restrictions): see `docs/agents.md`.
-- [Agents](agents.md): sub-agent overview.
 
 ## Tests and evidence
 
