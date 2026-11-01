@@ -36,8 +36,8 @@ test('E2E placeholder: pnpm test:e2e prints "not implemented — DEV-1016" and e
   assert.ok(out.includes('not implemented — DEV-1016'), `unexpected output:\n${out}`);
 });
 
-test('Lighthouse placeholder: pnpm lighthouse prints "not implemented — DEV-1011" and exits 0', () => {
-  const { status, out } = runPnpm('lighthouse');
-  assert.equal(status, 0, `expected exit 0, got ${status}\n${out}`);
-  assert.ok(out.includes('not implemented — DEV-1011'), `unexpected output:\n${out}`);
+test('Lighthouse is a real gate: root lighthouse script runs scripts/lighthouse.mjs, not the placeholder', () => {
+  const script = rootScripts()['lighthouse'];
+  assert.equal(script, 'node scripts/lighthouse.mjs');
+  assert.ok(!script.includes('not-implemented'), 'lighthouse must not reference not-implemented');
 });
