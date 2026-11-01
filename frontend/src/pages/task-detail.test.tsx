@@ -98,15 +98,15 @@ describe('TaskDetailPage', () => {
     expect(screen.getByText(/In progress/i)).toBeInTheDocument();
     expect(screen.getByText(/High/i)).toBeInTheDocument();
     expect(screen.getByText(/2026/)).toBeInTheDocument();
-    expect(await screen.findByText('Mia Member')).toBeInTheDocument();
-    expect(screen.queryByText('Unassigned')).not.toBeInTheDocument();
+    expect(await screen.findByText('Mia Member', { selector: ':not(option)' })).toBeInTheDocument();
+    expect(screen.queryByText('Unassigned', { selector: ':not(option)' })).not.toBeInTheDocument();
   });
 
   it('shows Unassigned when the task has no assignee', async () => {
     taskHandler = () => json(makeTask({ assigneeId: null }));
     renderPage();
 
-    expect(await screen.findByText('Unassigned')).toBeInTheDocument();
+    expect(await screen.findByText('Unassigned', { selector: ':not(option)' })).toBeInTheDocument();
   });
 
   it('shows a loading status while the request is pending', async () => {
