@@ -17,4 +17,4 @@ Ticket: DEV-1011 (Linear DEV-15). One commit per task: `type(scope): description
 
 ## 3. Verification
 
-- [ ] 3.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm lighthouse` (scores in `docs/evidence/DEV-1011/`) and `openspec validate dev-1011-auth-project-pages --strict`; append deviations to `docs/deviations.md`.
+- [x] 3.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm lighthouse` (scores in `docs/evidence/DEV-1011/`) and `openspec validate dev-1011-auth-project-pages --strict`; append deviations to `docs/deviations.md`.
