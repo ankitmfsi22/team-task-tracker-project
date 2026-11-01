@@ -9,10 +9,10 @@ import {
   UpdateTaskRequestSchema,
 } from './tasks.js';
 
-type JsonObject = Record<string, unknown>;
+export type JsonObject = Record<string, unknown>;
 
-const json = (schema: unknown): JsonObject => ({ 'application/json': { schema } });
-const errorResponse = (description: string): JsonObject => ({
+export const json = (schema: unknown): JsonObject => ({ 'application/json': { schema } });
+export const errorResponse = (description: string): JsonObject => ({
   description,
   content: json({ $ref: '#/components/schemas/ErrorResponse' }),
 });
@@ -24,7 +24,7 @@ const taskOk = (description: string): JsonObject => ({
   description,
   content: json({ $ref: '#/components/schemas/TaskResponse' }),
 });
-const uuidParam = (name: string): JsonObject => ({
+export const uuidParam = (name: string): JsonObject => ({
   name,
   in: 'path',
   required: true,
@@ -32,7 +32,7 @@ const uuidParam = (name: string): JsonObject => ({
 });
 
 // One query parameter per property of the strict list query schema (input side, so defaults stay optional).
-const queryParams = (schema: z.ZodType): JsonObject[] => {
+export const queryParams = (schema: z.ZodType): JsonObject[] => {
   const { properties = {} } = z.toJSONSchema(schema, { io: 'input' }) as {
     properties?: Record<string, unknown>;
   };
@@ -44,10 +44,10 @@ const queryParams = (schema: z.ZodType): JsonObject[] => {
   }));
 };
 
-const bearer = [{ bearerAuth: [] }];
+export const bearer = [{ bearerAuth: [] }];
 const params = [uuidParam('projectId'), uuidParam('taskId')];
-const invalid = errorResponse('Validation error');
-const unauthenticated = errorResponse('Missing, invalid or expired access token');
+export const invalid = errorResponse('Validation error');
+export const unauthenticated = errorResponse('Missing, invalid or expired access token');
 const projectNotFound = errorResponse('Project not found, or the caller is not a member');
 const taskNotFound = errorResponse(
   'Project not found, the caller is not a member, or the task does not exist in the project',

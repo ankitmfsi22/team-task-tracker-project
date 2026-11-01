@@ -47,8 +47,11 @@ describe('buildOpenApiDocument', () => {
         '/api/v1/projects/{projectId}/members/{userId}',
         '/api/v1/projects/{projectId}/tasks',
         '/api/v1/projects/{projectId}/tasks/{taskId}',
+        '/api/v1/projects/{projectId}/tasks/{taskId}/activity', // DEV-1010
         '/api/v1/projects/{projectId}/tasks/{taskId}/archive',
         '/api/v1/projects/{projectId}/tasks/{taskId}/assignee',
+        '/api/v1/projects/{projectId}/tasks/{taskId}/comments', // DEV-1010
+        '/api/v1/projects/{projectId}/tasks/{taskId}/comments/{commentId}', // DEV-1010
         '/api/v1/projects/{projectId}/tasks/{taskId}/status',
       ].sort(),
     );
@@ -246,5 +249,69 @@ describe('buildOpenApiDocument task list route', () => {
     );
     const codes = Object.keys(asRecord(op['responses']));
     expect(codes).toEqual(expect.arrayContaining(['200', '400', '401', '404']));
+  });
+});
+
+describe('buildOpenApiDocument comment and activity routes', () => {
+  const doc = asRecord(buildOpenApiDocument());
+  const base = '/api/v1/projects/{projectId}/tasks/{taskId}';
+  const paths = asRecord(doc['paths']);
+  const methods = (path: string): string[] => Object.keys(asRecord(paths[path])).sort();
+  const codes = (path: string, method: string): string[] =>
+    Object.keys(asRecord(operation(doc, path, method)['responses'])).sort();
+  const queryNames = (path: string, method: string): unknown[] => {
+    const params = operation(doc, path, method)['parameters'] as unknown[];
+    return params
+      .map((p) => asRecord(p))
+      .filter((p) => p['in'] === 'query')
+      .map((p) => p['name']);
+  };
+
+  it('OpenAPI describes the comment routes', () => {
+    expect(methods(`${base}/comments`)).toEqual(['get', 'post']);
+    expect(queryNames(`${base}/comments`, 'get')).toEqual(
+      expect.arrayContaining(['page', 'pageSize']),
+    );
+    expect(codes(`${base}/comments`, 'get')).toEqual(['200', '400', '401', '404']);
+    const body = asRecord(operation(doc, `${base}/comments`, 'post')['requestBody']);
+    expect(body['required']).toBe(true);
+    expect(asRecord(body['content'])['application/json']).toBeDefined();
+    expect(codes(`${base}/comments`, 'post')).toEqual(['201', '400', '401', '404', '409']);
+
+    expect(methods(`${base}/comments/{commentId}`)).toEqual(['delete', 'patch']);
+    expect(codes(`${base}/comments/{commentId}`, 'patch')).toEqual([
+      '200',
+      '400',
+      '401',
+      '403',
+      '404',
+      '409',
+    ]);
+    expect(codes(`${base}/comments/{commentId}`, 'delete')).toEqual([
+      '204',
+      '400',
+      '401',
+      '403',
+      '404',
+      '409',
+    ]);
+
+    const schemas = asRecord(asRecord(doc['components'])['schemas']);
+    expect(Object.keys(schemas)).toEqual(
+      expect.arrayContaining(['CommentResponse', 'CommentListResponse']),
+    );
+  });
+
+  it('OpenAPI describes the activity route', () => {
+    expect(methods(`${base}/activity`)).toEqual(['get']);
+    expect(queryNames(`${base}/activity`, 'get')).toEqual(
+      expect.arrayContaining(['page', 'pageSize']),
+    );
+    expect(codes(`${base}/activity`, 'get')).toEqual(['200', '400', '401', '404']);
+
+    const schemas = asRecord(asRecord(doc['components'])['schemas']);
+    expect(Object.keys(schemas)).toEqual(
+      expect.arrayContaining(['ActivityResponse', 'ActivityListResponse']),
+    );
   });
 });
