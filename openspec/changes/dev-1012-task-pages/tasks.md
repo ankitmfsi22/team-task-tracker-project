@@ -15,4 +15,4 @@ Ticket: DEV-1012 (Linear DEV-16). One commit per task: `type(scope): description
 
 ## 3. Verification
 
-- [ ] 3.1 Add the task list to `scripts/lighthouse.mjs` (PAGES and stub fixtures); run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm lighthouse` (scores in `docs/evidence/DEV-1012/`) and `openspec validate dev-1012-task-pages --strict`; append deviations to `docs/deviations.md`. Verify: Lighthouse run output (spec: Task list in the Lighthouse gate).
+- [x] 3.1 Add the task list to `scripts/lighthouse.mjs` (PAGES and stub fixtures); run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm lighthouse` (scores in `docs/evidence/DEV-1012/`) and `openspec validate dev-1012-task-pages --strict`; append deviations to `docs/deviations.md`. Verify: Lighthouse run output (spec: Task list in the Lighthouse gate).

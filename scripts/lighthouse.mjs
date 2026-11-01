@@ -22,10 +22,10 @@ const PREVIEW_PORT = 4173;
 const SESSION_HINT_KEY = 'ttt.session';
 
 // seedSession: the page needs a signed-in session, so the session hint is set before the audit.
-// DEV-1012 appends its task list page here.
 const PAGES = [
   { path: '/login', seedSession: false },
   { path: '/projects', seedSession: true },
+  { path: '/projects/3f2b8c1e-6d4a-4b7e-9a10-2c5d8e7f1a90/tasks', seedSession: true },
 ];
 
 const BROWSER_CANDIDATES = [
@@ -51,6 +51,22 @@ const PROJECTS = Array.from({ length: 3 }, (_, i) => ({
   createdAt: '2026-11-01T00:00:00.000Z',
 }));
 
+const TASK_PROJECT = PROJECTS[0];
+const TASKS = Array.from({ length: 5 }, (_, i) => ({
+  id: `5a2b8c1e-6d4a-4b7e-9a10-2c5d8e7f1a9${i}`,
+  projectId: TASK_PROJECT.id,
+  title: `Fixture task ${i + 1}`,
+  description: 'Fixture task served by the Lighthouse stub API.',
+  status: ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE', 'TODO'][i],
+  priority: ['LOW', 'MEDIUM', 'HIGH', 'URGENT', 'MEDIUM'][i],
+  dueDate: '2026-12-31T00:00:00.000Z',
+  assigneeId: USER.id,
+  createdById: USER.id,
+  archivedAt: null,
+  createdAt: '2026-11-01T00:00:00.000Z',
+  updatedAt: '2026-11-01T00:00:00.000Z',
+}));
+
 function sendJson(res, status, body) {
   res.writeHead(status, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(body));
@@ -66,6 +82,17 @@ function startStubApi() {
     if (req.method === 'GET' && url.pathname === '/api/v1/projects') {
       const meta = { page: 1, pageSize: 20, total: PROJECTS.length, totalPages: 1 };
       return sendJson(res, 200, { data: PROJECTS, meta });
+    }
+    if (req.method === 'GET' && url.pathname === `/api/v1/projects/${TASK_PROJECT.id}`) {
+      return sendJson(res, 200, TASK_PROJECT);
+    }
+    if (req.method === 'GET' && url.pathname === `/api/v1/projects/${TASK_PROJECT.id}/members`) {
+      const member = { userId: USER.id, email: USER.email, name: USER.name, role: 'OWNER' };
+      return sendJson(res, 200, { data: [member] });
+    }
+    if (req.method === 'GET' && url.pathname === `/api/v1/projects/${TASK_PROJECT.id}/tasks`) {
+      const meta = { page: 1, pageSize: 20, total: TASKS.length, totalPages: 1 };
+      return sendJson(res, 200, { data: TASKS, meta });
     }
     return sendJson(res, 404, { error: { code: 'NOT_FOUND', message: 'Not found' } });
   });
