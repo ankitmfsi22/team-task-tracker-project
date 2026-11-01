@@ -52,6 +52,17 @@ export class TasksService {
   async list(projectId: string, query: TaskListQuery): Promise<TaskListResponse> {
     const where: Prisma.TaskWhereInput = {
       projectId,
+      status: query.status,
+      priority: query.priority,
+      assigneeId: query.assigneeId,
+      // A due-date range excludes tasks without a dueDate (null never matches gte/lte).
+      dueDate:
+        query.dueFrom === undefined && query.dueTo === undefined
+          ? undefined
+          : {
+              gte: query.dueFrom === undefined ? undefined : new Date(query.dueFrom),
+              lte: query.dueTo === undefined ? undefined : new Date(query.dueTo),
+            },
       ...(query.includeArchived ? {} : { archivedAt: null }),
     };
     const [tasks, total] = await this.prisma.$transaction([
