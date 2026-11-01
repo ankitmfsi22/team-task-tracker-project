@@ -48,18 +48,64 @@ test('Prisma files and configuration exist with no literal connection string', (
 
 // Spec (DEV-1007, MODIFIED): "Client package is deferred" -- client and adapter are present
 // at exact versions because models exist; the schema defines only User, RefreshToken, Project
-// and ProjectMember.
+// and ProjectMember (DEV-1008 adds Task).
 const modelBlock = (schema, name) =>
   schema.match(new RegExp(`^model\\s+${name}\\s*\\{([\\s\\S]*?)^\\}`, 'm'))?.[1];
 
-test('Client package is deferred: client and adapter pinned, schema has only User, RefreshToken, Project and ProjectMember', () => {
+test('Client package is deferred: client and adapter pinned, schema has only User, RefreshToken, Project, ProjectMember and Task', () => {
   const pkg = JSON.parse(read('package.json'));
   assert.equal(pkg.dependencies?.['@prisma/client'], '7.10.1');
   assert.equal(pkg.dependencies?.['@prisma/adapter-pg'], '7.10.1');
 
   const schema = read('prisma/schema.prisma');
   const models = [...schema.matchAll(/^\s*model\s+(\w+)\s*\{/gm)].map((m) => m[1]).sort();
-  assert.deepEqual(models, ['Project', 'ProjectMember', 'RefreshToken', 'User']);
+  assert.deepEqual(models, ['Project', 'ProjectMember', 'RefreshToken', 'Task', 'User']);
+});
+
+const enumValues = (schema, name) => {
+  const body = schema.match(new RegExp(`^enum\\s+${name}\\s*\\{([\\s\\S]*?)^\\}`, 'm'))?.[1];
+  assert.ok(body, `enum ${name} must exist`);
+  return body
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith('//'));
+};
+
+test('Schema: TaskStatus and TaskPriority enums', () => {
+  const schema = read('prisma/schema.prisma');
+  assert.deepEqual(enumValues(schema, 'TaskStatus'), ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE']);
+  assert.deepEqual(enumValues(schema, 'TaskPriority'), ['LOW', 'MEDIUM', 'HIGH', 'URGENT']);
+});
+
+test('Schema: Task model fields, relations, indexes and back-relations', () => {
+  const schema = read('prisma/schema.prisma');
+  const task = modelBlock(schema, 'Task');
+  assert.ok(task, 'model Task must exist');
+  assert.match(task, /^\s*id\s+String\s+@id\b.*@default\(uuid\(\)\).*@db\.Uuid/m);
+  assert.match(task, /^\s*projectId\s+String\s+@db\.Uuid/m);
+  assert.match(task, /^\s*title\s+String\b(?!\?)/m);
+  assert.match(task, /^\s*description\s+String\?/m);
+  assert.match(task, /^\s*status\s+TaskStatus\s+@default\(TODO\)/m);
+  assert.match(task, /^\s*priority\s+TaskPriority\s+@default\(MEDIUM\)/m);
+  assert.match(task, /^\s*dueDate\s+DateTime\?/m);
+  assert.match(task, /^\s*assigneeId\s+String\?\s+@db\.Uuid/m);
+  assert.match(task, /^\s*createdById\s+String\s+@db\.Uuid/m);
+  assert.match(task, /^\s*archivedAt\s+DateTime\?/m);
+  assert.match(task, /^\s*createdAt\s+DateTime\s+@default\(now\(\)\)/m);
+  assert.match(task, /^\s*updatedAt\s+DateTime\s+@updatedAt/m);
+  assert.match(task, /^\s*project\s+Project\s+@relation\(.*onDelete:\s*Cascade/m);
+  assert.match(task, /^\s*assignee\s+User\?\s+@relation\(.*onDelete:\s*SetNull/m);
+  assert.match(task, /^\s*createdBy\s+User\s+@relation\(.*onDelete:\s*Restrict/m);
+  assert.match(task, /^\s*@@index\(\[projectId\]\)/m);
+  assert.match(task, /^\s*@@index\(\[assigneeId\]\)/m);
+
+  const project = modelBlock(schema, 'Project');
+  assert.ok(project, 'model Project must exist');
+  assert.match(project, /^\s*tasks\s+Task\[\]/m);
+  const user = modelBlock(schema, 'User');
+  assert.ok(user, 'model User must exist');
+  assert.match(user, /^\s*assignedTasks\s+Task\[\]\s+@relation\(/m);
+  assert.match(user, /^\s*createdTasks\s+Task\[\]\s+@relation\(/m);
 });
 
 test('Schema: ProjectRole enum has OWNER and MEMBER', () => {
@@ -124,7 +170,7 @@ test('Schema: RefreshToken model fields, cascade relation and userId index', () 
   assert.match(rt, /^\s*@@index\(\[userId\]\)/m);
 });
 
-test('Migration directory creates User, RefreshToken, Project and ProjectMember', () => {
+test('Migration directory creates User, RefreshToken, Project, ProjectMember and Task', () => {
   const dir = resolve(backend, 'prisma', 'migrations');
   assert.ok(existsSync(dir), 'backend/prisma/migrations must exist');
   const sqls = readdirSync(dir, { withFileTypes: true })
@@ -139,6 +185,9 @@ test('Migration directory creates User, RefreshToken, Project and ProjectMember'
   assert.match(all, /CREATE TYPE "ProjectRole"/);
   assert.match(all, /CREATE TABLE "Project"/);
   assert.match(all, /CREATE TABLE "ProjectMember"/);
+  assert.match(all, /CREATE TYPE "TaskStatus"/);
+  assert.match(all, /CREATE TYPE "TaskPriority"/);
+  assert.match(all, /CREATE TABLE "Task"/);
   assert.match(all, /PRIMARY KEY \("projectId",\s*"userId"\)/);
   assert.match(
     all,
