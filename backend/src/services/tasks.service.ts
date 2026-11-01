@@ -1,13 +1,15 @@
 import {
   TASK_STATUS_TRANSITIONS,
   type CreateTaskRequest,
+  type TaskListQuery,
+  type TaskListResponse,
   type TaskResponse,
   type TaskStatus,
   type UpdateTaskRequest,
 } from '@team-task-tracker/shared';
 import type { PrismaClient } from '../db.js';
 import { AppError } from '../errors.js';
-import type { Task } from '../generated/prisma/client.js';
+import type { Prisma, Task } from '../generated/prisma/client.js';
 
 export function toTaskResponse(task: Task): TaskResponse {
   return {
@@ -45,6 +47,31 @@ export class TasksService {
       },
     });
     return toTaskResponse(task);
+  }
+
+  async list(projectId: string, query: TaskListQuery): Promise<TaskListResponse> {
+    const where: Prisma.TaskWhereInput = {
+      projectId,
+      ...(query.includeArchived ? {} : { archivedAt: null }),
+    };
+    const [tasks, total] = await this.prisma.$transaction([
+      this.prisma.task.findMany({
+        where,
+        orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
+        skip: (query.page - 1) * query.pageSize,
+        take: query.pageSize,
+      }),
+      this.prisma.task.count({ where }),
+    ]);
+    return {
+      data: tasks.map(toTaskResponse),
+      meta: {
+        page: query.page,
+        pageSize: query.pageSize,
+        total,
+        totalPages: Math.ceil(total / query.pageSize),
+      },
+    };
   }
 
   async get(projectId: string, taskId: string): Promise<TaskResponse> {
