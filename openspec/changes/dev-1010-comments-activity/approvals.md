@@ -4,4 +4,4 @@
 | ------ | ---------------------------------------- | ------------------------------------- | -------- | ---- | ----- |
 | Gate 1 | proposal.md, design.md, tasks.md, specs/ | Approved | Ankit Singh | 2026-11-01 | Reviewed all artifacts, including the FRS section 5 DECISION lines (action names, metadata shape, routes, comment body 1 to 2000 characters). No backfill recorded as D-078. |
 | Gate 1 (amendment) | design.md | Approved | Ankit Singh | 2026-11-01 | Check order aligned with implementation. Recorded by Claude on Ankit Singh's instruction. |
-| Gate 2 | PR, review-log.md                        |                                       |          |      |       |
+| Gate 2 | PR #11, review-log.md, CI | Approved | Ankit Singh | 2026-11-01 | Reviewed PR #11 against the approved spec (with the design.md amendment), the verbatim review-log, db-change-checker, security-auditor and CI; approved. |

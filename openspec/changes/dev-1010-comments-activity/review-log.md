@@ -7,18 +7,19 @@
 
 ## Reviewer report (verbatim)
 
+Only the Status column was changed after the review: the reviewer wrote `Open` in every row, and each is now set to its disposition (see the Disposition table below), because `scripts/check-changes.mjs` rejects `Open` findings in an archived change. All other text is the reviewer's own.
 Reviewer: independent reviewer sub-agent (read-only) | Date: 2026-11-01 | Context: fresh
 
 Test evidence: I ran `pnpm test` myself and it passed: shared 110 tests, backend 244 tests in 22 files, frontend 1 test, plus the root node:test tooling tests. I did not run lint, typecheck or build.
 
 | Severity | file:line | Issue | Fix | Status |
 | --- | --- | --- | --- | --- |
-| Non-blocking | backend/src/routes/comments.routes.ts:25-52 | `validate` runs before `projectAccess`. A non-member who sends an invalid body or query gets 400 instead of 404, so validation errors reveal that the route exists to a non-member. It also differs from the "non-member 404" rule in AGENTS.md. Existing task routes may already do the same. | Accept as a deviation consistent with the existing routes, or put `projectAccess` before body validation. | Open |
-| Non-blocking | backend/src/services/comments.service.ts:66-92 | In `update` and `remove`, the 403 author check runs before `assertTaskWritable`. A non-author gets 403 on an archived task, and the author gets 409. The spec does not define this order, and the `findTask` call is repeated three times per request. | Document the order, or merge into one task lookup. | Open |
-| Non-blocking | backend/src/services/activity.service.ts:22 | `as ActivityResponse` casts unvalidated stored JSON. This is already accepted as D-082, and the cast is not `any` or `@ts-ignore`. | None (accepted D-082). Optionally parse with `ActivityMetadataSchemas` on read. | Open |
-| Non-blocking | backend/src/services/tasks.service.ts:140-146 | Concurrent assign or status requests can write an activity entry from a stale `from` value, because `task` is read outside the transaction (check-then-write race). Atomicity with the task change is correct. | Read the task inside the transaction, or use a conditional `updateMany` guard. | Open |
-| Non-blocking | backend/prisma/schema.prisma:107-130 | There is no index on `Comment.authorId` or `Activity.actorId`, and `Activity.metadata` has no default. This is already accepted as D-079. | None (accepted D-079). | Open |
-| Non-blocking | backend/src/routes/comments.routes.ts:27 | Comment collection routes reuse `ActivityParamsSchema` for their params. This is already accepted as D-082. | None (accepted D-082). | Open |
+| Non-blocking | backend/src/routes/comments.routes.ts:25-52 | `validate` runs before `projectAccess`. A non-member who sends an invalid body or query gets 400 instead of 404, so validation errors reveal that the route exists to a non-member. It also differs from the "non-member 404" rule in AGENTS.md. Existing task routes may already do the same. | Accept as a deviation consistent with the existing routes, or put `projectAccess` before body validation. | Accepted (non-blocking), see Disposition |
+| Non-blocking | backend/src/services/comments.service.ts:66-92 | In `update` and `remove`, the 403 author check runs before `assertTaskWritable`. A non-author gets 403 on an archived task, and the author gets 409. The spec does not define this order, and the `findTask` call is repeated three times per request. | Document the order, or merge into one task lookup. | Accepted (non-blocking), see Disposition |
+| Non-blocking | backend/src/services/activity.service.ts:22 | `as ActivityResponse` casts unvalidated stored JSON. This is already accepted as D-082, and the cast is not `any` or `@ts-ignore`. | None (accepted D-082). Optionally parse with `ActivityMetadataSchemas` on read. | Accepted (non-blocking), see Disposition |
+| Non-blocking | backend/src/services/tasks.service.ts:140-146 | Concurrent assign or status requests can write an activity entry from a stale `from` value, because `task` is read outside the transaction (check-then-write race). Atomicity with the task change is correct. | Read the task inside the transaction, or use a conditional `updateMany` guard. | Accepted (non-blocking), see Disposition |
+| Non-blocking | backend/prisma/schema.prisma:107-130 | There is no index on `Comment.authorId` or `Activity.actorId`, and `Activity.metadata` has no default. This is already accepted as D-079. | None (accepted D-079). | Accepted (non-blocking), see Disposition |
+| Non-blocking | backend/src/routes/comments.routes.ts:27 | Comment collection routes reuse `ActivityParamsSchema` for their params. This is already accepted as D-082. | None (accepted D-082). | Accepted (non-blocking), see Disposition |
 
 No blocking findings.
 
