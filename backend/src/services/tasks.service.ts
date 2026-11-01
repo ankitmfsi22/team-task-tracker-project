@@ -35,16 +35,31 @@ export class TasksService {
     const dueDate =
       input.dueDate === undefined ? undefined : this.parseFutureDueDate(input.dueDate);
     if (input.assigneeId !== undefined) await this.assertMember(projectId, input.assigneeId);
-    const task = await this.prisma.task.create({
-      data: {
-        projectId,
-        title: input.title,
-        description: input.description,
-        priority: input.priority,
-        dueDate,
-        assigneeId: input.assigneeId,
-        createdById: userId,
-      },
+    const task = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.task.create({
+        data: {
+          projectId,
+          title: input.title,
+          description: input.description,
+          priority: input.priority,
+          dueDate,
+          assigneeId: input.assigneeId,
+          createdById: userId,
+        },
+      });
+      await tx.activity.create({
+        data: {
+          taskId: created.id,
+          actorId: userId,
+          action: 'TASK_CREATED',
+          metadata: {
+            title: created.title,
+            priority: created.priority,
+            assigneeId: created.assigneeId,
+          },
+        },
+      });
+      return created;
     });
     return toTaskResponse(task);
   }
@@ -121,15 +136,34 @@ export class TasksService {
   async assign(
     projectId: string,
     taskId: string,
+    userId: string,
     assigneeId: string | null,
   ): Promise<TaskResponse> {
     const task = await this.findEditable(projectId, taskId);
     if (assigneeId !== null) await this.assertMember(projectId, assigneeId);
-    const updated = await this.prisma.task.update({ where: { id: task.id }, data: { assigneeId } });
+    // Assigning the current assignee again changes nothing, so nothing is recorded.
+    if (task.assigneeId === assigneeId) return toTaskResponse(task);
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.task.update({ where: { id: task.id }, data: { assigneeId } });
+      await tx.activity.create({
+        data: {
+          taskId: task.id,
+          actorId: userId,
+          action: 'TASK_ASSIGNED',
+          metadata: { from: task.assigneeId, to: assigneeId },
+        },
+      });
+      return result;
+    });
     return toTaskResponse(updated);
   }
 
-  async changeStatus(projectId: string, taskId: string, status: TaskStatus): Promise<TaskResponse> {
+  async changeStatus(
+    projectId: string,
+    taskId: string,
+    userId: string,
+    status: TaskStatus,
+  ): Promise<TaskResponse> {
     const task = await this.findEditable(projectId, taskId);
     if (!TASK_STATUS_TRANSITIONS[task.status].includes(status)) {
       throw new AppError(
@@ -138,15 +172,32 @@ export class TasksService {
         `Cannot move a task from ${task.status} to ${status}`,
       );
     }
-    const updated = await this.prisma.task.update({ where: { id: task.id }, data: { status } });
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.task.update({ where: { id: task.id }, data: { status } });
+      await tx.activity.create({
+        data: {
+          taskId: task.id,
+          actorId: userId,
+          action: 'TASK_STATUS_CHANGED',
+          metadata: { from: task.status, to: status },
+        },
+      });
+      return result;
+    });
     return toTaskResponse(updated);
   }
 
-  async archive(projectId: string, taskId: string): Promise<TaskResponse> {
+  async archive(projectId: string, taskId: string, userId: string): Promise<TaskResponse> {
     const task = await this.findEditable(projectId, taskId);
-    const updated = await this.prisma.task.update({
-      where: { id: task.id },
-      data: { archivedAt: new Date() },
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const result = await tx.task.update({
+        where: { id: task.id },
+        data: { archivedAt: new Date() },
+      });
+      await tx.activity.create({
+        data: { taskId: task.id, actorId: userId, action: 'TASK_ARCHIVED', metadata: {} },
+      });
+      return result;
     });
     return toTaskResponse(updated);
   }
