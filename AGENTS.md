@@ -13,9 +13,9 @@ Access is role-based and scoped per project (OWNER, MEMBER). Built as a pnpm mon
 - Accepted deviations: `docs/deviations.md` (every ticket appends its deviations).
 
 ## Repo structure
-- `backend/`: Express 5 REST API, Prisma, PostgreSQL (stub package plus Prisma datasource config; no models yet)
+- `backend/`: Express 5 REST API, Prisma, PostgreSQL (auth implemented: `User` and `RefreshToken` models, `createApp`, `authenticate`, `validate`, error handlers; project, task and comment models not yet)
 - `frontend/`: React SPA (stub package)
-- `packages/shared/`: Zod schemas and TypeScript types (stub package)
+- `packages/shared/`: Zod schemas and TypeScript types (auth schemas and the generated OpenAPI 3.1 document so far)
 - `scripts/`: pinning check (`check-pinning.mjs`), placeholder script and `node:test` tooling tests in `scripts/tests/`
 - `docs/`: FRS, SDS, VERSIONS, reference, evidence
 - `openspec/`: specs and changes

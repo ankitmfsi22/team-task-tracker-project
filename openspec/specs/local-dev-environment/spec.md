@@ -44,11 +44,11 @@ The Compose file SHALL define only the PostgreSQL service and its data volume; b
 - **THEN** Compose fails with an error naming the missing variable instead of starting with a default secret
 
 ### Requirement: Prisma connects to PostgreSQL
-The backend SHALL configure Prisma with a PostgreSQL datasource read from the `DATABASE_URL` environment variable. Models are added by the tickets that need them; this change adds `User` and `RefreshToken`.
+The backend SHALL configure Prisma with a PostgreSQL datasource read from the `DATABASE_URL` environment variable. Models are added by the tickets that need them; so far they are `User`, `RefreshToken`, `Project` and `ProjectMember`.
 
 #### Scenario: Client package is deferred
 - **WHEN** the backend dependencies are inspected
-- **THEN** `@prisma/client` and `@prisma/adapter-pg` are present at exact versions only because the first models exist, and the schema defines only `User` and `RefreshToken`
+- **THEN** `@prisma/client` and `@prisma/adapter-pg` are present at exact versions only because models exist, and the schema defines only `User`, `RefreshToken`, `Project` and `ProjectMember`
 
 #### Scenario: Prisma validates
 - **WHEN** a developer runs the Prisma validate command in `backend` with `DATABASE_URL` set
