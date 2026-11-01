@@ -254,6 +254,51 @@ describe('Sort tasks', () => {
       expect(res.status).toBe(200);
       expect(titles(res)).toEqual(['cara', 'bruno', 'alice', 'unassigned-a', 'unassigned-b']);
     });
+
+    it.each([
+      ['asc', ['alice', 'bruno', 'cara']],
+      ['desc', ['cara', 'bruno', 'alice']],
+    ])(
+      'Paging by assignee (%s) spans the assigned/unassigned boundary without gaps or duplicates',
+      async (order, assignedTitles) => {
+        const { member, project } = await setup();
+        const alice = await makeUser('alice@example.com', 'Alice');
+        const bruno = await makeUser('bruno@example.com', 'Bruno');
+        const cara = await makeUser('cara@example.com', 'Cara');
+        for (const u of [alice, bruno, cara]) {
+          await prisma.projectMember.create({
+            data: { projectId: project.id, userId: u.id, role: 'MEMBER' },
+          });
+        }
+        await makeTask(project.id, member.id, 'unassigned-c', 1, { id: uuid(3) });
+        await makeTask(project.id, member.id, 'cara', 2, { assigneeId: cara.id });
+        await makeTask(project.id, member.id, 'unassigned-a', 3, { id: uuid(1) });
+        await makeTask(project.id, member.id, 'alice', 4, { assigneeId: alice.id });
+        await makeTask(project.id, member.id, 'unassigned-b', 5, { id: uuid(2) });
+        await makeTask(project.id, member.id, 'bruno', 6, { assigneeId: bruno.id });
+        const expected = [...assignedTitles, 'unassigned-a', 'unassigned-b', 'unassigned-c'];
+        const query = (page: number) =>
+          `?sortBy=assignee&sortOrder=${order}&page=${page}&pageSize=4`;
+
+        const p1 = await list(project.id, member, query(1));
+        const p2 = await list(project.id, member, query(2));
+        const p3 = await list(project.id, member, query(3));
+
+        expect(p1.status).toBe(200);
+        expect(p2.status).toBe(200);
+        expect(p3.status).toBe(200);
+        expect(titles(p1)).toEqual([...assignedTitles, 'unassigned-a']);
+        expect(titles(p2)).toEqual(['unassigned-b', 'unassigned-c']);
+        expect([...titles(p1), ...titles(p2)]).toEqual(expected);
+        expect(new Set([...ids(p1), ...ids(p2)]).size).toBe(6);
+        for (const res of [p1, p2]) {
+          expect((res.body as ListBody).meta.total).toBe(6);
+          expect((res.body as ListBody).meta.totalPages).toBe(2);
+        }
+        expect((p3.body as ListBody).data).toEqual([]);
+        expect((p3.body as ListBody).meta.total).toBe(6);
+      },
+    );
   });
 
   it('Ties are broken by id ascending and are stable across pages', async () => {
