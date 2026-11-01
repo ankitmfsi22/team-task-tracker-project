@@ -5,7 +5,7 @@ Ticket: DEV-1010 (Linear DEV-14). One commit per task: `type(scope): description
 ## 1. CONTRACT (merged first; DEV-1013 builds on it)
 
 - [x] 1.1 Shared Zod schemas and types for comments and activity (`packages/shared/src/comments.ts`, `activity.ts`, exported from `index.ts`); rebuild `dist`. Verify: shared unit tests for valid and invalid comment bodies and activity metadata (specs: Shared comment contract and OpenAPI paths, Shared activity contract and OpenAPI path).
-- [ ] 1.2 Prisma `Comment`, `Activity` and `ActivityAction` plus migration `20261103000000_comments_activity`; run the db-change-checker sub-agent and fix blocking findings. Verify: migration applies on the test database and `prisma generate` and typecheck pass.
+- [x] 1.2 Prisma `Comment`, `Activity` and `ActivityAction` plus migration `20261103000000_comments_activity`; run the db-change-checker sub-agent and fix blocking findings. Verify: migration applies on the test database and `prisma generate` and typecheck pass.
 - [ ] 1.3 OpenAPI paths for the four comment routes and the activity route (`openapi-comments.ts`, merged in `openapi.ts`). Verify: `openapi.test.ts` asserts the methods, query parameters and 400, 401, 403, 404 and 409 responses (specs: OpenAPI describes the comment routes, OpenAPI describes the activity route).
 
 ## 2. Comments (backend)

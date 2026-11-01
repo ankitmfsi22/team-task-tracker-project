@@ -48,18 +48,26 @@ test('Prisma files and configuration exist with no literal connection string', (
 
 // Spec (DEV-1007, MODIFIED): "Client package is deferred" -- client and adapter are present
 // at exact versions because models exist; the schema defines only User, RefreshToken, Project
-// and ProjectMember (DEV-1008 adds Task).
+// and ProjectMember (DEV-1008 adds Task, DEV-1010 adds Comment and Activity).
 const modelBlock = (schema, name) =>
   schema.match(new RegExp(`^model\\s+${name}\\s*\\{([\\s\\S]*?)^\\}`, 'm'))?.[1];
 
-test('Client package is deferred: client and adapter pinned, schema has only User, RefreshToken, Project, ProjectMember and Task', () => {
+test('Client package is deferred: client and adapter pinned, schema has only User, RefreshToken, Project, ProjectMember, Task, Comment and Activity', () => {
   const pkg = JSON.parse(read('package.json'));
   assert.equal(pkg.dependencies?.['@prisma/client'], '7.10.1');
   assert.equal(pkg.dependencies?.['@prisma/adapter-pg'], '7.10.1');
 
   const schema = read('prisma/schema.prisma');
   const models = [...schema.matchAll(/^\s*model\s+(\w+)\s*\{/gm)].map((m) => m[1]).sort();
-  assert.deepEqual(models, ['Project', 'ProjectMember', 'RefreshToken', 'Task', 'User']);
+  assert.deepEqual(models, [
+    'Activity',
+    'Comment',
+    'Project',
+    'ProjectMember',
+    'RefreshToken',
+    'Task',
+    'User',
+  ]);
 });
 
 const enumValues = (schema, name) => {
