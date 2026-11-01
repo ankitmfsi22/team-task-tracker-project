@@ -15,7 +15,7 @@ Ticket: DEV-1010 (Linear DEV-14). One commit per task: `type(scope): description
 ## 3. Activity (backend)
 
 - [x] 3.1 `TasksService.create`, `assign`, `changeStatus` and `archive` take the actor id and write the task change and the activity entry in one transaction; controller passes `res.locals.userId`. Verify: integration tests for the four actions and their metadata, one entry for create with assignee, unassign, unchanged assignment recording nothing, rejected changes recording nothing, a forced activity failure rolling the change back; existing DEV-1008 tests updated for the new argument only (spec: Record activity on task changes).
-- [ ] 3.2 `GET .../tasks/:taskId/activity` with route, controller and `ActivityService` (newest first, paginated). Verify: integration tests for 200 order and `meta`, 404 non-member and task of another project, 400 invalid pagination, 401, and 404 for `POST`, `PATCH` and `DELETE` (spec: View activity history).
+- [x] 3.2 `GET .../tasks/:taskId/activity` with route, controller and `ActivityService` (newest first, paginated). Verify: integration tests for 200 order and `meta`, 404 non-member and task of another project, 400 invalid pagination, 401, and 404 for `POST`, `PATCH` and `DELETE` (spec: View activity history).
 
 ## 4. Verification
 
