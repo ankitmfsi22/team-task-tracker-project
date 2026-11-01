@@ -44,6 +44,8 @@ Registry and image tags were checked against the npm registry, GitHub and Docker
 | @testing-library/dom        | 10.4.2                | `frontend/package.json`                      |
 | @testing-library/user-event | 14.6.8                | `frontend/package.json`                      |
 | @testing-library/jest-dom   | 7.0.1                 | `frontend/package.json`                      |
+| Lighthouse                  | 13.6.0                | root `package.json`                          |
+| chrome-launcher             | 1.2.2                 | root `package.json`                          |
 | OpenSpec CLI                | 1.16.0                | root `package.json` (`@fission-ai/openspec`) |
 | PostgreSQL image            | postgres:16.15-alpine | `docker-compose.yml`                         |
 | actions/checkout            | v7.0.1                | `.github/workflows/ci.yml`                   |
