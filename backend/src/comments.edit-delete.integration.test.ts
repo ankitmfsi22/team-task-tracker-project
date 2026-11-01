@@ -173,6 +173,17 @@ describe('Edit comment', () => {
     expect(code(res)).toBe('COMMENT_NOT_FOUND');
   });
 
+  it('Author editing own comment in an archived project is 409 PROJECT_ARCHIVED and body unchanged', async () => {
+    const { author, project, task, comment } = await setupComment();
+    await prisma.project.update({ where: { id: project.id }, data: { archivedAt: new Date() } });
+
+    const res = await patch(project.id, task.id, comment.id, author, { body: 'edited' });
+
+    expect(res.status).toBe(409);
+    expect(code(res)).toBe('PROJECT_ARCHIVED');
+    expect(await bodyOf(comment.id)).toBe('original');
+  });
+
   it('Unauthenticated request is 401', async () => {
     const { project, task, comment } = await setupComment();
 
