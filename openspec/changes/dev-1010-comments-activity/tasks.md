@@ -10,7 +10,7 @@ Ticket: DEV-1010 (Linear DEV-14). One commit per task: `type(scope): description
 
 ## 2. Comments (backend)
 
-- [ ] 2.1 Comment routes, controller and `CommentsService`: add, list, edit (author only) and delete (author or OWNER), with `projectAccess`, task lookup, archived checks and `COMMENT_NOT_FOUND`. Verify: integration tests for 201, 200 list and `meta`, edit and delete by author, owner deleting any comment, 403 for another member (edit and delete), 400 empty and over-long body, 404 non-member, unknown task and unknown comment, 409 archived task and project, 401, and no activity added (specs: Add, List, Edit and Delete comment).
+- [x] 2.1 Comment routes, controller and `CommentsService`: add, list, edit (author only) and delete (author or OWNER), with `projectAccess`, task lookup, archived checks and `COMMENT_NOT_FOUND`. Verify: integration tests for 201, 200 list and `meta`, edit and delete by author, owner deleting any comment, 403 for another member (edit and delete), 400 empty and over-long body, 404 non-member, unknown task and unknown comment, 409 archived task and project, 401, and no activity added (specs: Add, List, Edit and Delete comment).
 
 ## 3. Activity (backend)
 

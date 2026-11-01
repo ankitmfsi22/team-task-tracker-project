@@ -5,9 +5,11 @@ import type { AppConfig } from './config.js';
 import { createPrismaClient, type PrismaClient } from './db.js';
 import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
 import { createAuthRouter } from './routes/auth.routes.js';
+import { createCommentsRouter } from './routes/comments.routes.js';
 import { createProjectsRouter } from './routes/projects.routes.js';
 import { createTasksRouter } from './routes/tasks.routes.js';
 import { AuthService } from './services/auth.service.js';
+import { CommentsService } from './services/comments.service.js';
 import { ProjectsService } from './services/projects.service.js';
 import { TasksService } from './services/tasks.service.js';
 
@@ -36,6 +38,10 @@ export function createApp(config: AppConfig, options: AppOptions = {}): Express 
   api.use(
     '/projects/:projectId/tasks',
     createTasksRouter(new TasksService(prisma), prisma, config),
+  );
+  api.use(
+    '/projects/:projectId/tasks/:taskId',
+    createCommentsRouter(new CommentsService(prisma), prisma, config),
   );
   options.extraRoutes?.(api);
   app.use('/api/v1', api);
