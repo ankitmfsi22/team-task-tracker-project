@@ -11,7 +11,7 @@ Ticket: DEV-1011 (Linear DEV-15). One commit per task: `type(scope): description
 
 ## 2. Pages (after Group 1)
 
-- [ ] 2.1 Register, login and logout pages and API functions in `src/lib/api/auth.ts`. Verify: component tests for valid submit, schema errors without a request, 409 duplicate email, 401 wrong credentials with cleared password, logout success and logout network failure (spec: web-auth).
+- [x] 2.1 Register, login and logout pages and API functions in `src/lib/api/auth.ts`. Verify: component tests for valid submit, schema errors without a request, 409 duplicate email, 401 wrong credentials with cleared password, logout success and logout network failure (spec: web-auth).
 - [ ] 2.2 Project list with pagination and `includeArchived`, create project dialog, `src/lib/api/projects.ts`. Verify: component tests for two pages, archived toggle, empty state, error with retry, create success and invalid name (spec: Project list, Create project).
 - [ ] 2.3 Project detail with edit, archive confirmation and members (list, add, remove, last-owner error), role-based hiding. Verify: component tests for OWNER, MEMBER and archived views, edit and archive success, 404 and 403 states, add member (success, 404, 409, invalid email), remove member, 409 `LAST_OWNER` (specs: Project detail, Members management, Role-based actions are hidden).
 
