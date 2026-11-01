@@ -80,6 +80,9 @@ Tickets: DEV-1010
 - DECISION: Project owners may also delete any comment in their project.
 - DECISION: Activity entries are append-only and cannot be edited or deleted.
 - DECISION: Comment edits and deletes are not recorded as activity (assignment lists only four actions).
+- DECISION: Activity actions are `TASK_CREATED`, `TASK_ASSIGNED`, `TASK_STATUS_CHANGED` and `TASK_ARCHIVED`. Metadata is a JSON object per action: `TASK_CREATED` `{ title, priority, assigneeId }`; `TASK_ASSIGNED` `{ from, to }` (assignee ids, `null` when unassigned); `TASK_STATUS_CHANGED` `{ from, to }`; `TASK_ARCHIVED` `{}`. Creating a task with an assignee records only `TASK_CREATED`; assigning the current assignee again records nothing. Entries are written in the same transaction as the change. (Approved by Ankit Singh, DEV-1010 Gate 1.)
+- DECISION: A comment body is trimmed and must be 1 to 2000 characters; an empty, whitespace-only or longer body responds 400. (Approved by Ankit Singh, DEV-1010 Gate 1.)
+- DECISION: Comment routes are `POST`/`GET /api/v1/projects/:projectId/tasks/:taskId/comments` and `PATCH`/`DELETE .../comments/:commentId`; activity is `GET .../tasks/:taskId/activity`. Only the author edits; the author or a project OWNER deletes (hard delete). Comment writes on an archived task or project respond 409; reads stay allowed. Comments list oldest first, activity newest first, both paginated. (Approved by Ankit Singh, DEV-1010 Gate 1.)
 
 ## 6. Frontend
 Tickets: DEV-1011, DEV-1012, DEV-1013
