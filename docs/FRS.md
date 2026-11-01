@@ -62,6 +62,9 @@ Tickets: DEV-1009
 - FR-FLT-5: The endpoint SHALL return only tasks in projects the caller is a member of; a non-member project MUST respond 404.
 - DECISION: Archived tasks are excluded unless an `includeArchived` filter is set.
 - DECISION: Default page size is 20, maximum 100.
+- DECISION: The list route is `GET /api/v1/projects/:projectId/tasks`. Query parameters: `status`, `priority` (one enum value each), `assigneeId` (UUID), `dueFrom` and `dueTo`, `includeArchived` (`true` or `false`, default `false`), `page`, `pageSize`, `sortBy`, `sortOrder`. Unknown query parameters respond 400. (Approved by Ankit Singh, DEV-1009 Gate 1.)
+- DECISION: `dueFrom` and `dueTo` are UTC ISO 8601 timestamps (same format as `dueDate`), both inclusive and both optional. `dueFrom` later than `dueTo` responds 400. When either is set, tasks without a `dueDate` are excluded. (Approved by Ankit Singh, DEV-1009 Gate 1.)
+- DECISION: `sortBy` is one of `status`, `priority`, `assignee`, `dueDate`; `sortOrder` is `asc` or `desc` (default `asc`). `status` and `priority` sort by their enum order (for example LOW before URGENT), `assignee` by the assignee's display name; tasks without an assignee or `dueDate` sort last in both directions. Without `sortBy` the list is ordered by `createdAt` descending; `id` is the final tie-breaker so pages are stable. (Approved by Ankit Singh, DEV-1009 Gate 1.)
 
 ## 5. Comments & Activity
 Tickets: DEV-1010
