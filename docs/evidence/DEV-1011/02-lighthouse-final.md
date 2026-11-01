@@ -25,3 +25,17 @@ Below 95: /projects performance = 88
 ```
 
 The threshold was not changed. The same command passed when re-run alone (above); the `pnpm test` case "pnpm lighthouse runs and exits 0" failed once inside a full `pnpm test` under the same load and passed when run alone. Recorded as deviation D-089 (Follow-up: DEV-1016).
+
+## After review finding 1 (gate stability)
+
+The reviewer saw `/projects` performance 88 on repeated runs, and later runs of mine scored 78 to 94 and, once, 0 in every category. Cause found: `vite preview` was pinned to port 4173, so two worktrees running the gate at the same time shared or killed each other's preview server, and scores also move with machine load (TBT between 280 and 930 ms for the same build). Fixes (deviation D-098): a free preview port per run, 5 audits per page with the median gated per category (threshold still 95), and a diagnostic line (FCP, LCP, TBT, runtime error) for a low page.
+
+Runs after the fix, DEV-1012 tests still running in the other worktree:
+
+```
+run 1  /login performance 100   /projects performance 99
+run 2  /login performance 100   /projects performance 99
+run 3  /login performance 100   /projects performance 99
+```
+
+Accessibility, best practices and SEO were 100 on both pages in every run.
