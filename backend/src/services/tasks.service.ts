@@ -65,15 +65,19 @@ export class TasksService {
             },
       ...(query.includeArchived ? {} : { archivedAt: null }),
     };
-    const [tasks, total] = await this.prisma.$transaction([
-      this.prisma.task.findMany({
-        where,
-        orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
-        skip: (query.page - 1) * query.pageSize,
-        take: query.pageSize,
-      }),
-      this.prisma.task.count({ where }),
-    ]);
+    const skip = (query.page - 1) * query.pageSize;
+    const [tasks, total] =
+      query.sortBy === 'assignee'
+        ? await this.listSortedByAssignee(where, query, skip)
+        : await this.prisma.$transaction([
+            this.prisma.task.findMany({
+              where,
+              orderBy: this.orderBy(query),
+              skip,
+              take: query.pageSize,
+            }),
+            this.prisma.task.count({ where }),
+          ]);
     return {
       data: tasks.map(toTaskResponse),
       meta: {
@@ -145,6 +149,60 @@ export class TasksService {
       data: { archivedAt: new Date() },
     });
     return toTaskResponse(updated);
+  }
+
+  // id is always the last key so pages never overlap. Postgres puts nulls first on desc, so dueDate asks for last.
+  private orderBy(query: TaskListQuery): Prisma.TaskOrderByWithRelationInput[] {
+    const dir = query.sortOrder;
+    switch (query.sortBy) {
+      case 'status':
+        return [{ status: dir }, { id: 'asc' }];
+      case 'priority':
+        return [{ priority: dir }, { id: 'asc' }];
+      case 'dueDate':
+        return [{ dueDate: { sort: dir, nulls: 'last' } }, { id: 'asc' }];
+      default:
+        return [{ createdAt: 'desc' }, { id: 'asc' }];
+    }
+  }
+
+  // Prisma cannot place nulls last when ordering by a relation field, so assigned tasks (ordered by the
+  // assignee's name) and unassigned tasks are read as two segments and the page is cut across both.
+  private async listSortedByAssignee(
+    where: Prisma.TaskWhereInput,
+    query: TaskListQuery,
+    skip: number,
+  ): Promise<[Task[], number]> {
+    const assignedWhere: Prisma.TaskWhereInput = { AND: [where, { assigneeId: { not: null } }] };
+    const unassignedWhere: Prisma.TaskWhereInput = { AND: [where, { assigneeId: null }] };
+    return this.prisma.$transaction(async (tx) => {
+      const assignedCount = await tx.task.count({ where: assignedWhere });
+      const unassignedCount = await tx.task.count({ where: unassignedWhere });
+      const assigned =
+        skip < assignedCount
+          ? await tx.task.findMany({
+              where: assignedWhere,
+              orderBy: [
+                { assignee: { name: query.sortOrder } },
+                { assigneeId: 'asc' },
+                { id: 'asc' },
+              ],
+              skip,
+              take: query.pageSize,
+            })
+          : [];
+      const remaining = query.pageSize - assigned.length;
+      const unassigned =
+        remaining > 0
+          ? await tx.task.findMany({
+              where: unassignedWhere,
+              orderBy: { id: 'asc' },
+              skip: Math.max(0, skip - assignedCount),
+              take: remaining,
+            })
+          : [];
+      return [[...assigned, ...unassigned], assignedCount + unassignedCount];
+    });
   }
 
   private async findEditable(projectId: string, taskId: string): Promise<Task> {
