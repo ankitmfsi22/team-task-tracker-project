@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { PaginationMetaSchema, PaginationQuerySchema } from './common.js';
 
 export const TaskStatusSchema = z.enum(['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE']);
 export const TaskPrioritySchema = z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']);
@@ -67,3 +68,38 @@ export type ChangeTaskStatusRequest = z.infer<typeof ChangeTaskStatusRequestSche
 export type AssignTaskRequest = z.infer<typeof AssignTaskRequestSchema>;
 export type TaskParams = z.infer<typeof TaskParamsSchema>;
 export type TaskResponse = z.infer<typeof TaskResponseSchema>;
+
+export const TaskSortBySchema = z.enum(['status', 'priority', 'assignee', 'dueDate']);
+
+// List filters, sorting and pagination (FRS section 4). Strict: unknown parameters are a 400.
+// includeArchived is an enum plus transform because z.coerce.boolean() turns "false" into true.
+export const TaskListQuerySchema = PaginationQuerySchema.extend({
+  status: TaskStatusSchema.optional(),
+  priority: TaskPrioritySchema.optional(),
+  assigneeId: z.uuid().optional(),
+  dueFrom: DueDateSchema.optional(),
+  dueTo: DueDateSchema.optional(),
+  includeArchived: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((value) => value === 'true'),
+  sortBy: TaskSortBySchema.optional(),
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+})
+  .strict()
+  .refine(
+    (query) =>
+      query.dueFrom === undefined ||
+      query.dueTo === undefined ||
+      new Date(query.dueFrom).getTime() <= new Date(query.dueTo).getTime(),
+    { message: 'dueFrom must not be later than dueTo', path: ['dueFrom'] },
+  );
+
+export const TaskListResponseSchema = z.object({
+  data: z.array(TaskResponseSchema),
+  meta: PaginationMetaSchema,
+});
+
+export type TaskSortBy = z.infer<typeof TaskSortBySchema>;
+export type TaskListQuery = z.infer<typeof TaskListQuerySchema>;
+export type TaskListResponse = z.infer<typeof TaskListResponseSchema>;

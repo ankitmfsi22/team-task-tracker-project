@@ -4,7 +4,7 @@ Ticket: DEV-1009 (Linear DEV-13). One commit per task: `type(scope): description
 
 ## 1. Contract (merged first; DEV-1012 builds on it)
 
-- [ ] 1.1 Shared `TaskListQuerySchema` (strict, `dueFrom <= dueTo`), `TaskListResponseSchema` and types in `packages/shared/src/tasks.ts`; the `GET` path in `openapi-tasks.ts`; rebuild `dist`. Verify: shared unit tests for valid and invalid queries and the OpenAPI path (spec: Shared list contract and OpenAPI path).
+- [x] 1.1 Shared `TaskListQuerySchema` (strict, `dueFrom <= dueTo`), `TaskListResponseSchema` and types in `packages/shared/src/tasks.ts`; the `GET` path in `openapi-tasks.ts`; rebuild `dist`. Verify: shared unit tests for valid and invalid queries and the OpenAPI path (spec: Shared list contract and OpenAPI path).
 
 ## 2. List route (backend)
 
