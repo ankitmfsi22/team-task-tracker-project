@@ -17,6 +17,7 @@ import {
   ProjectResponseSchema,
   UpdateProjectRequestSchema,
 } from './projects.js';
+import { buildCommentComponentSchemas, buildCommentPaths } from './openapi-comments.js';
 import { buildTaskComponentSchemas, buildTaskPaths } from './openapi-tasks.js';
 
 type JsonObject = Record<string, unknown>;
@@ -228,10 +229,12 @@ export function buildOpenApiDocument(): JsonObject {
         },
       },
       ...buildTaskPaths(),
+      ...buildCommentPaths(),
     },
     components: {
       schemas: {
         ...buildTaskComponentSchemas(),
+        ...buildCommentComponentSchemas(),
         ProjectResponse: z.toJSONSchema(ProjectResponseSchema),
         ProjectDetailResponse: z.toJSONSchema(ProjectDetailResponseSchema),
         ProjectListResponse: z.toJSONSchema(ProjectListResponseSchema),

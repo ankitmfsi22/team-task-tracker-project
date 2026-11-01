@@ -1,6 +1,8 @@
 export const packageName = '@team-task-tracker/shared';
 
+export * from './activity.js';
 export * from './auth.js';
+export * from './comments.js';
 export * from './common.js';
 export * from './projects.js';
 export * from './tasks.js';

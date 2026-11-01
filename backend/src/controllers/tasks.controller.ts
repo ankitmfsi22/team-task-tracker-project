@@ -37,16 +37,20 @@ export function createTasksController(
     assign: async (req, res) => {
       const { projectId, taskId } = req.params as unknown as TaskParams;
       const { assigneeId } = req.body as AssignTaskRequest;
-      res.status(200).json(await service.assign(projectId, taskId, assigneeId));
+      const userId = res.locals['userId'] as string;
+      res.status(200).json(await service.assign(projectId, taskId, userId, assigneeId));
     },
     changeStatus: async (req, res) => {
       const { projectId, taskId } = req.params as unknown as TaskParams;
       const { status } = req.body as ChangeTaskStatusRequest;
-      res.status(200).json(await service.changeStatus(projectId, taskId, status));
+      const userId = res.locals['userId'] as string;
+      res.status(200).json(await service.changeStatus(projectId, taskId, userId, status));
     },
     archive: async (req, res) => {
       const { projectId, taskId } = req.params as unknown as TaskParams;
-      res.status(200).json(await service.archive(projectId, taskId));
+      res
+        .status(200)
+        .json(await service.archive(projectId, taskId, res.locals['userId'] as string));
     },
     get: async (req, res) => {
       const { projectId, taskId } = req.params as unknown as TaskParams;
