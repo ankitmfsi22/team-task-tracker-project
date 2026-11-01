@@ -10,7 +10,7 @@ Ticket: DEV-1012 (Linear DEV-16). One commit per task: `type(scope): description
 
 ## 2. Task detail
 
-- [ ] 2.1 Task detail page read view with assignee name and states, route `/projects/:projectId/tasks/:taskId`. Verify: component tests for fields, unassigned, 404, 403 (spec: Task detail page).
+- [x] 2.1 Task detail page read view with assignee name and states, route `/projects/:projectId/tasks/:taskId`. Verify: component tests for fields, unassigned, 404, 403 (spec: Task detail page).
 - [ ] 2.2 Actions: allowed status transitions, assign/unassign, archive with confirmation, `canModify` hiding, inline 403/409 errors. Verify: component tests for transitions offered, status success and 409, assign, unassign, archive confirm and cancel, 403, archived task, archived project, MEMBER view (specs: Task actions, Unauthorized and impossible actions are hidden).
 
 ## 3. Verification
