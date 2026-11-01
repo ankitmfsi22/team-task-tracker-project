@@ -6,7 +6,7 @@ Ticket: DEV-1012 (Linear DEV-16). One commit per task: `type(scope): description
 
 - [x] 1.1 `src/lib/api/tasks.ts` (list, get, status, assign, archive, project and members read helpers), pure `parseTaskListParams` / `toApiQuery`, and the `/projects/:projectId/tasks` route. Verify: unit tests for URL parsing (restore, invalid ignored), date mapping and default omission (specs: Filters restored, Due range, Invalid URL value).
 - [x] 1.2 Task list page: filter bar, URL sync with page reset, clear filters, archived toggle and badge. Verify: component tests for filter-to-URL-and-request, restore from URL, clear filters, include archived (specs: Task list with URL-synced filters, Archived tasks toggle).
-- [ ] 1.3 Sorting, pagination controls and list states (loading, empty project, empty with filters, 403, 404, 500 with retry). Verify: component tests for sort toggle, next/previous and disabled edges, each state (specs: sorting and pagination, Task list states).
+- [x] 1.3 Sorting, pagination controls and list states (loading, empty project, empty with filters, 403, 404, 500 with retry). Verify: component tests for sort toggle, next/previous and disabled edges, each state (specs: sorting and pagination, Task list states).
 
 ## 2. Task detail
 

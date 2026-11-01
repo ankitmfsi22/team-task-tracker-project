@@ -1,11 +1,16 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { TaskPrioritySchema, TaskStatusSchema, type TaskResponse } from '@team-task-tracker/shared';
+import {
+  TaskPrioritySchema,
+  TaskStatusSchema,
+  type TaskResponse,
+  type TaskSortBy,
+} from '@team-task-tracker/shared';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { LoadingState } from '@/components/states';
+import { EmptyState, ErrorState, LoadingState } from '@/components/states';
 import { listTaskMembers, listTasks } from '@/lib/api/tasks';
 import { parseTaskListParams, toApiQuery, type TaskListParams } from '@/lib/api/task-list-params';
 
@@ -49,14 +54,81 @@ export function TaskListPage() {
     });
   }
 
+  // First click sorts ascending, a second click on the same column descending.
+  function toggleSort(field: TaskSortBy) {
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+      const descending = params.sortBy === field && params.sortOrder === 'asc';
+      next.set('sortBy', field);
+      next.set('sortOrder', descending ? 'desc' : 'asc');
+      next.delete('page');
+      return next;
+    });
+  }
+
+  function goToPage(page: number) {
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+      next.set('page', String(page));
+      return next;
+    });
+  }
+
+  const filtered = FILTER_KEYS.some((key) => searchParams.has(key));
+  const result = tasksQuery.data;
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-semibold">Tasks</h1>
       <FilterBar params={params} members={members} onChange={setFilter} onClear={clearFilters} />
       {tasksQuery.isPending ? (
         <LoadingState label="Loading tasks…" />
-      ) : tasksQuery.data ? (
-        <TaskTable tasks={tasksQuery.data.data} projectId={projectId} />
+      ) : tasksQuery.isError && !result ? (
+        <ErrorState error={tasksQuery.error} onRetry={() => void tasksQuery.refetch()} />
+      ) : result && result.data.length === 0 ? (
+        filtered ? (
+          <EmptyState
+            title="No tasks match these filters"
+            action={
+              <Button type="button" variant="outline" onClick={clearFilters}>
+                Clear filters
+              </Button>
+            }
+          />
+        ) : (
+          <EmptyState title="No tasks yet" />
+        )
+      ) : result ? (
+        <>
+          <TaskTable
+            tasks={result.data}
+            projectId={projectId}
+            params={params}
+            members={members}
+            onSort={toggleSort}
+          />
+          <nav aria-label="Pagination" className="flex items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={result.meta.page <= 1}
+              onClick={() => goToPage(result.meta.page - 1)}
+            >
+              Previous
+            </Button>
+            <span>
+              Page {result.meta.page} of {result.meta.totalPages}
+            </span>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={tasksQuery.isPlaceholderData || result.meta.page >= result.meta.totalPages}
+              onClick={() => goToPage(result.meta.page + 1)}
+            >
+              Next
+            </Button>
+          </nav>
+        </>
       ) : null}
     </div>
   );
@@ -161,15 +233,49 @@ function FilterBar({
   );
 }
 
-function TaskTable({ tasks, projectId }: { tasks: TaskResponse[]; projectId: string }) {
+const SORT_COLUMNS: { field: TaskSortBy; label: string }[] = [
+  { field: 'status', label: 'Status' },
+  { field: 'priority', label: 'Priority' },
+  { field: 'assignee', label: 'Assignee' },
+  { field: 'dueDate', label: 'Due date' },
+];
+
+function ariaSort(params: TaskListParams, field: TaskSortBy) {
+  if (params.sortBy !== field) return 'none';
+  return params.sortOrder === 'asc' ? 'ascending' : 'descending';
+}
+
+function TaskTable({
+  tasks,
+  projectId,
+  params,
+  members,
+  onSort,
+}: {
+  tasks: TaskResponse[];
+  projectId: string;
+  params: TaskListParams;
+  members: { userId: string; name: string }[];
+  onSort: (field: TaskSortBy) => void;
+}) {
+  const assigneeName = (id: string | null) =>
+    id === null ? 'Unassigned' : (members.find((m) => m.userId === id)?.name ?? 'Former member');
   return (
     <table className="w-full text-left text-sm">
       <thead>
         <tr className="border-b border-border">
           <th className="py-2">Title</th>
-          <th className="py-2">Status</th>
-          <th className="py-2">Priority</th>
-          <th className="py-2">Due date</th>
+          {SORT_COLUMNS.map(({ field, label }) => (
+            <th key={field} className="py-2" aria-sort={ariaSort(params, field)}>
+              <button
+                type="button"
+                className="font-semibold hover:underline"
+                onClick={() => onSort(field)}
+              >
+                {label}
+              </button>
+            </th>
+          ))}
         </tr>
       </thead>
       <tbody>
@@ -186,6 +292,7 @@ function TaskTable({ tasks, projectId }: { tasks: TaskResponse[]; projectId: str
             </td>
             <td className="py-2">{task.status}</td>
             <td className="py-2">{task.priority}</td>
+            <td className="py-2">{assigneeName(task.assigneeId)}</td>
             <td className="py-2">{task.dueDate ? task.dueDate.slice(0, 10) : '—'}</td>
           </tr>
         ))}
