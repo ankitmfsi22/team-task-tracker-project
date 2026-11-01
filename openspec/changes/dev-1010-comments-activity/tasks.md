@@ -19,4 +19,4 @@ Ticket: DEV-1010 (Linear DEV-14). One commit per task: `type(scope): description
 
 ## 4. Verification
 
-- [ ] 4.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1010-comments-activity --strict`; append deviations to `docs/deviations.md`.
+- [x] 4.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1010-comments-activity --strict`; append deviations to `docs/deviations.md`.
