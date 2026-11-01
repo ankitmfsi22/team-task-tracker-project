@@ -31,8 +31,8 @@ function mockSuccessfulLogin(): void {
   });
 }
 
-function renderAt(path: string): void {
-  const router = createMemoryRouter(routes, { initialEntries: [path] });
+function renderAt(path: string, state?: unknown): void {
+  const router = createMemoryRouter(routes, { initialEntries: [{ pathname: path, state }] });
   render(
     <QueryClientProvider client={createTestQueryClient()}>
       <AuthProvider>
@@ -103,6 +103,18 @@ describe('Login page', () => {
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Apollo' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Projects' })).not.toBeInTheDocument();
+  });
+
+  it('ignores a protocol-relative stored location and opens the project list instead', async () => {
+    mockSuccessfulLogin();
+    const user = userEvent.setup();
+    renderAt('/login', { from: { pathname: '//evil.example', search: '' } });
+
+    await user.type(await screen.findByLabelText('Email'), 'ada@example.com');
+    await user.type(screen.getByLabelText('Password'), 'correct-horse-1');
+    await user.click(screen.getByRole('button', { name: 'Log in' }));
+
+    expect(await screen.findByRole('heading', { level: 1, name: 'Projects' })).toBeInTheDocument();
   });
 
   it('shows an error, clears the password and stays on the login page on 401', async () => {

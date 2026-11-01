@@ -28,7 +28,8 @@ function requestedLocation(state: unknown): string | null {
   const { from } = state;
   if (typeof from !== 'object' || from === null || !('pathname' in from)) return null;
   const { pathname } = from;
-  if (typeof pathname !== 'string' || !pathname.startsWith('/')) return null;
+  // An in-app absolute path only: reject protocol-relative (`//host`) and backslash forms.
+  if (typeof pathname !== 'string' || !/^\/(?![/\\])/.test(pathname)) return null;
   const search = 'search' in from && typeof from.search === 'string' ? from.search : '';
   return `${pathname}${search}`;
 }
