@@ -72,15 +72,36 @@ describe('Login page', () => {
   });
 
   it('returns to the originally requested page after login', async () => {
+    const projectId = '7d1c0b52-8a3e-4f7b-b6a1-0e9d2c4f5a31';
     mockSuccessfulLogin();
+    const login = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation((input, init) => {
+      const url = String(input);
+      if (url === `/api/v1/projects/${projectId}`) {
+        return Promise.resolve(
+          jsonResponse(200, {
+            id: projectId,
+            name: 'Apollo',
+            description: null,
+            archivedAt: null,
+            createdAt: '2026-01-01T00:00:00.000Z',
+            role: 'MEMBER',
+          }),
+        );
+      }
+      if (url === `/api/v1/projects/${projectId}/members`) {
+        return Promise.resolve(jsonResponse(200, { data: [] }));
+      }
+      return login ? login(input, init) : Promise.reject(new Error('no mock'));
+    });
     const user = userEvent.setup();
-    renderAt('/projects/7d1c0b52-8a3e-4f7b-b6a1-0e9d2c4f5a31');
+    renderAt(`/projects/${projectId}`);
 
     await user.type(await screen.findByLabelText('Email'), 'ada@example.com');
     await user.type(screen.getByLabelText('Password'), 'correct-horse-1');
     await user.click(screen.getByRole('button', { name: 'Log in' }));
 
-    expect(await screen.findByRole('heading', { level: 1, name: 'Project' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: 'Apollo' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Projects' })).not.toBeInTheDocument();
   });
 
