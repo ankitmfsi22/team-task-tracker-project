@@ -14,6 +14,7 @@ One row per ticket: ticket to Linear key to change to branch to PR to gates. Eve
 | DEV-1006 | DEV-10 | `openspec/changes/archive/2026-10-31-dev-1006-auth`              | `feature/backend/DEV-1006-auth`            | #7  | `2467934` 22:35 | `c0299fd` 22:38             | `390dee1` 23:39 |
 | DEV-1007 | DEV-11 | `openspec/changes/archive/2026-11-01-dev-1007-projects`          | `feature/projects/DEV-1007-projects`       | #9  | `1a295fe` 00:02 | `d999451` 00:05             | `95166cf` 13:17 |
 | DEV-1008 | DEV-12 | `openspec/changes/archive/2026-11-01-dev-1008-tasks`             | `feature/tasks/DEV-1008-tasks`             | #8  | `6d0ce14` 00:40 | `d8a54e8` 00:42             | `09cca24` 13:52 |
+| DEV-1009 | DEV-13 | `openspec/changes/archive/2026-11-01-dev-1009-task-filtering`    | `feature/tasks/DEV-1009-task-filtering`    | #10 | `e9c78a1` 14:30 | `f4387e7` 14:33             | `3aa62e6` 15:13 |
 
 Notes:
 
