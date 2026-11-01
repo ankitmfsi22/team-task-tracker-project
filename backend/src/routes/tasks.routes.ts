@@ -4,6 +4,7 @@ import {
   ChangeTaskStatusRequestSchema,
   CreateTaskRequestSchema,
   ProjectIdParamsSchema,
+  TaskListQuerySchema,
   TaskParamsSchema,
   UpdateTaskRequestSchema,
 } from '@team-task-tracker/shared';
@@ -30,6 +31,13 @@ export function createTasksRouter(
     validate({ params: ProjectIdParamsSchema, body: CreateTaskRequestSchema }),
     projectAccess(prisma, { write: true }),
     controller.create,
+  );
+  router.get(
+    '/',
+    auth,
+    validate({ params: ProjectIdParamsSchema, query: TaskListQuerySchema }),
+    projectAccess(prisma),
+    controller.list,
   );
   router.get(
     '/:taskId',

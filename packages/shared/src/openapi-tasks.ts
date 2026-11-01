@@ -3,6 +3,8 @@ import {
   AssignTaskRequestSchema,
   ChangeTaskStatusRequestSchema,
   CreateTaskRequestSchema,
+  TaskListQuerySchema,
+  TaskListResponseSchema,
   TaskResponseSchema,
   UpdateTaskRequestSchema,
 } from './tasks.js';
@@ -29,6 +31,19 @@ const uuidParam = (name: string): JsonObject => ({
   schema: { type: 'string', format: 'uuid' },
 });
 
+// One query parameter per property of the strict list query schema (input side, so defaults stay optional).
+const queryParams = (schema: z.ZodType): JsonObject[] => {
+  const { properties = {} } = z.toJSONSchema(schema, { io: 'input' }) as {
+    properties?: Record<string, unknown>;
+  };
+  return Object.entries(properties).map(([name, paramSchema]) => ({
+    name,
+    in: 'query',
+    required: false,
+    schema: paramSchema,
+  }));
+};
+
 const bearer = [{ bearerAuth: [] }];
 const params = [uuidParam('projectId'), uuidParam('taskId')];
 const invalid = errorResponse('Validation error');
@@ -45,6 +60,20 @@ export function buildTaskPaths(): JsonObject {
   const base = '/api/v1/projects/{projectId}/tasks';
   return {
     [base]: {
+      get: {
+        summary: 'List tasks with filters, sorting and pagination (any member)',
+        security: bearer,
+        parameters: [uuidParam('projectId'), ...queryParams(TaskListQuerySchema)],
+        responses: {
+          '200': {
+            description: 'A page of tasks with pagination metadata',
+            content: json({ $ref: '#/components/schemas/TaskListResponse' }),
+          },
+          '400': invalid,
+          '401': unauthenticated,
+          '404': projectNotFound,
+        },
+      },
       post: {
         summary: 'Create a task with status TODO (any member)',
         security: bearer,
@@ -133,5 +162,8 @@ export function buildTaskPaths(): JsonObject {
 }
 
 export function buildTaskComponentSchemas(): JsonObject {
-  return { TaskResponse: z.toJSONSchema(TaskResponseSchema) };
+  return {
+    TaskResponse: z.toJSONSchema(TaskResponseSchema),
+    TaskListResponse: z.toJSONSchema(TaskListResponseSchema),
+  };
 }

@@ -126,7 +126,7 @@ describe('buildOpenApiDocument', () => {
     const paths = asRecord(doc['paths']);
     const methods = (path: string): string[] => Object.keys(asRecord(paths[path])).sort();
     const t = '/api/v1/projects/{projectId}/tasks';
-    expect(methods(t)).toEqual(['post']);
+    expect(methods(t)).toEqual(['get', 'post']);
     expect(methods(`${t}/{taskId}`)).toEqual(['get', 'patch']);
     expect(methods(`${t}/{taskId}/status`)).toEqual(['post']);
     expect(methods(`${t}/{taskId}/assignee`)).toEqual(['put']);
@@ -220,5 +220,31 @@ describe('buildOpenApiDocument', () => {
 
   it('Document matches the schemas: document is JSON-serialisable', () => {
     expect(JSON.parse(JSON.stringify(doc))).toEqual(doc);
+  });
+});
+
+describe('buildOpenApiDocument task list route', () => {
+  const doc = asRecord(buildOpenApiDocument());
+
+  it('OpenAPI describes the list route', () => {
+    const op = operation(doc, '/api/v1/projects/{projectId}/tasks', 'get');
+    const parameters = (op['parameters'] as unknown[]).map((p) => asRecord(p));
+    const query = parameters.filter((p) => p['in'] === 'query').map((p) => p['name']);
+    expect(query).toEqual(
+      expect.arrayContaining([
+        'page',
+        'pageSize',
+        'status',
+        'priority',
+        'assigneeId',
+        'dueFrom',
+        'dueTo',
+        'includeArchived',
+        'sortBy',
+        'sortOrder',
+      ]),
+    );
+    const codes = Object.keys(asRecord(op['responses']));
+    expect(codes).toEqual(expect.arrayContaining(['200', '400', '401', '404']));
   });
 });

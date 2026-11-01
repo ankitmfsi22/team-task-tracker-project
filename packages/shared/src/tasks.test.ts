@@ -11,6 +11,7 @@ import {
   UpdateTaskRequestSchema,
 } from './tasks.js';
 import * as shared from './index.js';
+import { TaskListQuerySchema, TaskListResponseSchema } from './index.js';
 
 const uuid = '123e4567-e89b-42d3-a456-426614174000';
 const uuid2 = '223e4567-e89b-42d3-a456-426614174001';
@@ -189,5 +190,68 @@ describe('TaskResponseSchema', () => {
     expect(TaskResponseSchema.safeParse({ ...task, id: 'nope' }).success).toBe(false);
     expect(TaskResponseSchema.safeParse({ ...task, status: 'X' }).success).toBe(false);
     expect(TaskResponseSchema.safeParse({ ...task, createdById: undefined }).success).toBe(false);
+  });
+});
+
+describe('TaskListQuerySchema', () => {
+  it('Query schema accepts valid and rejects invalid input', () => {
+    expect(TaskListQuerySchema.parse({})).toEqual({
+      page: 1,
+      pageSize: 20,
+      includeArchived: false,
+      sortOrder: 'asc',
+    });
+    expect(
+      TaskListQuerySchema.parse({
+        page: '2',
+        pageSize: '100',
+        status: 'DONE',
+        priority: 'HIGH',
+        assigneeId: uuid,
+        dueFrom: '2030-01-01T00:00:00.000Z',
+        dueTo: '2030-02-01T00:00:00.000Z',
+        includeArchived: 'true',
+        sortBy: 'dueDate',
+        sortOrder: 'desc',
+      }),
+    ).toMatchObject({ page: 2, pageSize: 100, includeArchived: true, sortBy: 'dueDate' });
+    for (const sortBy of ['status', 'priority', 'assignee', 'dueDate']) {
+      expect(TaskListQuerySchema.safeParse({ sortBy }).success).toBe(true);
+    }
+
+    const invalid = [
+      { status: 'X' },
+      { priority: 'X' },
+      { assigneeId: 'nope' },
+      { dueFrom: '2030-01-01' },
+      { dueTo: 'nope' },
+      { dueFrom: '2030-02-01T00:00:00.000Z', dueTo: '2030-01-01T00:00:00.000Z' },
+      { includeArchived: 'yes' },
+      { sortBy: 'title' },
+      { sortOrder: 'up' },
+      { pageSize: '101' },
+      { page: '0' },
+      { unknown: '1' },
+    ];
+    for (const q of invalid) {
+      expect(TaskListQuerySchema.safeParse(q).success).toBe(false);
+    }
+    expect(
+      TaskListQuerySchema.safeParse({
+        dueFrom: '2030-01-01T00:00:00.000Z',
+        dueTo: '2030-01-01T00:00:00.000Z',
+      }).success,
+    ).toBe(true);
+  });
+});
+
+describe('TaskListResponseSchema', () => {
+  it('Query schema accepts valid and rejects invalid input: response envelope', () => {
+    const meta = { page: 1, pageSize: 20, total: 1, totalPages: 1 };
+    expect(TaskListResponseSchema.safeParse({ data: [task], meta }).success).toBe(true);
+    expect(TaskListResponseSchema.safeParse({ data: [{ ...task, id: 'x' }], meta }).success).toBe(
+      false,
+    );
+    expect(TaskListResponseSchema.safeParse({ data: [task] }).success).toBe(false);
   });
 });
