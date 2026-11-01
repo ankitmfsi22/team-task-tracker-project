@@ -3,7 +3,12 @@
 // Pure-function tests of scripts/lib/lighthouse-gate.mjs; no browser is launched.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluateScores, findBrowser, missingBrowserMessage } from '../lib/lighthouse-gate.mjs';
+import {
+  evaluateScores,
+  findBrowser,
+  medianScores,
+  missingBrowserMessage,
+} from '../lib/lighthouse-gate.mjs';
 
 const CATEGORIES = ['performance', 'accessibility', 'best-practices', 'seo'];
 
@@ -82,4 +87,20 @@ test('first existing candidate is used when CHROME_PATH is unset', () => {
     exists: (p) => p !== '/a/chrome',
   });
   assert.equal(found, '/b/edge');
+});
+
+test('medianScores takes the per-category median of the runs and counts null as 0', () => {
+  const median = medianScores([
+    scores({ performance: 0.5, seo: 1 }),
+    scores({ performance: 0.97, seo: 1 }),
+    scores({ performance: 0.99, seo: null }),
+  ]);
+  assert.equal(median.performance, 0.97);
+  assert.equal(median.seo, 1);
+  assert.equal(median.accessibility, 1);
+});
+
+test('medianScores of an even number of runs uses the lower middle score, never the higher', () => {
+  const median = medianScores([scores({ performance: 0.9 }), scores({ performance: 1 })]);
+  assert.equal(median.performance, 0.9);
 });

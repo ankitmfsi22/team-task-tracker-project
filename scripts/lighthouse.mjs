@@ -13,13 +13,15 @@ import {
   CATEGORIES,
   evaluateScores,
   findBrowser,
+  medianScores,
   missingBrowserMessage,
 } from './lib/lighthouse-gate.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const frontendDir = resolve(repoRoot, 'frontend');
-const PREVIEW_PORT = 4173;
 const SESSION_HINT_KEY = 'ttt.session';
+// Each page is audited this many times and the median score is gated (scores vary with machine load).
+const RUNS_PER_PAGE = 5;
 
 // seedSession: the page needs a signed-in session, so the session hint is set before the audit.
 // DEV-1012 appends its task list page here.
@@ -95,7 +97,19 @@ async function waitForServer(url, attempts = 60) {
   throw new Error(`Server did not start: ${url}`);
 }
 
-function startPreview(backendUrl) {
+// A free port per run, so two worktrees (or a dev server on 4173) never share a preview server.
+function findFreePort() {
+  return new Promise((resolvePort, reject) => {
+    const probe = createServer();
+    probe.once('error', reject);
+    probe.listen(0, '127.0.0.1', () => {
+      const { port } = probe.address();
+      probe.close(() => resolvePort(port));
+    });
+  });
+}
+
+function startPreview(backendUrl, port) {
   const requireFromFrontend = createRequire(resolve(frontendDir, 'package.json'));
   const viteBin = resolve(
     dirname(requireFromFrontend.resolve('vite/package.json')),
@@ -104,7 +118,7 @@ function startPreview(backendUrl) {
   );
   return spawn(
     process.execPath,
-    [viteBin, 'preview', '--port', String(PREVIEW_PORT), '--strictPort', '--host', '127.0.0.1'],
+    [viteBin, 'preview', '--port', String(port), '--strictPort', '--host', '127.0.0.1'],
     { cwd: frontendDir, env: { ...process.env, BACKEND_URL: backendUrl }, stdio: 'ignore' },
   );
 }
@@ -158,6 +172,15 @@ async function auditPage(chromePort, origin, { path, seedSession }) {
   const scores = {};
   for (const category of CATEGORIES)
     scores[category] = run?.lhr.categories[category]?.score ?? null;
+  // Diagnostics for a low score: a runtime error or the slow metric explains it without a re-run.
+  if (run?.lhr.runtimeError || (scores.performance ?? 0) < 0.95) {
+    const audits = run?.lhr.audits ?? {};
+    const metrics = ['first-contentful-paint', 'largest-contentful-paint', 'total-blocking-time']
+      .map((id) => `${id}=${audits[id]?.displayValue ?? 'n/a'}`)
+      .join(' ');
+    const error = run?.lhr.runtimeError;
+    console.error(`[${path}] ${metrics}${error ? ` runtimeError=${error.code}` : ''}`);
+  }
   return { page: path, scores };
 }
 
@@ -174,8 +197,9 @@ async function main() {
 
   runBuild();
   const stub = await startStubApi();
-  const preview = startPreview(`http://127.0.0.1:${stub.address().port}`);
-  const origin = `http://127.0.0.1:${PREVIEW_PORT}`;
+  const previewPort = await findFreePort();
+  const preview = startPreview(`http://127.0.0.1:${stub.address().port}`, previewPort);
+  const origin = `http://127.0.0.1:${previewPort}`;
   let chrome;
   try {
     await waitForServer(origin);
@@ -184,7 +208,13 @@ async function main() {
       chromeFlags: ['--headless=new', '--disable-gpu', '--no-sandbox'],
     });
     const results = [];
-    for (const page of PAGES) results.push(await auditPage(chrome.port, origin, page));
+    for (const page of PAGES) {
+      const runs = [];
+      for (let i = 0; i < RUNS_PER_PAGE; i += 1) {
+        runs.push((await auditPage(chrome.port, origin, page)).scores);
+      }
+      results.push({ page: page.path, scores: medianScores(runs) });
+    }
     const { ok, report } = evaluateScores(results);
     console.log(report);
     return ok ? 0 : 1;
