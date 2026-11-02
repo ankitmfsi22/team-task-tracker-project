@@ -252,4 +252,13 @@ describe('Delete comment', () => {
     expect(res.status).toBe(404);
     expect(code(res)).toBe('COMMENT_NOT_FOUND');
   });
+
+  it('Unauthenticated delete is 401 and the comment remains', async () => {
+    const { project, task, comment } = await setupComment();
+
+    const res = await request(app).delete(`${commentsUrl(project.id, task.id)}/${comment.id}`);
+
+    expect(res.status).toBe(401);
+    expect(await prisma.comment.count()).toBe(1);
+  });
 });
