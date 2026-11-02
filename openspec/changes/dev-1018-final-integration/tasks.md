@@ -14,7 +14,7 @@
 
 ## 4. Submission documents (docs)
 
-- [ ] 4.1 Write `docs/SUBMISSION.md`, `docs/DEMO.md` and `docs/RETROSPECTIVE.md` from real evidence in the repo (Linear MCP, git log, review logs, deviations); close out every "Follow-up: DEV-1016/1017/1018" row in `docs/deviations.md`; map scenarios in `docs/testing/scenario-test-map.md`; one commit. No tests for these files; they are checked in 6.1.
+- [x] 4.1 Write `docs/SUBMISSION.md`, `docs/DEMO.md` and `docs/RETROSPECTIVE.md` from real evidence in the repo (Linear MCP, git log, review logs, deviations); close out every "Follow-up: DEV-1016/1017/1018" row in `docs/deviations.md`; map scenarios in `docs/testing/scenario-test-map.md`; one commit. No tests for these files; they are checked in 6.1.
 
 ## 5. Integration run (infra)
 
