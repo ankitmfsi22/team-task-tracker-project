@@ -74,3 +74,27 @@ read-only tools with `--tools` (all five exist in 2.3.9):
 
 No `env` or `headers`, so no secret. `scripts/tests/mcp-config.test.mjs` checks the entry. A Claude Code restart and the
 human's approval of the server are needed before any MCP query.
+
+## Build graphs (task 3.1)
+
+`.code-review-graph/` and `graphify-out/` are git-ignored (`.gitignore`). Both graphs were built on 2026-11-02 at commit
+`71307ad` with `export PATH="$HOME/.local/bin:$PATH"`.
+
+| Tool              | Command                          | Wall time | Reported result                                                               | On disk |
+| ----------------- | -------------------------------- | --------- | ----------------------------------------------------------------------------- | ------- |
+| Code Review Graph | `code-review-graph build`        | 5.7 s     | `Full build: 197 files, 1845 nodes, 20599 edges (postprocess=full)`           | 29 MB   |
+| Graphify          | `graphify extract . --code-only` | 5.9 s     | `1494 nodes, 3584 edges, 86 communities` (209 code files, no LLM, no network) | 1.8 MB  |
+
+Real notes from the output:
+
+- `code-review-graph status` afterwards reports `Nodes: 1830, Edges: 20453, Files: 177`, which differs from the build
+  line above (`1845 / 20599 / 197`). Both numbers are the tool's own; the difference is not explained in its output.
+- Graphify warned: `5 .sql file(s) contributed nothing ... tree_sitter_sql not installed`, and `11 code file(s) yielded
+no symbols` (for example `backend/src/main.ts`, `backend/vitest.config.ts`). It skipped `.npmrc` as potentially
+  sensitive. The `[sql]` extra was not installed (it would add a package).
+- Code Review Graph used file-based community detection (`igraph not available`).
+- `git status` after both builds shows only `.gitignore` and the new evidence file: no git hook, `.claude/settings*`,
+  `CLAUDE.md` or `AGENTS.md` change. `.git/hooks` holds only `*.sample` files and `core.hooksPath` is still Husky.
+
+MCP connection evidence: `docs/evidence/DEV-1015/mcp-connected.md`. The server exposes no build tool (read-only
+allow-list), which is why the graph is built with the CLI.

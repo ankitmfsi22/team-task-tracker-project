@@ -10,11 +10,11 @@
 
 ## 3. Build graphs
 
-- [ ] 3.1 Git-ignore `.code-review-graph/` and `graphify-out/`, build both graphs (`code-review-graph build`, `graphify extract . --code-only`) and record their statistics in `docs/GRAPH-TOOLS.md`; verify `git status` shows no hook, settings or rules-file change.
+- [x] 3.1 Git-ignore `.code-review-graph/` and `graphify-out/`, build both graphs (`code-review-graph build`, `graphify extract . --code-only`) and record their statistics in `docs/GRAPH-TOOLS.md`; verify `git status` shows no hook, settings or rules-file change.
 
 ## 4. Targeted queries
 
-- [ ] 4.1 Run queries for relevant files, dependencies, call relationships and affected tests (comment delete, `projectAccess`) with both tools; paste real output into `docs/GRAPH-TOOLS.md` and confirm each key finding in source with file and line.
+- [x] 4.1 Run queries for relevant files, dependencies, call relationships and affected tests (comment delete, `projectAccess`) with both tools; paste real output into `docs/GRAPH-TOOLS.md` and confirm each key finding in source with file and line.
 
 ## 5. Comparison
 
