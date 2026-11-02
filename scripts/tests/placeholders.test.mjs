@@ -28,7 +28,12 @@ test('E2E placeholder is gone: test:e2e script runs Playwright, not the not-impl
     !script.includes('scripts/not-implemented.mjs'),
     'test:e2e must not name scripts/not-implemented.mjs',
   );
-  assert.ok(script.includes('playwright'), `test:e2e must reference playwright, got: ${script}`);
+  const runner = script.match(/node\s+(\S+\.mjs)/)?.[1];
+  assert.ok(runner, `test:e2e must run a node script, got: ${script}`);
+  assert.ok(
+    readFileSync(resolve(repoRoot, runner), 'utf8').includes('playwright test'),
+    `${runner} must run playwright test`,
+  );
 });
 
 test('Lighthouse is a real gate: root lighthouse script runs scripts/lighthouse.mjs, not the placeholder', () => {
