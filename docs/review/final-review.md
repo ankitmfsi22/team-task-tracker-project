@@ -3,7 +3,7 @@
 - Ticket: DEV-1017 (Linear DEV-21). Change: `openspec/changes/dev-1017-independent-review`.
 - Scope: the whole of `main` (backend, `packages/shared`, frontend, `e2e`, `scripts`, docs), reviewed at commit `d2f5bde` (source identical to `main` at `c8b5535`).
 - Reviewers: `reviewer` and `security-auditor` sub-agents, read-only, fresh contexts, run in parallel. Findings verbatim: `review-log.md` (reviewer) and `docs/evidence/DEV-1017/security-audit.md` (security).
-- Result: 17 findings (13 from the first review, 4 from a second fresh-context review of this change itself), 3 blocking (all fixed), 14 non-blocking (accepted in `docs/deviations.md` D-135 to D-142, or fixed in documentation).
+- Result: 17 findings (13 from the first review, 4 from a second fresh-context review of this change itself), 3 blocking (all fixed), 14 non-blocking (accepted in `docs/deviations.md` D-135 to D-143, or fixed in documentation).
 
 ## 1. Spec compliance
 
@@ -53,4 +53,4 @@ R1, R2, R3: no 401 test for the comments GET list and DELETE (R2), the tasks get
 
 ## 6. Accepted and follow-up
 
-See `docs/deviations.md` D-135 to D-142. Follow-up after submission: D-137, D-138, D-140, and D-019 (the `.claude` permission hook fails open on malformed input). D-019 is recorded as "Follow-up: post-submission" and not implemented here; no file under `.claude/` changed.
+See `docs/deviations.md` D-135 to D-143. Follow-up after submission: D-137, D-138, D-140, and D-019 (the `.claude` permission hook fails open on malformed input). D-019 is recorded as "Follow-up: post-submission" and not implemented here; no file under `.claude/` changed.
