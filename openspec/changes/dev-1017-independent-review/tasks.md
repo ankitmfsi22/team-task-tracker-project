@@ -10,7 +10,7 @@
 
 ## 3. Fix blocking, accept the rest
 
-- [ ] 3.1 Classify every finding in source; for each blocking one: test-writer first, fix, own commit, status "Fixed" in `review-log.md`; add each non-blocking one to `docs/deviations.md` as an accepted deviation (status "Accepted"). If a fix needs an API or schema change, stop for `/opsx:update`.
+- [x] 3.1 Classify every finding in source; for each blocking one: test-writer first, fix, own commit, status "Fixed" in `review-log.md`; add each non-blocking one to `docs/deviations.md` as an accepted deviation (status "Accepted"). If a fix needs an API or schema change, stop for `/opsx:update`.
 
 ## 4. Final report and verification
 

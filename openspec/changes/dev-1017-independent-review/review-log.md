@@ -55,3 +55,25 @@ Role rules in source: projects, `PATCH` / `archive` / member add / member remove
 ## Security-auditor report
 
 Verbatim in `docs/evidence/DEV-1017/security-audit.md` (8 findings, none marked blocking).
+
+## Disposition
+
+Written by the main session after checking each finding in source. The verbatim sections above are unchanged. IDs: R1-R5 are the reviewer rows in order; S1-S8 are the security-auditor rows in order (`docs/evidence/DEV-1017/security-audit.md`).
+
+| ID  | Severity | file:line                                                      | Blocking | Checked in source                                                                                                   | Status                                       |
+| --- | -------- | -------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| R1  | Medium   | backend/src/routes/tasks.routes.ts:42-76                       | no       | Confirmed: 401 tests only for create and list. Already accepted by D-067; `authenticate` also runs at router level | Accepted (D-134)                             |
+| R2  | Medium   | backend/src/routes/comments.routes.ts:38-55                    | yes      | Confirmed: no 401 test for GET list or DELETE (`comments.*.integration.test.ts`); untested authorization path       | Fixed f871252 (D-141 explains the test-only fix) |
+| R3  | Low      | backend/src/routes/projects.routes.ts:24                       | no       | Confirmed: one router-level guard, 401 tested on POST and GET                                                       | Accepted (D-134)                             |
+| R4  | Low      | backend/src/routes/tasks.routes.ts:50-70                       | no       | Confirmed: no 409-on-archived test for patch, status, assignee, comment delete                                      | Accepted (D-134)                             |
+| R5  | Low      | docs/testing/scenario-test-map.md:121                          | no       | Confirmed: row names one of two tests; the nonexistent-id test exists at `projects.integration.test.ts:228`         | Accepted (D-135)                             |
+| S1  | Medium   | backend/src/routes/auth.routes.ts:12-15, backend/src/app.ts:25-58 | no   | Confirmed: no rate limiter or helmet in `app.ts`; new package needs approval                                        | Follow-up: post-submission (D-136)           |
+| S2  | Low      | backend/src/config.ts:17-22                                    | no       | Confirmed: `required()` only (`config.ts:19-21`)                                                                    | Follow-up: post-submission (D-137)           |
+| S3  | Low      | backend/src/services/auth.service.ts:49                        | no       | Confirmed: 409 CONFLICT at `auth.service.ts:49` (409 is the project conflict status)                                                                 | Accepted (D-138)                             |
+| S4  | Low      | backend/src/services/projects.service.ts:113-114               | no       | Confirmed: 404 USER_NOT_FOUND at `projects.service.ts:114`, OWNER-only route                                                                               | Accepted (D-138)                             |
+| S5  | Low      | backend/src/services/auth.service.ts:71-86                     | no       | Confirmed: rotation is a conditional `updateMany`; no family revoke (`auth.service.ts:75-84`)                       | Follow-up: post-submission (D-139)           |
+| S6  | Low      | backend/src/middleware/validate.ts:22-24                       | no       | Confirmed by reviewer too (D-058, D-073, D-083)                                                                     | Accepted (D-140)                             |
+| S7  | Low      | backend/src/app.ts:28                                          | no       | Not checked beyond the auditor's line read (`app.ts:28`); default limits                                                                                 | Follow-up: post-submission (D-136)           |
+| S8  | Info     | backend/src/services/tasks.service.ts:190-203                  | no       | Checked against `docs/FRS.md` FR-TSK-5 and the decision at line 51: any member may archive tasks; no defect          | No finding (matches FRS)                     |
+
+Counts: 13 findings, 1 blocking (R2, fixed), 12 non-blocking (none fixed here, by scope; 4 accepted as follow-up after submission, the rest accepted). Every finding has a final status. D-019 is recorded as "Follow-up: post-submission" in `docs/deviations.md` and is not a finding of this review.
