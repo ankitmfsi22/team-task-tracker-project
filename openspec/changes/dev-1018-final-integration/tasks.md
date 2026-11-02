@@ -2,7 +2,7 @@
 
 ## 1. Seed data (backend)
 
-- [ ] 1.1 Test-writer first, from the `demo-seed-data` scenarios (usable, idempotent, missing password, production denied), then implement `backend/src/seed.ts` and the `db:seed` script; no new package; one commit.
+- [x] 1.1 Test-writer first, from the `demo-seed-data` scenarios (usable, idempotent, missing password, production denied), then implement `backend/src/seed.ts` and the `db:seed` script; no new package; one commit.
 
 ## 2. Docker (infra)
 
