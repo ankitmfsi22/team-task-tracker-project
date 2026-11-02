@@ -6,6 +6,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TaskDetailPage } from '@/pages/task-detail';
 import { renderWithProviders } from '@/test/render';
 
+vi.mock('@/lib/auth/auth-context', () => ({
+  useAuth: () => ({
+    status: 'authenticated',
+    user: {
+      id: '00000000-0000-4000-8000-000000000001',
+      email: 'viewer@example.com',
+      name: 'Viewer',
+    },
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+  }),
+}));
+
 const PROJECT_ID = '3f1c2b4e-5a6d-4e7f-8a9b-0c1d2e3f4a5b';
 const TASK_ID = 'a1111111-1111-4111-8111-111111111111';
 const OWNER_ID = '9b2e3d4f-5c6a-4b7c-8d8e-9f0a1b2c3d4e';
@@ -270,7 +283,9 @@ describe('Edit task form', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Write docs' }),
     ).toBeInTheDocument();
-    expect(await screen.findByText(/Archived/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Archived: this (task|project) is read-only/),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
   });
 
@@ -281,7 +296,9 @@ describe('Edit task form', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Write docs' }),
     ).toBeInTheDocument();
-    expect(await screen.findByText(/Archived/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Archived: this (task|project) is read-only/),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Edit' })).not.toBeInTheDocument();
   });
 });

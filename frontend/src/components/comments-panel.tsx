@@ -1,13 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CreateCommentRequestSchema } from '@team-task-tracker/shared';
+import {
+  CreateCommentRequestSchema,
+  UpdateCommentRequestSchema,
+  type CommentResponse,
+} from '@team-task-tracker/shared';
 import { useState, type FormEvent } from 'react';
 import { fieldErrorsFrom, type FieldErrors } from '@/components/form-field';
 import { EmptyState, ErrorState, LoadingState } from '@/components/states';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { ApiError } from '@/lib/api/client';
-import { createComment, listComments } from '@/lib/api/comments';
+import { createComment, deleteComment, listComments, updateComment } from '@/lib/api/comments';
+import { useAuth } from '@/lib/auth/auth-context';
+import { commentPermissions } from '@/lib/comment-permissions';
 
 const PAGE_SIZE = 20;
 
@@ -25,16 +38,173 @@ function formatTimestamp(value: string): string {
   return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
 }
 
-export function CommentsPanel({
+function describeChangeError(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.status === 403) return 'You do not have permission';
+    if (error.status === 409) return 'This task is archived and its comments are read-only.';
+    if (error.status === 404) return 'Not found';
+  }
+  return 'Something went wrong';
+}
+
+function CommentItem({
   projectId,
   taskId,
-  canComment,
+  comment,
+  canEdit,
+  canDelete,
+  onDeleted,
 }: {
   projectId: string;
   taskId: string;
-  canComment: boolean;
+  comment: CommentResponse;
+  canEdit: boolean;
+  canDelete: boolean;
+  onDeleted: () => void;
 }) {
   const queryClient = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(comment.body);
+  const [fieldError, setFieldError] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const editId = `edit-comment-${comment.id}`;
+
+  const updateMutation = useMutation({
+    mutationFn: (body: string) => updateComment(projectId, taskId, comment.id, { body }),
+    onSuccess: async () => {
+      setEditing(false);
+      await queryClient.invalidateQueries({ queryKey: ['comments', projectId, taskId] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteComment(projectId, taskId, comment.id),
+    onSettled: () => setConfirmingDelete(false),
+    onSuccess: async () => {
+      onDeleted();
+      await queryClient.invalidateQueries({ queryKey: ['comments', projectId, taskId] });
+    },
+  });
+
+  function startEdit() {
+    setText(comment.body);
+    setFieldError(false);
+    updateMutation.reset();
+    setEditing(true);
+  }
+
+  function onSave(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const parsed = UpdateCommentRequestSchema.safeParse({ body: text });
+    if (!parsed.success) {
+      setFieldError(true);
+      return;
+    }
+    setFieldError(false);
+    updateMutation.mutate(parsed.data.body);
+  }
+
+  return (
+    <li className="flex flex-col gap-1 rounded-md border p-3">
+      <div className="flex flex-wrap items-baseline gap-2 text-sm">
+        <span className="font-medium">{comment.author.name}</span>
+        <time dateTime={comment.createdAt} className="text-muted-foreground">
+          {formatTimestamp(comment.createdAt)}
+        </time>
+      </div>
+      {editing ? (
+        <form onSubmit={onSave} noValidate className="flex flex-col gap-2">
+          {updateMutation.isError ? (
+            <Alert variant="destructive">{describeChangeError(updateMutation.error)}</Alert>
+          ) : null}
+          <Label htmlFor={editId}>Edit comment</Label>
+          <textarea
+            id={editId}
+            rows={3}
+            className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+            value={text}
+            aria-invalid={fieldError ? true : undefined}
+            aria-describedby={fieldError ? `${editId}-error` : undefined}
+            onChange={(event) => setText(event.target.value)}
+          />
+          {fieldError ? (
+            <p id={`${editId}-error`} className="text-sm text-destructive">
+              Enter a comment of 1 to 2000 characters
+            </p>
+          ) : null}
+          <div className="flex gap-2">
+            <Button type="submit" disabled={updateMutation.isPending}>
+              Save comment
+            </Button>
+            <Button type="button" variant="outline" onClick={() => setEditing(false)}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <p className="whitespace-pre-wrap text-sm">{comment.body}</p>
+      )}
+      {deleteMutation.isError ? (
+        <Alert variant="destructive">{describeChangeError(deleteMutation.error)}</Alert>
+      ) : null}
+      {!editing && (canEdit || canDelete) ? (
+        <div className="flex gap-2">
+          {canEdit ? (
+            <Button type="button" variant="outline" size="sm" onClick={startEdit}>
+              Edit
+            </Button>
+          ) : null}
+          {canDelete ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                deleteMutation.reset();
+                setConfirmingDelete(true);
+              }}
+            >
+              Delete
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
+      <Dialog open={confirmingDelete} onOpenChange={setConfirmingDelete}>
+        <DialogContent>
+          <DialogTitle>Delete this comment?</DialogTitle>
+          <DialogDescription>This permanently removes the comment.</DialogDescription>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setConfirmingDelete(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={deleteMutation.isPending}
+              onClick={() => deleteMutation.mutate()}
+            >
+              Confirm delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </li>
+  );
+}
+
+export function CommentsPanel({
+  projectId,
+  taskId,
+  archived,
+  role,
+}: {
+  projectId: string;
+  taskId: string;
+  archived: boolean;
+  role: 'OWNER' | 'MEMBER' | undefined;
+}) {
+  const queryClient = useQueryClient();
+  const userId = useAuth().user?.id;
   const [page, setPage] = useState(1);
   const [text, setText] = useState('');
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -82,17 +252,27 @@ export function CommentsPanel({
       ) : null}
       {query.isSuccess && query.data.data.length > 0 ? (
         <ul className="flex flex-col gap-3">
-          {query.data.data.map((comment) => (
-            <li key={comment.id} className="flex flex-col gap-1 rounded-md border p-3">
-              <div className="flex flex-wrap items-baseline gap-2 text-sm">
-                <span className="font-medium">{comment.author.name}</span>
-                <time dateTime={comment.createdAt} className="text-muted-foreground">
-                  {formatTimestamp(comment.createdAt)}
-                </time>
-              </div>
-              <p className="whitespace-pre-wrap text-sm">{comment.body}</p>
-            </li>
-          ))}
+          {query.data.data.map((comment) => {
+            const { canEdit, canDelete } = commentPermissions({
+              userId,
+              role,
+              comment,
+              archived,
+            });
+            return (
+              <CommentItem
+                key={comment.id}
+                projectId={projectId}
+                taskId={taskId}
+                comment={comment}
+                canEdit={canEdit}
+                canDelete={canDelete}
+                onDeleted={() => {
+                  if (page > 1 && query.data.data.length === 1) setPage(page - 1);
+                }}
+              />
+            );
+          })}
         </ul>
       ) : null}
       {totalPages > 1 ? (
@@ -117,7 +297,8 @@ export function CommentsPanel({
           </Button>
         </div>
       ) : null}
-      {canComment ? (
+      {archived ? <p className="text-sm font-medium">Archived: comments are read-only.</p> : null}
+      {!archived ? (
         <form onSubmit={onSubmit} noValidate className="flex flex-col gap-2">
           {mutation.isError ? (
             <Alert variant="destructive">{describeAddError(mutation.error)}</Alert>

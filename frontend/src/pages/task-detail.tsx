@@ -194,7 +194,12 @@ export function TaskDetailPage() {
           </Dialog>
         </div>
       ) : null}
-      <CommentsPanel projectId={projectId} taskId={taskId} canComment={editable} />
+      <CommentsPanel
+        projectId={projectId}
+        taskId={taskId}
+        archived={task.archivedAt !== null || (project?.archivedAt ?? null) !== null}
+        role={project?.role}
+      />
       {/* Outside the editable block so a 409 message stays visible after the task reloads. */}
       <TaskFormDialog
         mode="edit"

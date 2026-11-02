@@ -6,6 +6,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TaskDetailPage } from '@/pages/task-detail';
 import { renderWithProviders } from '@/test/render';
 
+vi.mock('@/lib/auth/auth-context', () => ({
+  useAuth: () => ({
+    status: 'authenticated',
+    user: {
+      id: '00000000-0000-4000-8000-000000000001',
+      email: 'viewer@example.com',
+      name: 'Viewer',
+    },
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+  }),
+}));
+
 const PROJECT_ID = '3f1c2b4e-5a6d-4e7f-8a9b-0c1d2e3f4a5b';
 const TASK_ID = 'a1111111-1111-4111-8111-111111111111';
 const MEMBER_ID = '7a1d2c3e-4b5f-4a6b-9c7d-8e9f0a1b2c3d';
@@ -239,7 +252,9 @@ describe('TaskDetailPage actions', () => {
       expect(mutationCalls().filter((c) => c.pathname === `${TASK_PATH}/archive`)).toHaveLength(1);
     });
     expect(mutationCalls()[0]?.method).toBe('POST');
-    expect(await screen.findByText(/Archived/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Archived: this (task|project) is read-only/),
+    ).toBeInTheDocument();
   });
 
   it('sends no request when the archive confirmation is cancelled', async () => {
@@ -277,7 +292,9 @@ describe('TaskDetailPage actions', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Write docs' }),
     ).toBeInTheDocument();
-    expect(await screen.findByText(/Archived/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Archived: this (task|project) is read-only/),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /^Move to / })).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Assign to')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Archive' })).not.toBeInTheDocument();
@@ -290,7 +307,9 @@ describe('TaskDetailPage actions', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Write docs' }),
     ).toBeInTheDocument();
-    expect(await screen.findByText(/Archived/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Archived: this (task|project) is read-only/),
+    ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /^Move to / })).not.toBeInTheDocument();
     expect(screen.queryByLabelText('Assign to')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Archive' })).not.toBeInTheDocument();

@@ -4,7 +4,9 @@ import {
   type CommentListResponse,
   type CommentResponse,
   type CreateCommentRequest,
+  type UpdateCommentRequest,
 } from '@team-task-tracker/shared';
+import { z } from 'zod';
 import { apiFetch } from './client';
 
 const commentsPath = (projectId: string, taskId: string) =>
@@ -33,5 +35,29 @@ export function createComment(
     method: 'POST',
     body,
     schema: CommentResponseSchema,
+  });
+}
+
+export function updateComment(
+  projectId: string,
+  taskId: string,
+  commentId: string,
+  body: UpdateCommentRequest,
+): Promise<CommentResponse> {
+  return apiFetch(`${commentsPath(projectId, taskId)}/${commentId}`, {
+    method: 'PATCH',
+    body,
+    schema: CommentResponseSchema,
+  });
+}
+
+export function deleteComment(
+  projectId: string,
+  taskId: string,
+  commentId: string,
+): Promise<undefined> {
+  return apiFetch(`${commentsPath(projectId, taskId)}/${commentId}`, {
+    method: 'DELETE',
+    schema: z.undefined(),
   });
 }
