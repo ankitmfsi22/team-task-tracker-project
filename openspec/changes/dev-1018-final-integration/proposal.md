@@ -25,6 +25,7 @@ DEV-1018 (Linear DEV-22) is the final integration. Checked against ASSIGNMENT.md
 ### Modified Capabilities
 - `local-dev-environment`: "Compose scope" now covers the app services as well as PostgreSQL.
 - `dependency-pinning`: GitHub Actions are pinned to commit SHAs and Dockerfile base images are pinned to exact tags.
+- `workspace-quality-gates`: the CI requirement and its "Actions are pinned" scenario now say commit SHA with the version tag as a comment (Gate 1 amendment, D-144).
 
 ## Impact
 
