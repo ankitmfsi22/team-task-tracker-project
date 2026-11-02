@@ -14,6 +14,10 @@ Every ticket follows one lifecycle. Rules: `CLAUDE.md`. Evidence per ticket: `do
 8. **Gate 2**: the human approves the PR and adds a Gate 2 entry (`Approved`) to `approvals.md`.
 9. `/opsx:sync`, then `/opsx:archive`, then append the row to `docs/traceability.md`. `node scripts/check-changes.mjs` (run through its node:test in `pnpm test` and CI) fails if an archived change lacks an artifact, a gate approval or has an `Open` finding.
 
+## Parallel tickets
+
+`[PARALLEL]` tickets use one git worktree and branch each, cut from the approved contract commit: `docs/WORKTREES.md`.
+
 ## Why sync and archive run on the feature branch
 
 `main` is push-protected, so nothing can be archived after merge. Verify, sync and archive therefore run in that order on the feature branch right after Gate 2, before the merge (D-033).

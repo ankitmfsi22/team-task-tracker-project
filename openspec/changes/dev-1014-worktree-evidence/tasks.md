@@ -10,7 +10,7 @@
 
 ## 3. Cross-links and deviations
 
-- [ ] 3.1 Link `docs/WORKTREES.md` from `docs/workflow.md` and append the DEV-1014 rows to `docs/deviations.md` (file name, pair 2 contract limit); verify the links resolve and numbering continues from the last D-number.
+- [x] 3.1 Link `docs/WORKTREES.md` from `docs/workflow.md` and append the DEV-1014 rows to `docs/deviations.md` (file name, pair 2 contract limit); verify the links resolve and numbering continues from the last D-number.
 
 ## 4. Gates
 
