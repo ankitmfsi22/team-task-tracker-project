@@ -14,7 +14,7 @@
 
 ## 4. Gates
 
-- [ ] 4.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format:check` and `openspec validate dev-1014-worktree-evidence --strict`; verify all exit 0.
+- [x] 4.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format:check` and `openspec validate dev-1014-worktree-evidence --strict`; verify all exit 0.
 
 ## Workflow follow-up
 
