@@ -82,7 +82,8 @@ test('Key commands still mention openspec validate and the integration gate rule
   assert.ok(body.includes('Build, lint, typecheck and test MUST all pass'));
 });
 
-for (const name of ['format:check', 'test:e2e']) {
+// e2e needs services (Docker, browser, build) and runs as its own gate.
+for (const name of ['format:check']) {
   test(`pnpm ${name} runs and exits 0`, () => {
     const r = spawnSync(`pnpm ${name}`, { cwd: repoRoot, shell: true, encoding: 'utf8' });
     assert.equal(r.status, 0, `pnpm ${name} exit ${r.status}\n${r.stdout}\n${r.stderr}`);
