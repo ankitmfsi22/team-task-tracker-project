@@ -93,7 +93,7 @@ The repository SHALL store text files with LF endings, enforced by `.gitattribut
 - **THEN** the check exits non-zero
 
 ### Requirement: Continuous integration runs the gates
-A GitHub Actions workflow `.github/workflows/ci.yml` SHALL run the quality gates on every pull request and on every push to `main`, using Node and pnpm versions from the repository and only exactly pinned actions.
+A GitHub Actions workflow `.github/workflows/ci.yml` SHALL run the quality gates on every pull request and on every push to `main`, using Node and pnpm versions from the repository and only actions pinned to a full commit SHA, with the version tag kept as a trailing comment.
 
 #### Scenario: Workflow triggers and steps
 - **WHEN** `.github/workflows/ci.yml` is inspected
@@ -101,7 +101,7 @@ A GitHub Actions workflow `.github/workflows/ci.yml` SHALL run the quality gates
 
 #### Scenario: Actions are pinned
 - **WHEN** every `uses:` reference in the workflow is inspected
-- **THEN** each is an exact version tag, with no `latest`, `main` or floating major tag
+- **THEN** each is a full 40-character commit SHA with its version tag in a trailing comment, with no `latest`, `main`, floating major tag or tag-only reference
 
 #### Scenario: Versions come from the repository
 - **WHEN** the workflow's Node and pnpm setup is inspected
