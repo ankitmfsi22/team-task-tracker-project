@@ -105,6 +105,45 @@ test('duplicate scenario titles in two capabilities are matched per capability',
   assert.match(problems[0], /Same title/);
 });
 
+test('multi-clause row naming two existing tests yields no problems', () => {
+  const opts = fixture({
+    specs: { alpha: ['One'] },
+    files: {
+      'tests/a.test.ts': "it('does one');",
+      'tests/b.test.ts': "it('does two');",
+    },
+    rows: [['alpha', 'One', 'tests/a.test.ts : does one; tests/b.test.ts : does two']],
+  });
+  assert.deepEqual(checkScenarioMap(opts), []);
+});
+
+test('multi-clause row with a missing second test name fails the check', () => {
+  const opts = fixture({
+    specs: { alpha: ['One'] },
+    files: {
+      'tests/a.test.ts': "it('does one');",
+      'tests/b.test.ts': "it('something else');",
+    },
+    rows: [['alpha', 'One', 'tests/a.test.ts : does one; tests/b.test.ts : does two']],
+  });
+  const problems = checkScenarioMap(opts);
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /One/);
+  assert.match(problems[0], /does two/);
+});
+
+test('multi-clause row with a missing second file fails the check', () => {
+  const opts = fixture({
+    specs: { alpha: ['One'] },
+    files: { 'tests/a.test.ts': "it('does one');" },
+    rows: [['alpha', 'One', 'tests/a.test.ts : does one; tests/gone.test.ts : does two']],
+  });
+  const problems = checkScenarioMap(opts);
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /One/);
+  assert.match(problems[0], /test file tests\/gone\.test\.ts does not exist/);
+});
+
 test('real repo: every scenario is mapped to an existing test', () => {
   const specDirs = ['openspec/specs', 'openspec/changes/dev-1016-testing/specs'].filter((d) =>
     existsSync(resolve(realRoot, d)),

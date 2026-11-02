@@ -50,16 +50,19 @@ export function checkScenarioMap({ repoRoot, specDirs, mapPath }) {
       continue;
     }
     if (/^review:\s*\S/.test(row.test)) continue;
-    const at = row.test.lastIndexOf(' : ');
-    const testFile = at === -1 ? row.test : row.test.slice(0, at).trim();
-    const testName = at === -1 ? '' : row.test.slice(at + 3).trim();
     const where = `row "${title}" (capability ${capability})`;
-    if (!testFile || !testName) {
-      problems.push(`${where}: test must be "<file> : <test name>" or "review: <what>"`);
-    } else if (!existsSync(join(repoRoot, testFile))) {
-      problems.push(`${where}: test file ${testFile} does not exist`);
-    } else if (!readFileSync(join(repoRoot, testFile), 'utf8').includes(testName)) {
-      problems.push(`${where}: test name "${testName}" not found in ${testFile}`);
+    // A multi-clause scenario may name one test per clause, separated by "; ".
+    for (const part of row.test.split(/;\s+(?=\S+ : )/)) {
+      const at = part.lastIndexOf(' : ');
+      const testFile = at === -1 ? part.trim() : part.slice(0, at).trim();
+      const testName = at === -1 ? '' : part.slice(at + 3).trim();
+      if (!testFile || !testName) {
+        problems.push(`${where}: test must be "<file> : <test name>" or "review: <what>"`);
+      } else if (!existsSync(join(repoRoot, testFile))) {
+        problems.push(`${where}: test file ${testFile} does not exist`);
+      } else if (!readFileSync(join(repoRoot, testFile), 'utf8').includes(testName)) {
+        problems.push(`${where}: test name "${testName}" not found in ${testFile}`);
+      }
     }
   }
   return problems;
