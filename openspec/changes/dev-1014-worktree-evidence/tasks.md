@@ -2,7 +2,7 @@
 
 ## 1. Worktree guide
 
-- [ ] 1.1 Write `docs/WORKTREES.md` (commands, layout, merge and conflict steps, post-integration gates, links to the evidence); verify with the "Worktree guide" scenarios and `pnpm format:check`.
+- [x] 1.1 Write `docs/WORKTREES.md` (commands, layout, merge and conflict steps, post-integration gates, links to the evidence); verify with the "Worktree guide" scenarios and `pnpm format:check`.
 
 ## 2. Consolidated evidence
 
