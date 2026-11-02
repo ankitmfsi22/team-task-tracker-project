@@ -315,3 +315,26 @@ describe('Archived project members are read-only', () => {
     expect(await memberCount(project.id)).toBe(2);
   });
 });
+
+describe('Unauthenticated project routes', () => {
+  it.each([
+    ['GET /projects', 'get', () => '/api/v1/projects'],
+    ['PATCH /projects/:projectId', 'patch', (id: string) => `/api/v1/projects/${id}`],
+    ['POST /projects/:projectId/archive', 'post', (id: string) => `/api/v1/projects/${id}/archive`],
+    ['GET /projects/:projectId/members', 'get', (id: string) => base(id)],
+    ['POST /projects/:projectId/members', 'post', (id: string) => base(id)],
+    [
+      'DELETE /projects/:projectId/members/:userId',
+      'delete',
+      (id: string) => `${base(id)}/00000000-0000-4000-8000-000000000000`,
+    ],
+  ] as const)('Unauthenticated %s is 401', async (_label, method, url) => {
+    const owner = await makeUser('owner@example.com');
+    const project = await ownedProject(owner);
+
+    const res = await request(app)[method](url(project.id)).send({});
+
+    expect(res.status).toBe(401);
+    expect(await memberCount(project.id)).toBe(1);
+  });
+});

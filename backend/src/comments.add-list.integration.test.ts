@@ -262,4 +262,14 @@ describe('List comments', () => {
       expect(code(res)).toBe('VALIDATION_ERROR');
     },
   );
+
+  it('Unauthenticated list is 401', async () => {
+    const { member, project, task } = await setup();
+    await makeComment(task.id, member.id, 'secret', new Date());
+
+    const res = await request(app).get(commentsUrl(project.id, task.id));
+
+    expect(res.status).toBe(401);
+    expect(res.body).not.toHaveProperty('data');
+  });
 });

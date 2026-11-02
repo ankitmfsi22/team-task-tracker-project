@@ -316,3 +316,29 @@ describe('View task', () => {
     expect(code(res)).toBe('VALIDATION_ERROR');
   });
 });
+
+describe('Unauthenticated task routes', () => {
+  it.each([
+    ['GET /:taskId', 'get', (p: string, t: string) => taskUrl(p, t)],
+    ['PATCH /:taskId', 'patch', (p: string, t: string) => taskUrl(p, t)],
+    ['POST /:taskId/status', 'post', (p: string, t: string) => `${taskUrl(p, t)}/status`],
+    ['PUT /:taskId/assignee', 'put', (p: string, t: string) => `${taskUrl(p, t)}/assignee`],
+    ['POST /:taskId/archive', 'post', (p: string, t: string) => `${taskUrl(p, t)}/archive`],
+  ] as const)('Unauthenticated %s is 401', async (_label, method, url) => {
+    const { member, project } = await setup();
+    const task = await makeTask(project.id, member.id);
+
+    const res = await request(app)[method](url(project.id, task.id)).send({
+      title: 'Changed',
+      status: 'DONE',
+      assigneeId: member.id,
+    });
+
+    expect(res.status).toBe(401);
+    const after = await prisma.task.findUniqueOrThrow({ where: { id: task.id } });
+    expect(after.title).toBe('Existing');
+    expect(after.status).toBe('TODO');
+    expect(after.assigneeId).toBeNull();
+    expect(after.archivedAt).toBeNull();
+  });
+});
