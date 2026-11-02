@@ -6,7 +6,7 @@
 
 ## 2. Graph-assisted impact
 
-- [ ] 2.1 Rebuild Code Review Graph at the current commit; get impact radius and affected tests for project-access, auth/refresh and comment permissions; confirm each claim in source with `file:line`; save raw output in `docs/evidence/DEV-1017/graph.md`; check Context7 only if a graph tool's usage is unclear.
+- [x] 2.1 Rebuild Code Review Graph at the current commit; get impact radius and affected tests for project-access, auth/refresh and comment permissions; confirm each claim in source with `file:line`; save raw output in `docs/evidence/DEV-1017/graph.md`; check Context7 only if a graph tool's usage is unclear.
 
 ## 3. Fix blocking, accept the rest
 
