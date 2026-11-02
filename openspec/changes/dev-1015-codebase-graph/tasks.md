@@ -18,7 +18,7 @@
 
 ## 5. Comparison
 
-- [ ] 5.1 Run the task and the review once without and once with the graph; record tokens, files examined, time and findings from real session data in `docs/TOKEN-REPORT.md` with method and limitations ("not measured" where unreported); verify every number against the raw output.
+- [x] 5.1 Run the task and the review once without and once with the graph; record tokens, files examined, time and findings from real session data in `docs/TOKEN-REPORT.md` with method and limitations ("not measured" where unreported); verify every number against the raw output.
 
 ## 6. Deviations and gates
 
