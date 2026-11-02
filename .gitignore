@@ -9,3 +9,7 @@ test-results/
 .claude/settings.local.json
 *.log
 backend/src/generated
+
+# Codebase graph tool output (DEV-1015)
+.code-review-graph/
+graphify-out/

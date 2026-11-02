@@ -18,6 +18,10 @@ Every ticket follows one lifecycle. Rules: `CLAUDE.md`. Evidence per ticket: `do
 
 `[PARALLEL]` tickets use one git worktree and branch each, cut from the approved contract commit: `docs/WORKTREES.md`.
 
+## Codebase graph tools
+
+Code Review Graph (read-only MCP) and Graphify (CLI): install, queries and limits in `docs/GRAPH-TOOLS.md`; measured comparison in `docs/TOKEN-REPORT.md`.
+
 ## Why sync and archive run on the feature branch
 
 `main` is push-protected, so nothing can be archived after merge. Verify, sync and archive therefore run in that order on the feature branch right after Gate 2, before the merge (D-033).

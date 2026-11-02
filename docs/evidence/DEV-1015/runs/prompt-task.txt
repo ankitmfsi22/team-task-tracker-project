@@ -1,0 +1,1 @@
+Read-only investigation, do not modify any file. Task: explain who is allowed to delete a comment in this repository (which roles and conditions, including archived tasks), name the file and line of each check, and list the tests that cover comment deletion (file and line of each relevant test). Answer as a short list of findings, each with file:line.

@@ -1,0 +1,193 @@
+{
+  "duration_api_ms": 19544,
+  "stop_reason": "end_turn",
+  "session_id": "73d82579-5cc6-4950-b483-f97ee95fa45e",
+  "total_cost_usd": 0.1262442,
+  "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 19496,
+    "cache_read_input_tokens": 215307,
+    "output_tokens": 2657,
+    "output_tokens_details": {
+      "thinking_tokens": 131
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 19496,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 1223,
+        "cache_read_input_tokens": 50829,
+        "cache_creation_input_tokens": 1065,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 1065
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+  },
+  "modelUsage": {
+    "claude-haiku-5-5": {
+      "inputTokens": 1265,
+      "outputTokens": 18,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.00013550000000000001,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 128000,
+      "thinkingTokens": 0,
+      "cacheCreationEphemeral5mInputTokens": 0,
+      "cacheCreationEphemeral1hInputTokens": 0,
+      "canonicalModel": "claude-haiku-5-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+      "inputTokens": 12,
+      "outputTokens": 2657,
+      "cacheReadInputTokens": 215307,
+      "cacheCreationInputTokens": 19496,
+      "webSearchRequests": 0,
+      "costUSD": 0.12610870000000002,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 128000,
+      "thinkingTokens": 131,
+      "cacheCreationEphemeral5mInputTokens": 0,
+      "cacheCreationEphemeral1hInputTokens": 19496,
+      "canonicalModel": "claude-sonnet-5-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "extra_usage_disabled",
+  "subagent_stats": {
+    "spawned": 0,
+    "requested": {
+      "background": 0,
+      "foreground": 0,
+      "unset": 0
+    },
+    "started_in_background": 0,
+    "max_depth": 0,
+    "spawned_by_subagents": 0,
+    "completed": 0,
+    "failed": 0,
+    "killed": {
+      "parent": 0,
+      "user": 0,
+      "system": 0
+    },
+    "refused": {
+      "depth_limit": 0,
+      "concurrency_limit": 0,
+      "budget": 0
+    },
+    "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 11,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "## Who can delete a comment\n\n**Rule:** the comment's author, or a project OWNER (for any comment). Nobody can delete once the task or project is archived. Comments are hard-deleted.\n\n**Backend checks, in the order they run:**\n1. `backend/src/routes/comments.routes.ts:47-53` registers `DELETE /comments/:commentId` with `authenticate` (line 49, so 401 if not logged in), `validate` (line 50) and `projectAccess(prisma, { write: true })` (line 51).\n2. `backend/src/middleware/project-access.ts:32` returns 404 `PROJECT_NOT_FOUND` for a non-member.\n3. `backend/src/middleware/project-access.ts:39` returns 409 `PROJECT_ARCHIVED` when the project is archived. This is the `write: true` check.\n4. `backend/src/services/comments.service.ts:99` calls `findComment`, which returns 404 `TASK_NOT_FOUND` (`:117`) or 404 `COMMENT_NOT_FOUND` (`:133`).\n5. `backend/src/services/comments.service.ts:100-106` is the role check. It returns 403 `FORBIDDEN` unless `authorId === userId` or `role === 'OWNER'`. A MEMBER who is not the author is denied.\n6. `backend/src/services/comments.service.ts:107` calls `assertTaskWritable`, which returns 409 `TASK_ARCHIVED` at `:123` when the task is archived. This applies to authors and owners alike.\n7. `backend/src/services/comments.service.ts:108` performs the delete.\n\n**Frontend (UI only, the backend stays authoritative):** `frontend/src/lib/comment-permissions.ts:23` sets `canDelete = !archived && (isAuthor || role === 'OWNER')`.\n\n## Tests covering deletion\n\n**Backend** (`backend/src/comments.edit-delete.integration.test.ts`):\n- `:199` author deletes own comment, it leaves the list and no activity is added.\n- `:213` owner deletes a MEMBER's comment.\n- `:224` other MEMBER gets 403 `FORBIDDEN` and the comment remains.\n- `:236` non-member gets 404 `PROJECT_NOT_FOUND`.\n- `:247` unknown comment gets 404 `COMMENT_NOT_FOUND`.\n\n**Frontend** (`frontend/src/pages/task-comments-actions.test.tsx`):\n- `:281` author deletes, confirming sends DELETE.\n- `:300` author cancels, so no request is sent.\n- `:315` owner deletes another user's comment.\n- `:331` a MEMBER who is not the author is not offered Delete.\n- `:343` a 403 on delete shows \"You do not have permission\" and the comment remains.\n- `:372` archived task shows no Delete button.\n- `:382` archived project shows no Delete button.\n\n## Gaps\n- There is no backend test for delete on an archived task (409 `TASK_ARCHIVED`) or an archived project (409 `PROJECT_ARCHIVED`).\n- Backend delete is not tested for 401 unauthenticated, for a comment on another task (404), or for the invalid-params 400.\n- The archived-task and archived-project cases for create are covered at `backend/src/comments.add-list.integration.test.ts:188` and `:202`.\n- The edit-path archived-project test at `backend/src/comments.edit-delete.integration.test.ts:176` has no delete equivalent.\n- The only archived-delete coverage is the frontend hiding the button (`:372`, `:382`).",
+  "ttft_ms": 2553,
+  "type": "result",
+  "duration_ms": 215012,
+  "uuid": "8088356a-9ca1-41b1-954f-6d0fa964227e",
+  "ttft_stream_ms": 1807,
+  "time_to_request_ms": 300,
+  "time_to_request_phases_ms": {
+    "other": 2,
+    "system_prompt": 56,
+    "resume_other": 0,
+    "process_user_input": 4,
+    "input_attachments": 10,
+    "input_hooks": 1,
+    "conversation_append": 0,
+    "tool_pool_refresh": 1,
+    "init_message": 3,
+    "init_frame_send": 3,
+    "engine_pickup": 0,
+    "loop_entry": 2,
+    "message_prep": 0,
+    "model_config_wait": 0,
+    "autocompact": 1,
+    "request_announcements": 3,
+    "query_setup": 0,
+    "model_gates": 195,
+    "tool_schema_build": 12,
+    "message_normalization": 1,
+    "client_creation": 3,
+    "request_build": 3
+  },
+  "turn_start_resume_kind": "none",
+  "process_turn_index": 0,
+  "time_to_request_loop_lag_ms": 1,
+  "time_to_request_cpu_ms": 175,
+  "time_to_request_major_faults": 0,
+  "input_attachments_detail": {
+    "slowest_producer": "skill_listing",
+    "slowest_producer_ms": 3,
+    "cpu_ms": 14,
+    "major_faults": 0,
+    "setup_ms": 0,
+    "prompt_producers_ms": 0,
+    "ambient_start_ms": 5,
+    "ambient_wait_ms": 2,
+    "render_ms": 0,
+    "producers": 43,
+    "token_counts": 0
+  },
+  "first_content_frame_ms": 1807,
+  "queued_turn_count": 0,
+  "result_index": 0,
+  "model_usage_since_last_result": {
+    "claude-haiku-5-5": {
+      "inputTokens": 1265,
+      "outputTokens": 18,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.00013550000000000001,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 128000,
+      "thinkingTokens": 0,
+      "cacheCreationEphemeral5mInputTokens": 0,
+      "cacheCreationEphemeral1hInputTokens": 0,
+      "canonicalModel": "claude-haiku-5-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+      "inputTokens": 12,
+      "outputTokens": 2657,
+      "cacheReadInputTokens": 215307,
+      "cacheCreationInputTokens": 19496,
+      "webSearchRequests": 0,
+      "costUSD": 0.12610870000000002,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 128000,
+      "thinkingTokens": 131,
+      "cacheCreationEphemeral5mInputTokens": 0,
+      "cacheCreationEphemeral1hInputTokens": 19496,
+      "canonicalModel": "claude-sonnet-5-5",
+      "provider": "firstParty",
+      "costBasis": "list"
+    }
+  }
+}
