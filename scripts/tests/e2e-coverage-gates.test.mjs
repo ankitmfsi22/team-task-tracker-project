@@ -50,7 +50,11 @@ test('deliberate failure', () => {
 
 test('Failure is reported: runner propagates the Playwright exit status', () => {
   const runner = read('scripts/e2e.mjs');
-  assert.match(runner, /status =\s*run\(`pnpm exec playwright test[\s\S]*?\.status \?\? 1;/);
+  assert.match(
+    runner,
+    /status =\s*spawnSync\(\s*'pnpm',\s*\[[^\]]*'playwright',\s*'test'[\s\S]*?\.status \?\? 1;/,
+  );
+  assert.doesNotMatch(runner, /\$\{extra\}/, 'extra arguments are not joined into a shell string');
   assert.match(runner, /process\.exit\(status\);\s*$/);
   assert.match(runner, /let status = 1;/);
   const config = read('e2e/playwright.config.ts');

@@ -47,16 +47,30 @@ try {
     throw new Error('prisma migrate deploy failed');
   }
   if (run('pnpm build').status !== 0) throw new Error('pnpm build failed');
-  const extra = process.argv.slice(2).join(' ');
+  // Extra arguments go to Playwright as an argument list; a shell is only needed on Windows (pnpm.cmd).
   status =
-    run(`pnpm exec playwright test --config e2e/playwright.config.ts ${extra}`, {
-      env: {
-        ...process.env,
-        DATABASE_URL: databaseUrl,
-        JWT_ACCESS_SECRET: 'e2e-access-secret-not-for-production',
-        JWT_REFRESH_SECRET: 'e2e-refresh-secret-not-for-production',
+    spawnSync(
+      'pnpm',
+      [
+        'exec',
+        'playwright',
+        'test',
+        '--config',
+        'e2e/playwright.config.ts',
+        ...process.argv.slice(2),
+      ],
+      {
+        cwd: repoRoot,
+        shell: process.platform === 'win32',
+        stdio: 'inherit',
+        env: {
+          ...process.env,
+          DATABASE_URL: databaseUrl,
+          JWT_ACCESS_SECRET: 'e2e-access-secret-not-for-production',
+          JWT_REFRESH_SECRET: 'e2e-refresh-secret-not-for-production',
+        },
       },
-    }).status ?? 1;
+    ).status ?? 1;
 } catch (err) {
   console.error(err instanceof Error ? err.message : err);
 } finally {
