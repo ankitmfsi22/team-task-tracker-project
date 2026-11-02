@@ -24,4 +24,4 @@
 
 ## 6. Evidence and deviations
 
-- [ ] 6.1 Run `pnpm test:e2e`, save the Playwright report in `docs/evidence/DEV-1016/`, append the DEV-1016 rows to `docs/deviations.md` (e2e local only; no S-DEV IDs, mapping file instead), update the coverage matrix if a gap was found, and run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format:check`, `openspec validate dev-1016-testing --strict`.
+- [x] 6.1 Run `pnpm test:e2e`, save the Playwright report in `docs/evidence/DEV-1016/`, append the DEV-1016 rows to `docs/deviations.md` (e2e local only; no S-DEV IDs, mapping file instead), update the coverage matrix if a gap was found, and run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format:check`, `openspec validate dev-1016-testing --strict`.
