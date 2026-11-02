@@ -112,7 +112,7 @@ Result summary: `Found 21 call site(s) across 5 node(s)`, all `EXTRACTED`, confi
 `project-access.integration.test.ts` (3: 36, 45, 54).
 
 Confirmed in source (`grep -n projectAccess backend/src/routes/*.ts`): 18 route call sites at exactly those lines
-plus 3 in the test = 21. The graph is correct. Delete route: `backend/src/routes/comments.routes.ts:46-52` uses
+plus 3 in the test = 21. The graph is correct. Delete route: `backend/src/routes/comments.routes.ts:47-53` uses
 `projectAccess(prisma, { write: true })` (line 51).
 
 ### Q2. Call chain for comment delete (Graphify `explain` and `path`)
@@ -155,7 +155,7 @@ Result: `Found 8 result(s)`, all `indirect: true`, all in `frontend/src/lib/api/
 `frontend/src/lib/api/comments.ts:54`, and the tool returned the generic API-client tests. The tests that really cover
 delete are `backend/src/comments.edit-delete.integration.test.ts` (calls to `remove(...)` at lines 202, 218, 229, 240,
 250: author, owner, other member, outsider, unknown id) and `frontend/src/pages/task-comments-actions.test.tsx`
-(`Delete` button, line 224). A reviewer who trusted the graph would have missed both. Recorded as a limitation in
+(delete tests at lines 281, 300, 315, 331, 343, 372 and 382). A reviewer who trusted the graph would have missed both. Recorded as a limitation in
 `docs/TOKEN-REPORT.md`.
 
 ### Q5. Context for `projectAccess` (Graphify `query "who calls projectAccess"`)
