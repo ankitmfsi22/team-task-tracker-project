@@ -22,7 +22,7 @@
 
 ## 6. Deviations and gates
 
-- [ ] 6.1 Append the DEV-1015 rows to `docs/deviations.md` (skipped tool hooks, rules edits and user-wide skills with the reason; file names), link both docs from `docs/workflow.md`, and run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format:check` and `openspec validate dev-1015-codebase-graph --strict`.
+- [x] 6.1 Append the DEV-1015 rows to `docs/deviations.md` (skipped tool hooks, rules edits and user-wide skills with the reason; file names), link both docs from `docs/workflow.md`, and run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `pnpm format:check` and `openspec validate dev-1015-codebase-graph --strict`.
 
 ## Workflow follow-up
 
