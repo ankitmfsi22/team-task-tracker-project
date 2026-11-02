@@ -54,3 +54,49 @@ Verdict: no Blocking findings. All 61 frontend Vitest tests pass; I ran `pnpm ex
 | Non-blocking | frontend/src/pages/task-detail.tsx:610 and :596            | The assign select is controlled by `task.assigneeId`. On a failed mutation it reverts, which is correct, but a 403 test only checks that the message shows.                                                                                   | Optional: assert that the select value is unchanged.                                                                                   |
 | Non-blocking | openspec/changes/dev-1012-task-pages/tasks.md:16           | Task 2.2 cites the spec requirement "Unauthorized and impossible actions are hidden", but the spec title is "Impossible actions are hidden".                                                                                                  | Fix the reference; documentation only.                                                                                                 |
 | Non-blocking | openspec/changes/dev-1012-task-pages/review-log.md         | The file is still the empty template.                                                                                                                                                                                                         | The main session must save this review there verbatim, as CLAUDE.md requires.                                                          |
+---
+
+## Review 2 (after merging origin/main, DEV-1011 integrated)
+
+- Reviewer: reviewer sub-agent (read-only, fresh context)
+- Context: fresh
+- Date: 2026-11-02
+- Diff: `git diff origin/main...HEAD` (origin/main = 94eeecf)
+- Note: Review 1 above is the pre-merge review; its line numbers and test counts (61 tests) predate the merge and are kept verbatim. The branch now has 95 frontend tests.
+
+Result: no Blocking findings.
+
+### Disposition (review 2)
+
+| Severity     | file:line                                            | Issue                                                                                     | Fix                                                                       | Status           |
+| ------------ | ---------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------- |
+| Non-blocking | docs/evidence/DEV-1012/lighthouse.md, integration.md | Post-merge Lighthouse gate and root `pnpm test` case are red on this machine in some runs | Listed honestly; PR states it; D-104 and the DEV-1016 follow-up stay open | Accepted (D-104) |
+| Non-blocking | docs/deviations.md:107 (D-101)                       | Row said the duplicate helpers still exist                                                | D-101 reworded as resolved at integration                                 | Fixed            |
+| Non-blocking | openspec/changes/dev-1012-task-pages/review-log.md   | Review 1 line numbers and "61 tests" are stale after the merge                            | Note added above; review 1 kept verbatim                                  | Fixed            |
+| Non-blocking | docs/deviations.md:110 (D-104)                       | Row mentioned only the pre-merge score range                                              | D-104 updated with the post-merge range and the main A/B                  | Fixed            |
+
+### Reviewer report 2 (verbatim)
+
+Second review of feature/web/DEV-1012-task-pages (diff `git diff origin/main...HEAD`, origin/main = 94eeecf). No Blocking findings. I ran `pnpm --filter frontend test` (16 files, 95 tests pass) and `pnpm typecheck` (pass). I did not run lint, build, root `pnpm test`, `pnpm lighthouse` or openspec validate. The gate claims in integration.md for those are plausible against the diff but unverified by me.
+
+**Verified**
+
+- Spec coverage: the 10 spec requirements map onto `task-list.tsx`, `task-detail.tsx`, `tasks.ts`, `task-list-params.ts` and the Lighthouse PAGES entry. I matched scenarios to tests by name and did not read every assertion.
+- Integration:
+  - `task-detail.tsx:24` and `task-list.tsx:14` import `getProject`, `listMembers` and `projectDetailKeys` from `@/lib/api/projects`.
+  - `tasks.ts` no longer has `getTaskProject` or `listTaskMembers`; a grep finds no remaining uses.
+  - `router.tsx` keeps DEV-1011's routes and adds `/projects/:projectId/tasks` and `/projects/:projectId/tasks/:taskId`.
+  - `lighthouse.mjs` keeps DEV-1011's `RUNS_PER_PAGE = 5`, median and free-port logic. It adds the task list to PAGES, `TASKS` fixtures, and stub routes for project, members and tasks.
+  - The stub project response includes `role: 'OWNER'`.
+- Deviations: DEV-1012 rows are D-101 to D-110, directly after D-100. The review-log.md references (D-104, D-105, D-107 to D-110) match. The lighthouse.md reference (D-104) matches. integration.md describes the renumbering correctly. Nothing in the change folder or evidence still points to D-088 to D-097.
+- Tests: the diff shows no weakening. The `task-detail.test.tsx` change only scopes three text queries with `{ selector: ':not(option)' }`, because the "Assign to" select repeats the names. The `role: 'OWNER'` addition is fixture-only. I confirmed neither by reading the full test files.
+- Code rules: no `any`, `@ts-ignore` or `eslint-disable` in the task files. No `package.json` or lockfile changes. Schemas come from `@team-task-tracker/shared`.
+
+**Findings (all Non-blocking)**
+
+| Severity     | file:line                                                                                | Evidence                                                                                                                                                                                                                                                                                                                                                                                       | Recommendation                                                                                                                                                                                            |
+| ------------ | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Non-blocking | `docs/evidence/DEV-1012/lighthouse.md` (post-merge table), `integration.md` (gate table) | After the merge, the Lighthouse gate fails in both final runs (Final 1: /projects 93 and task list 86; Final 2: /projects 87). Root `pnpm test` has 1 failure ("pnpm lighthouse runs and exits 0"). The files list these failures honestly and do not claim a pass. But the DoD requires `pnpm test` and the gate to pass, and the only "passing" evidence is pre-merge run 4 and the A/B run. | Before Gate 2, get one clean `pnpm lighthouse` and root `pnpm test` pass on an idle machine and record it. Otherwise state in the PR that the gate was red post-merge. Keep D-104 and its follow-up open. |
+| Non-blocking | `docs/deviations.md:107` (D-101)                                                         | The row says `tasks.md` "holds `getTaskProject` and `listTaskMembers`, duplicating" DEV-1011's helpers, with resolution "swapped ... at merge if identical". The duplicates were removed in the merge, so the row is now false.                                                                                                                                                                | Reword D-101 as resolved: duplicates replaced by `getProject`, `listMembers` and `projectDetailKeys` at integration.                                                                                      |
+| Non-blocking | `openspec/changes/dev-1012-task-pages/review-log.md` (rows and verbatim report)          | The log cites `task-detail.tsx:546-547`, `:539-542`, `:610`, `:596`, and `task-list.tsx:180-184`, `:236-248`, `:273`. The diff shows `task-detail.tsx` is 193 lines, so the task-detail citations cannot be valid. The report also says "61 tests", but the branch now has 95. The log is the first review and predates the merge, so line references and counts are stale.                    | Add a short note that the log is from the pre-merge review. Record that this second review found no Blocking issues. The first review's file is verbatim by rule, so do not edit it.                      |
+| Non-blocking | `docs/deviations.md:110` (D-104)                                                         | It says the 73 to 98 range and mentions only the pre-merge window. The post-merge scores, with the task list at 86 and /projects at 87 and 93, are in `lighthouse.md` but not in the row.                                                                                                                                                                                                      | Update D-104 to mention the post-merge range.                                                                                                                                                             |
