@@ -53,6 +53,18 @@ test('Release-age exclusions are documented', () => {
     .filter((l) => l.startsWith('-'))
     .map((l) => unquote(l.slice(1)));
   const doc = read('docs/VERSIONS.md');
+  if (entries.length === 0) {
+    // Zero entries is only valid when the workspace has no section and the doc says so.
+    assert.ok(
+      !text.includes('minimumReleaseAgeExclude'),
+      'no minimumReleaseAgeExclude key may remain when there are no entries',
+    );
+    assert.match(
+      doc,
+      /`minimumReleaseAgeExclude` is no longer used/,
+      'docs/VERSIONS.md states that no release-age exclusions are kept',
+    );
+  }
   for (const e of entries) {
     assert.match(e, /^@?[^@\s]+@\d+\.\d+\.\d+$/, `${e} is an exact name@version`);
     assert.ok(doc.includes(e), `${e} is documented in docs/VERSIONS.md`);
