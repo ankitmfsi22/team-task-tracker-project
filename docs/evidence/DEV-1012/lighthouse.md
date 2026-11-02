@@ -23,3 +23,15 @@ Final passing output (run 4):
 /projects         performance 99, accessibility 100, best-practices 100, seo 100
 /tasks (list)     performance 96, accessibility 100, best-practices 100, seo 100
 ```
+
+## After the merge with main (median of 5 audits per page, run alone)
+
+| Run                                       | /login  | /projects | task list |
+| ----------------------------------------- | ------- | --------- | --------- |
+| A/B, branch                               | 100     | 99        | 99        |
+| A/B, clean origin/main (before and after) | 99, 100 | 98, 99    | n/a       |
+| Final 1                                   | 98      | 93 FAIL   | 86 FAIL   |
+| Final 2                                   | 98      | 87 FAIL   | 95        |
+
+Accessibility, best-practices and SEO were 100 in every run. `/projects` is main's code unchanged,
+so the drops are not specific to the task list. Open risk (D-104): the gate is machine-sensitive.

@@ -119,6 +119,7 @@ beforeEach(() => {
           id: PROJECT_ID,
           name: 'Alpha',
           description: null,
+          role: 'OWNER',
           archivedAt: projectArchivedAt,
           createdAt: '2026-10-01T10:00:00.000Z',
         }),

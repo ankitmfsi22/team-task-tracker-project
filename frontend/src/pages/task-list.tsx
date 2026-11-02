@@ -11,7 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { EmptyState, ErrorState, LoadingState } from '@/components/states';
-import { listTaskMembers, listTasks } from '@/lib/api/tasks';
+import { projectDetailKeys, listMembers } from '@/lib/api/projects';
+import { listTasks } from '@/lib/api/tasks';
 import { parseTaskListParams, toApiQuery, type TaskListParams } from '@/lib/api/task-list-params';
 
 const SELECT_CLASS =
@@ -30,8 +31,8 @@ export function TaskListPage() {
     placeholderData: keepPreviousData,
   });
   const membersQuery = useQuery({
-    queryKey: ['project', projectId, 'members'],
-    queryFn: () => listTaskMembers(projectId),
+    queryKey: projectDetailKeys.members(projectId),
+    queryFn: () => listMembers(projectId),
   });
   const members = membersQuery.data?.data ?? [];
 

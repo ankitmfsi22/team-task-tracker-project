@@ -24,6 +24,19 @@ export function evaluateScores(results, threshold = 95) {
   return { ok: failures.length === 0, failures, report: lines.join('\n') };
 }
 
+// Lighthouse scores vary with machine load, so a page is audited several times and the median is
+// gated. A null score counts as 0; with an even number of runs the lower middle score is used.
+export function medianScores(runs) {
+  const scores = {};
+  for (const category of CATEGORIES) {
+    const sorted = runs
+      .map((run) => (typeof run[category] === 'number' ? run[category] : 0))
+      .sort((a, b) => a - b);
+    scores[category] = sorted[Math.ceil(sorted.length / 2) - 1];
+  }
+  return scores;
+}
+
 export function findBrowser({ env, candidates, exists }) {
   if (env.CHROME_PATH && exists(env.CHROME_PATH)) return env.CHROME_PATH;
   return candidates.find((candidate) => exists(candidate)) ?? null;

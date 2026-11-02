@@ -47,16 +47,16 @@ The root SHALL provide `format` (writes Prettier changes) and `format:check` (fa
 - **WHEN** `pnpm format` is run and then `pnpm format:check`
 - **THEN** both exit with code 0
 
-### Requirement: Placeholder scripts
-`pnpm test:e2e` and `pnpm lighthouse` SHALL exist and, until their owning tickets are done, print a "not implemented" message naming the owning ticket and exit 0.
+### Requirement: E2E placeholder script
+`pnpm test:e2e` SHALL exist and, until its owning ticket is done, print a "not implemented" message naming the owning ticket and exit 0.
 
 #### Scenario: E2E placeholder
 - **WHEN** a developer runs `pnpm test:e2e`
 - **THEN** the output contains "not implemented — DEV-1016" and the exit code is 0
 
-#### Scenario: Lighthouse placeholder
+#### Scenario: Lighthouse is a real gate
 - **WHEN** a developer runs `pnpm lighthouse`
-- **THEN** the output contains "not implemented — DEV-1011" and the exit code is 0
+- **THEN** the output does not contain "not implemented" and the command audits the built frontend as specified by `web-platform`
 
 ### Requirement: Strict TypeScript and lint rules
 All packages SHALL compile with TypeScript strict mode, and lint SHALL reject `any`, `@ts-ignore` and `eslint-disable` comments that lack a ticket ID.

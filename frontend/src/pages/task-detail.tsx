@@ -20,14 +20,8 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { ApiError } from '@/lib/api/client';
-import {
-  archiveTask,
-  assignTask,
-  changeTaskStatus,
-  getTask,
-  getTaskProject,
-  listTaskMembers,
-} from '@/lib/api/tasks';
+import { archiveTask, assignTask, changeTaskStatus, getTask } from '@/lib/api/tasks';
+import { getProject, listMembers, projectDetailKeys } from '@/lib/api/projects';
 
 // "IN_PROGRESS" -> "In progress"
 function humanize(value: string): string {
@@ -66,12 +60,12 @@ export function TaskDetailPage() {
     queryFn: () => getTask(projectId, taskId),
   });
   const projectQuery = useQuery({
-    queryKey: ['project', projectId],
-    queryFn: () => getTaskProject(projectId),
+    queryKey: projectDetailKeys.detail(projectId),
+    queryFn: () => getProject(projectId),
   });
   const membersQuery = useQuery({
-    queryKey: ['project', projectId, 'members'],
-    queryFn: () => listTaskMembers(projectId),
+    queryKey: projectDetailKeys.members(projectId),
+    queryFn: () => listMembers(projectId),
   });
 
   const mutation = useMutation({

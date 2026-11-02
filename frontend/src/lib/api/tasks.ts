@@ -1,10 +1,6 @@
 import {
-  MemberListResponseSchema,
-  ProjectResponseSchema,
   TaskListResponseSchema,
   TaskResponseSchema,
-  type MemberListResponse,
-  type ProjectResponse,
   type TaskListResponse,
   type TaskResponse,
   type TaskStatus,
@@ -55,13 +51,4 @@ export function archiveTask(projectId: string, taskId: string): Promise<TaskResp
     method: 'POST',
     schema: TaskResponseSchema,
   });
-}
-
-// Read helpers kept here so DEV-1011 Group 2's projects.ts is not edited (docs/deviations.md).
-export function getTaskProject(projectId: string): Promise<ProjectResponse> {
-  return apiFetch(projectPath(projectId), { schema: ProjectResponseSchema });
-}
-
-export function listTaskMembers(projectId: string): Promise<MemberListResponse> {
-  return apiFetch(`${projectPath(projectId)}/members`, { schema: MemberListResponseSchema });
 }
