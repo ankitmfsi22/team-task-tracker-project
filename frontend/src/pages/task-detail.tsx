@@ -9,6 +9,7 @@ import {
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { ErrorState, LoadingState } from '@/components/states';
+import { TaskFormDialog } from '@/components/task-form-dialog';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -54,6 +55,7 @@ export function TaskDetailPage() {
   const queryClient = useQueryClient();
   const [actionError, setActionError] = useState<string | null>(null);
   const [confirmingArchive, setConfirmingArchive] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   const taskQuery = useQuery({
     queryKey: ['task', projectId, taskId],
@@ -153,7 +155,10 @@ export function TaskDetailPage() {
               ))}
             </select>
           </div>
-          <div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" onClick={() => setEditing(true)}>
+              Edit
+            </Button>
             <Button
               type="button"
               variant="destructive"
@@ -188,6 +193,14 @@ export function TaskDetailPage() {
           </Dialog>
         </div>
       ) : null}
+      {/* Outside the editable block so a 409 message stays visible after the task reloads. */}
+      <TaskFormDialog
+        mode="edit"
+        open={editing}
+        onOpenChange={setEditing}
+        projectId={projectId}
+        task={task}
+      />
     </div>
   );
 }

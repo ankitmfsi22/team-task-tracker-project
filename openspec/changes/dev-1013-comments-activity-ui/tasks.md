@@ -4,7 +4,7 @@ Per task: the test-writer sub-agent writes failing tests from the spec scenarios
 
 ## 1. Task create and edit forms
 
-- [ ] 1.1 Add `createTask`/`updateTask` clients and a shared `TaskFormDialog` (create on the task list, edit on the detail page) with shared-schema validation, due-date rule and 400/403/409 display; verify the "Create task form" and "Edit task form" scenarios pass in Vitest.
+- [x] 1.1 Add `createTask`/`updateTask` clients and a shared `TaskFormDialog` (create on the task list, edit on the detail page) with shared-schema validation, due-date rule and 400/403/409 display; verify the "Create task form" and "Edit task form" scenarios pass in Vitest.
 
 ## 2. Comments
 

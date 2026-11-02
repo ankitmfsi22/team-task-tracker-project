@@ -5,13 +5,15 @@ import {
   type TaskResponse,
   type TaskSortBy,
 } from '@team-task-tracker/shared';
+import { useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router';
+import { TaskFormDialog } from '@/components/task-form-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { EmptyState, ErrorState, LoadingState } from '@/components/states';
-import { projectDetailKeys, listMembers } from '@/lib/api/projects';
+import { getProject, projectDetailKeys, listMembers } from '@/lib/api/projects';
 import { listTasks } from '@/lib/api/tasks';
 import { parseTaskListParams, toApiQuery, type TaskListParams } from '@/lib/api/task-list-params';
 
@@ -35,6 +37,12 @@ export function TaskListPage() {
     queryFn: () => listMembers(projectId),
   });
   const members = membersQuery.data?.data ?? [];
+  const projectQuery = useQuery({
+    queryKey: projectDetailKeys.detail(projectId),
+    queryFn: () => getProject(projectId),
+  });
+  const canCreate = projectQuery.data !== undefined && projectQuery.data.archivedAt === null;
+  const [creating, setCreating] = useState(false);
 
   // Changing a filter or sort always returns to page 1.
   function setFilter(key: string, value: string | null) {
@@ -80,7 +88,23 @@ export function TaskListPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-xl font-semibold">Tasks</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold">Tasks</h1>
+        {canCreate ? (
+          <Button type="button" onClick={() => setCreating(true)}>
+            New task
+          </Button>
+        ) : null}
+      </div>
+      {canCreate ? (
+        <TaskFormDialog
+          mode="create"
+          open={creating}
+          onOpenChange={setCreating}
+          projectId={projectId}
+          members={members}
+        />
+      ) : null}
       <FilterBar params={params} members={members} onChange={setFilter} onClear={clearFilters} />
       {tasksQuery.isPending ? (
         <LoadingState label="Loading tasks…" />
