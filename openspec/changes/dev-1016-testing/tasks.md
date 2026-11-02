@@ -2,7 +2,7 @@
 
 ## 1. Lighthouse gate separation
 
-- [ ] 1.1 Remove the `pnpm lighthouse runs and exits 0` case from `scripts/tests/agents-doc.test.mjs`; keep the logic tests; verify the "Unit suite has no browser audit" and "Gate still enforces 95" scenarios; close D-104 in `docs/deviations.md`.
+- [x] 1.1 Remove the `pnpm lighthouse runs and exits 0` case from `scripts/tests/agents-doc.test.mjs`; keep the logic tests; verify the "Unit suite has no browser audit" and "Gate still enforces 95" scenarios; close D-104 in `docs/deviations.md`.
 
 ## 2. Flaky root tooling test (time-boxed)
 
