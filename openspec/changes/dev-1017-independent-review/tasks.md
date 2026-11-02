@@ -14,4 +14,4 @@
 
 ## 4. Final report and verification
 
-- [ ] 4.1 Write `docs/review/final-review.md` (spec compliance, security, test coverage, authorization-denied matrix per route group, graph impact, accepted deviations); update D-019 in `docs/deviations.md` to "Follow-up: post-submission" (hook untouched); run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `openspec validate dev-1017-independent-review --strict`.
+- [x] 4.1 Write `docs/review/final-review.md` (spec compliance, security, test coverage, authorization-denied matrix per route group, graph impact, accepted deviations); update D-019 in `docs/deviations.md` to "Follow-up: post-submission" (hook untouched); run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`, `openspec validate dev-1017-independent-review --strict`.
