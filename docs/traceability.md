@@ -19,6 +19,7 @@ One row per ticket: ticket to Linear key to change to branch to PR to gates. Eve
 | DEV-1011 | DEV-15 | `openspec/changes/archive/2026-11-02-dev-1011-auth-project-pages`   | `feature/web/DEV-1011-auth-project-pages`     | #13 | `98ad9e7` 17:24 | `6c50f7f` 17:39             | `53a8ffe` 01:30 |
 | DEV-1012 | DEV-16 | `openspec/changes/archive/2026-11-02-dev-1012-task-pages`           | `feature/web/DEV-1012-task-pages`             | #12 | `6370e56` 22:57 | `9345807` 00:13             | `7497574` 10:56 |
 | DEV-1013 | DEV-17 | `openspec/changes/archive/2026-11-02-dev-1013-comments-activity-ui` | `feature/web/DEV-1013-comments-activity-ui`   | #14 | `7f5552d` 11:49 | `cb4b033` 12:02             | `589a709` 14:45 |
+| DEV-1014 | DEV-18 | `openspec/changes/archive/2026-11-02-dev-1014-worktree-evidence`    | `feature/infra/DEV-1014-worktree-evidence`    | #15 | `700110d` 15:03 | `6fdc1c1` 15:04             | `2cf1e9b` 15:21 |
 
 Notes:
 
@@ -31,6 +32,7 @@ Notes:
 - DEV-1011: Gate 1 and first implementation times are 2026-11-01 local, Gate 2 is 2026-11-02 local; implementation started after Gate 1. The Gate 1 amendment for design.md decision 13 (Lighthouse free port, median of 5, `de4cb05`) came after implementation and before Gate 2; it is a separate row in its `approvals.md`. Built in worktree `../ttt-1011` in parallel with DEV-1012.
 - DEV-1012: Gate 1 time is 2026-11-01 local, first implementation and Gate 2 are 2026-11-02 local; implementation started after Gate 1. Built in worktree `../ttt-1012` in parallel with DEV-1011; origin/main (DEV-1011) was merged into the branch before Gate 2 (`8b952f0`), see `docs/evidence/DEV-1012/integration.md`.
 - DEV-1013: Gate 1 (11:49), first implementation (12:02) and Gate 2 are all 2026-11-02 local; implementation started after Gate 1. Gate 2 entry, spec sync and archive were committed together in `589a709`.
+- DEV-1014: Gate 1 (15:03), first implementation (15:04) and Gate 2 (15:21) are all 2026-11-02 local; implementation started after Gate 1. Docs and evidence only; consolidates the DEV-1007/1008 and DEV-1011/1012 worktree evidence in `docs/evidence/DEV-1014/parallel-work.md`. Spec sync and archive were committed after Gate 2.
 
 ## Append rule
 
