@@ -17,12 +17,14 @@
     "lint": "eslint . && node scripts/check-pinning.mjs",
     "prepare": "husky",
     "test:e2e": "node scripts/not-implemented.mjs test:e2e DEV-1016",
-    "lighthouse": "node scripts/not-implemented.mjs lighthouse DEV-1011"
+    "lighthouse": "node scripts/lighthouse.mjs"
   },
   "devDependencies": {
     "@fission-ai/openspec": "1.16.0",
+    "chrome-launcher": "1.2.2",
     "eslint": "10.14.0",
     "husky": "9.1.7",
+    "lighthouse": "13.6.0",
     "lint-staged": "17.6.0",
     "prettier": "3.9.10",
     "typescript-eslint": "8.72.1"
