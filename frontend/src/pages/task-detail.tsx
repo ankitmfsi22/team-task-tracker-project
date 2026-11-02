@@ -8,6 +8,7 @@ import {
 } from '@team-task-tracker/shared';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
+import { CommentsPanel } from '@/components/comments-panel';
 import { ErrorState, LoadingState } from '@/components/states';
 import { TaskFormDialog } from '@/components/task-form-dialog';
 import { Alert } from '@/components/ui/alert';
@@ -193,6 +194,7 @@ export function TaskDetailPage() {
           </Dialog>
         </div>
       ) : null}
+      <CommentsPanel projectId={projectId} taskId={taskId} canComment={editable} />
       {/* Outside the editable block so a 409 message stays visible after the task reloads. */}
       <TaskFormDialog
         mode="edit"

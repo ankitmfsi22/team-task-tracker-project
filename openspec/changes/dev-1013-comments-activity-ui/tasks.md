@@ -8,7 +8,7 @@ Per task: the test-writer sub-agent writes failing tests from the spec scenarios
 
 ## 2. Comments
 
-- [ ] 2.1 Add the comments API client and `CommentsPanel` list (oldest first, pagination, loading/empty/error) and add-comment form; verify the "Comment list" and "Add comment" scenarios pass.
+- [x] 2.1 Add the comments API client and `CommentsPanel` list (oldest first, pagination, loading/empty/error) and add-comment form; verify the "Comment list" and "Add comment" scenarios pass.
 - [ ] 2.2 Add edit and delete with the permission helper (edit author only, delete author or OWNER, confirmation, 403, archived read-only); verify the "Edit comment", "Delete comment" and "Comments are read-only on archived items" scenarios pass.
 
 ## 3. Activity history

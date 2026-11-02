@@ -78,6 +78,11 @@ beforeEach(() => {
         }),
       );
     }
+    if (/\/(comments|activity)$/.test(url.pathname)) {
+      return Promise.resolve(
+        json({ data: [], meta: { page: 1, pageSize: 20, total: 0, totalPages: 0 } }),
+      );
+    }
     return Promise.resolve(new Response('{}', { status: 404 }));
   });
   vi.stubGlobal('fetch', fetchMock);
