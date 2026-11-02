@@ -6,7 +6,7 @@
 
 ## 2. Consolidated evidence
 
-- [ ] 2.1 Write `docs/evidence/DEV-1014/parallel-work.md` with worktrees and branches, the contract-before-parallel table from `git log`, merge graph excerpts, conflicts, gate results and the verbatim "provided by Ankit Singh" cleanup output; verify every hash with `git cat-file -e` and every figure against the two `integration.md` files.
+- [x] 2.1 Write `docs/evidence/DEV-1014/parallel-work.md` with worktrees and branches, the contract-before-parallel table from `git log`, merge graph excerpts, conflicts, gate results and the verbatim "provided by Ankit Singh" cleanup output; verify every hash with `git cat-file -e` and every figure against the two `integration.md` files.
 
 ## 3. Cross-links and deviations
 
