@@ -18,7 +18,7 @@
 
 ## 5. Integration run (infra)
 
-- [ ] 5.1 On the integrated branch run `pnpm build`, `lint`, `typecheck`, `test`, `pnpm test:e2e` and the Compose smoke run (health, login as a demo user, 401 through the frontend port); save the outputs in `docs/evidence/DEV-1018/`; fix only what breaks; one commit.
+- [x] 5.1 On the integrated branch run `pnpm build`, `lint`, `typecheck`, `test`, `pnpm test:e2e` and the Compose smoke run (health, login as a demo user, 401 through the frontend port); save the outputs in `docs/evidence/DEV-1018/`; fix only what breaks; one commit.
 
 ## 6. Verification and close
 
