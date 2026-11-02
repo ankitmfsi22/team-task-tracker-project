@@ -2,7 +2,7 @@
 
 ## 1. Install and pin
 
-- [ ] 1.1 Run `brew install uv`, `uv tool install --python 3.12 code-review-graph==2.3.9` and `uv tool install --python 3.12 graphifyy==0.9.100`; record the tool, `uv` and Python versions in `docs/VERSIONS.md`, save the version and registry check output in `docs/evidence/DEV-1015/install-check.md`, and write the install section of `docs/GRAPH-TOOLS.md` (real errors included); verify with `uv tool list` and the "Pinned installation" and "Toolchain versions" scenarios.
+- [x] 1.1 Run `brew install uv`, `uv tool install --python 3.12 code-review-graph==2.3.9` and `uv tool install --python 3.12 graphifyy==0.9.100`; record the tool, `uv` and Python versions in `docs/VERSIONS.md`, save the version and registry check output in `docs/evidence/DEV-1015/install-check.md`, and write the install section of `docs/GRAPH-TOOLS.md` (real errors included); verify with `uv tool list` and the "Pinned installation" and "Toolchain versions" scenarios.
 
 ## 2. MCP entry
 
