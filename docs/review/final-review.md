@@ -3,7 +3,7 @@
 - Ticket: DEV-1017 (Linear DEV-21). Change: `openspec/changes/dev-1017-independent-review`.
 - Scope: the whole of `main` (backend, `packages/shared`, frontend, `e2e`, `scripts`, docs), reviewed at commit `d2f5bde` (source identical to `main` at `c8b5535`).
 - Reviewers: `reviewer` and `security-auditor` sub-agents, read-only, fresh contexts, run in parallel. Findings verbatim: `review-log.md` (reviewer) and `docs/evidence/DEV-1017/security-audit.md` (security).
-- Result: 13 findings, 1 blocking (fixed), 12 non-blocking (not fixed, accepted in `docs/deviations.md` D-134 to D-141).
+- Result: 17 findings (13 from the first review, 4 from a second fresh-context review of this change itself), 1 blocking (fixed), 16 non-blocking (accepted in `docs/deviations.md` D-134 to D-142, or fixed in documentation).
 
 ## 1. Spec compliance
 
@@ -49,7 +49,7 @@ Code Review Graph 2.3.9 rebuilt at `d2f5bde` (the earlier index was stale). Deta
 
 ## 5. Blocking finding
 
-R2: no 401 test for comments GET list and DELETE. Fixed by two tests (`comments.add-list.integration.test.ts`, `comments.edit-delete.integration.test.ts`), commit `f871252`. They pass at once because the code was already correct; the test-writer's mutation check shows they fail when both authentication guards are removed.
+R2: no 401 test for comments GET list and DELETE. Fixed by two tests (`comments.add-list.integration.test.ts`, `comments.edit-delete.integration.test.ts`), commit `f871252`. They pass at once because the code was already correct; the test-writer's mutation check shows they fail when both authentication guards are removed (this mutation result is the test-writer's report; the second reviewer did not re-run it).
 
 ## 6. Accepted and follow-up
 
