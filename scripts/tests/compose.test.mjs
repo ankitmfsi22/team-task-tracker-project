@@ -21,14 +21,23 @@ const readCompose = () => {
 };
 
 // Runs `docker compose` with a controlled environment and an empty env file so no .env is read.
-const compose = (args, extraEnv) => {
+const REQUIRED_VARS = {
+  POSTGRES_PASSWORD: 'test-only-value',
+  JWT_ACCESS_SECRET: 'test-only-access',
+  JWT_REFRESH_SECRET: 'test-only-refresh',
+  SEED_DEMO_PASSWORD: 'test-only-demo',
+};
+
+// `omit` lists required variables to leave unset; all others get test-only values.
+const compose = (args, extraEnv, omit = []) => {
   const dir = mkdtempSync(join(tmpdir(), 'compose-env-'));
   try {
     const emptyEnv = join(dir, 'empty.env');
     writeFileSync(emptyEnv, '');
     const env = { ...process.env };
-    delete env.POSTGRES_PASSWORD;
-    Object.assign(env, extraEnv);
+    for (const key of Object.keys(REQUIRED_VARS)) delete env[key];
+    Object.assign(env, REQUIRED_VARS, extraEnv);
+    for (const key of omit) delete env[key];
     const r = spawnSync('docker', ['compose', '--env-file', emptyEnv, '-f', composePath, ...args], {
       encoding: 'utf8',
       env,
@@ -49,12 +58,14 @@ test('compose: image is an exact postgres:16.<minor>-alpine tag and passes the p
   assert.deepEqual(violations, []);
 });
 
-test('compose: only the postgres service exists', () => {
+// Spec: local-dev-environment / "Expected services exist" (DEV-1018).
+test('compose: exactly postgres, migrate, backend and frontend exist', () => {
   readCompose();
-  const r = compose(['config', '--services'], { POSTGRES_PASSWORD: 'test-only-value' });
+  const r = compose(['config', '--services'], {});
   assert.equal(r.error, undefined, String(r.error));
   assert.equal(r.status, 0, r.stderr);
-  assert.equal(r.stdout.trim(), 'postgres');
+  const services = r.stdout.trim().split(/\s+/).sort();
+  assert.deepEqual(services, ['backend', 'frontend', 'migrate', 'postgres']);
 });
 
 test('compose: defines a named volume and a healthcheck', () => {
@@ -67,7 +78,7 @@ test('compose: defines a named volume and a healthcheck', () => {
 
 test('compose: missing POSTGRES_PASSWORD fails and names the variable', () => {
   readCompose();
-  const r = compose(['config'], {});
+  const r = compose(['config'], {}, ['POSTGRES_PASSWORD']);
   assert.notEqual(r.status, 0, 'expected non-zero exit without POSTGRES_PASSWORD');
   assert.match(r.stderr, /POSTGRES_PASSWORD/);
 });
@@ -142,6 +153,9 @@ test(
     const composeEnv = {
       ...process.env,
       POSTGRES_PASSWORD: 'test-only-pw',
+      JWT_ACCESS_SECRET: 'test-only-access',
+      JWT_REFRESH_SECRET: 'test-only-refresh',
+      SEED_DEMO_PASSWORD: 'test-only-demo',
       POSTGRES_PORT: String(port),
       POSTGRES_USER: 'tasktracker',
       POSTGRES_DB: 'tasktracker',
@@ -156,7 +170,7 @@ test(
       });
     let down;
     try {
-      const up = dc('up -d --wait');
+      const up = dc('up -d --wait postgres');
       if (up.status !== 0) {
         assert.fail(`compose up failed:
 ${up.stdout}${up.stderr}`);

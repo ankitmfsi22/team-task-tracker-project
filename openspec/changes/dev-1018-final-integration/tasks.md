@@ -6,7 +6,7 @@
 
 ## 2. Docker (infra)
 
-- [ ] 2.1 Test-writer first, from the `containerized-app` and "Compose scope" scenarios (`node:test` on Dockerfiles and `docker compose config`; replace the "only postgres" test as specified); then add `backend/Dockerfile`, `frontend/Dockerfile`, `frontend/nginx.conf`, `.dockerignore`, the Compose services, `.env.example` variable names, and `postgres` scoping in `scripts/e2e.mjs`; build the images and run `docker compose up --build --wait`; one commit.
+- [x] 2.1 Test-writer first, from the `containerized-app` and "Compose scope" scenarios (`node:test` on Dockerfiles and `docker compose config`; replace the "only postgres" test as specified); then add `backend/Dockerfile`, `frontend/Dockerfile`, `frontend/nginx.conf`, `.dockerignore`, the Compose services, `.env.example` variable names, and `postgres` scoping in `scripts/e2e.mjs`; build the images and run `docker compose up --build --wait`; one commit.
 
 ## 3. Cleanup (infra)
 

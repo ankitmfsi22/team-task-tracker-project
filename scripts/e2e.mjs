@@ -30,12 +30,16 @@ const composeEnv = {
   POSTGRES_PORT: String(dbPort),
   POSTGRES_USER: 'tasktracker',
   POSTGRES_DB: 'tasktracker',
+  // Compose interpolates the whole file; only the postgres service is started.
+  JWT_ACCESS_SECRET: 'e2e-only-access',
+  JWT_REFRESH_SECRET: 'e2e-only-refresh',
+  SEED_DEMO_PASSWORD: 'e2e-only-demo',
 };
 const databaseUrl = `postgresql://tasktracker:e2e-only-pw@127.0.0.1:${dbPort}/tasktracker`;
 
 let status = 1;
 try {
-  if (run(`docker compose -p ${name} up -d --wait`, { env: composeEnv }).status !== 0) {
+  if (run(`docker compose -p ${name} up -d --wait postgres`, { env: composeEnv }).status !== 0) {
     throw new Error('docker compose up failed (is Docker running?)');
   }
   if (

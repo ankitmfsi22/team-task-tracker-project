@@ -1,0 +1,5 @@
+NAME                                   IMAGE                                COMMAND                  SERVICE    CREATED          STATUS                      PORTS
+team-task-tracker-project-backend-1    team-task-tracker-project-backend    "docker-entrypoint.s…"   backend    27 seconds ago   Up 11 seconds (healthy)     3000/tcp
+team-task-tracker-project-frontend-1   team-task-tracker-project-frontend   "/docker-entrypoint.…"   frontend   27 seconds ago   Up 5 seconds (healthy)      127.0.0.1:8081->8080/tcp
+team-task-tracker-project-migrate-1    team-task-tracker-project-migrate    "docker-entrypoint.s…"   migrate    27 seconds ago   Exited (0) 11 seconds ago   
+team-task-tracker-project-postgres-1   postgres:16.15-alpine                "docker-entrypoint.s…"   postgres   27 seconds ago   Up 26 seconds (healthy)     127.0.0.1:5432->5432/tcp

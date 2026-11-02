@@ -1,0 +1,12 @@
+# Keep secrets and local artefacts out of the build context.
+**/.env*
+.git
+**/node_modules
+**/dist
+**/coverage
+graphify-out
+playwright-report
+test-results
+docs/evidence
+openspec
+.claude
