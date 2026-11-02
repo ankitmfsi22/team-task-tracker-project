@@ -17,6 +17,7 @@ One row per ticket: ticket to Linear key to change to branch to PR to gates. Eve
 | DEV-1009 | DEV-13 | `openspec/changes/archive/2026-11-01-dev-1009-task-filtering`     | `feature/tasks/DEV-1009-task-filtering`       | #10 | `e9c78a1` 14:30 | `f4387e7` 14:33             | `3aa62e6` 15:13 |
 | DEV-1010 | DEV-14 | `openspec/changes/archive/2026-11-01-dev-1010-comments-activity`  | `feature/comments/DEV-1010-comments-activity` | #11 | `92e10dd` 15:42 | `28a7230` 15:46             | `161f778` 16:54 |
 | DEV-1011 | DEV-15 | `openspec/changes/archive/2026-11-02-dev-1011-auth-project-pages` | `feature/web/DEV-1011-auth-project-pages`     | #13 | `98ad9e7` 17:24 | `6c50f7f` 17:39             | `53a8ffe` 01:30 |
+| DEV-1012 | DEV-16 | `openspec/changes/archive/2026-11-02-dev-1012-task-pages`         | `feature/web/DEV-1012-task-pages`             | #12 | `6370e56` 22:57 | `9345807` 00:13             | `7497574` 10:56 |
 
 Notes:
 
@@ -27,6 +28,7 @@ Notes:
 - DEV-1006: Gate 1 was amended after implementation (task 4.3, server entrypoint found by /opsx:verify); the amendment is a separate row in its `approvals.md`.
 - DEV-1010: times are 2026-11-01 local; implementation started after Gate 1. The Gate 1 amendment for design.md (check order, `8ce62d6`) came after implementation and before Gate 2; it is a separate row in its `approvals.md`.
 - DEV-1011: Gate 1 and first implementation times are 2026-11-01 local, Gate 2 is 2026-11-02 local; implementation started after Gate 1. The Gate 1 amendment for design.md decision 13 (Lighthouse free port, median of 5, `de4cb05`) came after implementation and before Gate 2; it is a separate row in its `approvals.md`. Built in worktree `../ttt-1011` in parallel with DEV-1012.
+- DEV-1012: Gate 1 time is 2026-11-01 local, first implementation and Gate 2 are 2026-11-02 local; implementation started after Gate 1. Built in worktree `../ttt-1012` in parallel with DEV-1011; origin/main (DEV-1011) was merged into the branch before Gate 2 (`8b952f0`), see `docs/evidence/DEV-1012/integration.md`.
 
 ## Append rule
 
