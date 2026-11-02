@@ -1,0 +1,125 @@
+{
+  "wall_clock_seconds": 241.6024558544159,
+  "tool_call_counts": {
+    "ToolSearch": 1,
+    "mcp__code-review-graph__query_graph_tool": 7,
+    "Read": 3,
+    "Grep": 4
+  },
+  "files_read": [
+    "/Users/ankitsingh/team-task-tracker-project/backend/src/middleware/project-access.ts",
+    "/Users/ankitsingh/team-task-tracker-project/backend/src/routes/comments.routes.ts",
+    "/Users/ankitsingh/team-task-tracker-project/backend/src/services/comments.service.ts"
+  ],
+  "tool_calls": [
+    {
+      "name": "ToolSearch",
+      "input": {
+        "query": "select:mcp__code-review-graph__query_graph_tool",
+        "max_results": 1
+      }
+    },
+    {
+      "name": "mcp__code-review-graph__query_graph_tool",
+      "input": {
+        "pattern": "callers_of",
+        "target": "deleteComment"
+      }
+    },
+    {
+      "name": "mcp__code-review-graph__query_graph_tool",
+      "input": {
+        "pattern": "tests_for",
+        "target": "deleteComment"
+      }
+    },
+    {
+      "name": "mcp__code-review-graph__query_graph_tool",
+      "input": {
+        "pattern": "file_summary",
+        "target": "/Users/ankitsingh/team-task-tracker-project/backend/src/services/comments.service.ts"
+      }
+    },
+    {
+      "name": "mcp__code-review-graph__query_graph_tool",
+      "input": {
+        "pattern": "file_summary",
+        "target": "/Users/ankitsingh/team-task-tracker-project/backend/src/routes/comments.routes.ts"
+      }
+    },
+    {
+      "name": "mcp__code-review-graph__query_graph_tool",
+      "input": {
+        "pattern": "tests_for",
+        "target": "/Users/ankitsingh/team-task-tracker-project/backend/src/services/comments.service.ts::CommentsService.remove"
+      }
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Users/ankitsingh/team-task-tracker-project/backend/src/services/comments.service.ts",
+        "offset": 88,
+        "limit": 50
+      }
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Users/ankitsingh/team-task-tracker-project/backend/src/routes/comments.routes.ts"
+      }
+    },
+    {
+      "name": "mcp__code-review-graph__query_graph_tool",
+      "input": {
+        "pattern": "importers_of",
+        "target": "/Users/ankitsingh/team-task-tracker-project/backend/src/routes/comments.routes.ts"
+      }
+    },
+    {
+      "name": "mcp__code-review-graph__query_graph_tool",
+      "input": {
+        "pattern": "file_summary",
+        "target": "/Users/ankitsingh/team-task-tracker-project/backend/src/middleware/project-access.ts"
+      }
+    },
+    {
+      "name": "Read",
+      "input": {
+        "file_path": "/Users/ankitsingh/team-task-tracker-project/backend/src/middleware/project-access.ts"
+      }
+    },
+    {
+      "name": "Grep",
+      "input": {
+        "pattern": "delete\\(|\\.delete|DELETE|remove\\(",
+        "path": "/Users/ankitsingh/team-task-tracker-project",
+        "glob": "**/*comment*.test.{ts,tsx}",
+        "output_mode": "content"
+      }
+    },
+    {
+      "name": "Grep",
+      "input": {
+        "pattern": "^\\s*(it|describe)\\(",
+        "path": "/Users/ankitsingh/team-task-tracker-project/backend/src/comments.edit-delete.integration.test.ts",
+        "output_mode": "content"
+      }
+    },
+    {
+      "name": "Grep",
+      "input": {
+        "pattern": "^\\s*(it|describe)\\(",
+        "path": "/Users/ankitsingh/team-task-tracker-project/frontend/src/pages/task-comments-actions.test.tsx",
+        "output_mode": "content"
+      }
+    },
+    {
+      "name": "Grep",
+      "input": {
+        "pattern": "canDelete|canEdit|isOwner|readOnly|archived",
+        "path": "/Users/ankitsingh/team-task-tracker-project/frontend/src/components/comments-panel.tsx",
+        "output_mode": "content"
+      }
+    }
+  ]
+}
