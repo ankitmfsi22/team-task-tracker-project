@@ -6,7 +6,7 @@
 
 ## 2. Flaky root tooling test (time-boxed)
 
-- [ ] 2.1 Reproduce the intermittent failure (repeated runs, alone and under CPU load), fix the real cause without skips or weaker assertions; if not found, save the evidence in `docs/evidence/DEV-1016/flaky.md` and record "Follow-up: post-submission".
+- [x] 2.1 Reproduce the intermittent failure (repeated runs, alone and under CPU load), fix the real cause without skips or weaker assertions; if not found, save the evidence in `docs/evidence/DEV-1016/flaky.md` and record "Follow-up: post-submission".
 
 ## 3. Playwright E2E
 
