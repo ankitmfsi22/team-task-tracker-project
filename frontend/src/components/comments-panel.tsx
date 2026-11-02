@@ -239,38 +239,41 @@ export function CommentsPanel({
       <h2 id="comments-heading" className="text-lg font-semibold">
         Comments
       </h2>
-      {query.isPending ? <LoadingState label="Loading comments…" /> : null}
-      {query.isError ? (
-        <ErrorState error={query.error} onRetry={() => void query.refetch()} />
-      ) : null}
-      {query.isSuccess && query.data.data.length === 0 ? (
-        <EmptyState title="No comments yet" />
-      ) : null}
-      {query.isSuccess && query.data.data.length > 0 ? (
-        <ul className="flex flex-col gap-3">
-          {query.data.data.map((comment) => {
-            const { canEdit, canDelete } = commentPermissions({
-              userId,
-              role,
-              comment,
-              archived,
-            });
-            return (
-              <CommentItem
-                key={comment.id}
-                projectId={projectId}
-                taskId={taskId}
-                comment={comment}
-                canEdit={canEdit}
-                canDelete={canDelete}
-                onDeleted={() => {
-                  if (page > 1 && query.data.data.length === 1) setPage(page - 1);
-                }}
-              />
-            );
-          })}
-        </ul>
-      ) : null}
+      {/* Reserves the list height so the panel below does not jump when the list loads. */}
+      <div className="min-h-44">
+        {query.isPending ? <LoadingState label="Loading comments…" /> : null}
+        {query.isError ? (
+          <ErrorState error={query.error} onRetry={() => void query.refetch()} />
+        ) : null}
+        {query.isSuccess && query.data.data.length === 0 ? (
+          <EmptyState title="No comments yet" />
+        ) : null}
+        {query.isSuccess && query.data.data.length > 0 ? (
+          <ul className="flex flex-col gap-3">
+            {query.data.data.map((comment) => {
+              const { canEdit, canDelete } = commentPermissions({
+                userId,
+                role,
+                comment,
+                archived,
+              });
+              return (
+                <CommentItem
+                  key={comment.id}
+                  projectId={projectId}
+                  taskId={taskId}
+                  comment={comment}
+                  canEdit={canEdit}
+                  canDelete={canDelete}
+                  onDeleted={() => {
+                    if (page > 1 && query.data.data.length === 1) setPage(page - 1);
+                  }}
+                />
+              );
+            })}
+          </ul>
+        ) : null}
+      </div>
       {totalPages > 1 ? (
         <div className="flex items-center gap-2">
           <Button

@@ -17,7 +17,7 @@ Per task: the test-writer sub-agent writes failing tests from the spec scenarios
 
 ## 4. Lighthouse and docs
 
-- [ ] 4.1 Add the task detail page and its stub routes (task, comments, activity) to `scripts/lighthouse.mjs` and update the page list in `frontend/CLAUDE.md`; verify `pnpm lighthouse` scores at least 95 in every category.
+- [x] 4.1 Add the task detail page and its stub routes (task, comments, activity) to `scripts/lighthouse.mjs` and update the page list in `frontend/CLAUDE.md`; verify `pnpm lighthouse` scores at least 95 in every category.
 
 ## 5. Verification
 

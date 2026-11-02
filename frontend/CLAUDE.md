@@ -10,7 +10,7 @@ React 19 + TypeScript + Vite, Tailwind CSS, shadcn/ui, TanStack Query.
 - Show clear loading, empty and error states, including 401, 403 and 404 responses.
 - Hide or disable actions the current user is not authorized to perform (SDS section 6 permission table).
 - Task list supports filter, sort and pagination using the API query parameters.
-- Lighthouse 95+ on login, project list and task list, measured on the production build (`vite build` + `vite preview`).
+- Lighthouse 95+ on login, project list, task list and task detail, measured on the production build (`vite build` + `vite preview`).
 
 ## Anti-patterns
 - Storing tokens in localStorage or sessionStorage.

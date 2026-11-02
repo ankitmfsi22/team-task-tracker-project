@@ -80,9 +80,12 @@ export function TaskDetailPage() {
     },
   });
 
-  if (taskQuery.isPending) return <LoadingState label="Loading task…" />;
   if (taskQuery.isError) {
     return <ErrorState error={taskQuery.error} onRetry={() => void taskQuery.refetch()} />;
+  }
+  // Wait for the project and members too, so the actions and assignee do not shift the page in later.
+  if (taskQuery.isPending || projectQuery.isPending || membersQuery.isPending) {
+    return <LoadingState label="Loading task…" />;
   }
 
   const task = taskQuery.data;

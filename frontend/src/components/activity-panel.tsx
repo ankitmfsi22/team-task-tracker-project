@@ -49,28 +49,31 @@ export function ActivityPanel({
       <h2 id="activity-heading" className="text-lg font-semibold">
         Activity
       </h2>
-      {query.isPending ? <LoadingState label="Loading activity…" /> : null}
-      {query.isError ? (
-        <ErrorState error={query.error} onRetry={() => void query.refetch()} />
-      ) : null}
-      {query.isSuccess && query.data.data.length === 0 ? (
-        <EmptyState title="No activity yet" />
-      ) : null}
-      {query.isSuccess && query.data.data.length > 0 ? (
-        <ul className="flex flex-col gap-3">
-          {query.data.data.map((entry) => (
-            <li key={entry.id} className="flex flex-col gap-1 rounded-md border p-3 text-sm">
-              <p>
-                <span className="font-medium">{entry.actor.name}</span>{' '}
-                {describeActivity(entry, members)}
-              </p>
-              <time dateTime={entry.createdAt} className="text-muted-foreground">
-                {formatTimestamp(entry.createdAt)}
-              </time>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      {/* Reserves the list height so the panel below does not jump when the list loads. */}
+      <div className="min-h-44">
+        {query.isPending ? <LoadingState label="Loading activity…" /> : null}
+        {query.isError ? (
+          <ErrorState error={query.error} onRetry={() => void query.refetch()} />
+        ) : null}
+        {query.isSuccess && query.data.data.length === 0 ? (
+          <EmptyState title="No activity yet" />
+        ) : null}
+        {query.isSuccess && query.data.data.length > 0 ? (
+          <ul className="flex flex-col gap-3">
+            {query.data.data.map((entry) => (
+              <li key={entry.id} className="flex flex-col gap-1 rounded-md border p-3 text-sm">
+                <p>
+                  <span className="font-medium">{entry.actor.name}</span>{' '}
+                  {describeActivity(entry, members)}
+                </p>
+                <time dateTime={entry.createdAt} className="text-muted-foreground">
+                  {formatTimestamp(entry.createdAt)}
+                </time>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
       {totalPages > 1 ? (
         <div className="flex items-center gap-2">
           <Button
