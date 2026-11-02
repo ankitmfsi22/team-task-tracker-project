@@ -1,0 +1,7 @@
+ Container team-task-tracker-project-migrate-run-aac241abde73 Creating 
+ Container team-task-tracker-project-migrate-run-aac241abde73 Created 
+GET /projects without token -> 401 {"error":{"code":"UNAUTHENTICATED","message":"Authentication required"}}
+POST /auth/login alice@demo.example -> 200 accessToken: string refresh cookie set: true (httpOnly: true )
+GET /projects (alice) -> 200 [ 'Demo Project' ]
+GET tasks of demo project -> 200 total: 4 [ 'DONE/URGENT', 'IN_REVIEW/HIGH', 'IN_PROGRESS/MEDIUM', 'TODO/LOW' ]
+POST /auth/login wrong password -> 401

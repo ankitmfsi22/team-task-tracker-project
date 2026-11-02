@@ -15,5 +15,60 @@ services:
       timeout: 5s
       retries: 10
 
+  # One-shot: applies migrations and the demo seed, then exits. The backend waits for it.
+  migrate:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: migrate
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-tasktracker}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set (copy .env.example to .env)}@postgres:5432/${POSTGRES_DB:-tasktracker}
+      NODE_ENV: production
+      SEED_DEMO_DATA: 'true'
+      SEED_DEMO_PASSWORD: ${SEED_DEMO_PASSWORD:?SEED_DEMO_PASSWORD must be set (copy .env.example to .env)}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: 'no'
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: runtime
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-tasktracker}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set (copy .env.example to .env)}@postgres:5432/${POSTGRES_DB:-tasktracker}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:?JWT_ACCESS_SECRET must be set (copy .env.example to .env)}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET must be set (copy .env.example to .env)}
+      PORT: '3000'
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      # No health route exists: any answer below 500 (401 without a token) means the API is up.
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/v1/projects').then((r) => process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - '127.0.0.1:${FRONTEND_PORT:-8080}:8080'
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '--spider', 'http://127.0.0.1:8080/']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 volumes:
   postgres_data:

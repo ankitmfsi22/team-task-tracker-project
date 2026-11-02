@@ -21,12 +21,16 @@ Defines the local development environment: a pinned PostgreSQL 16 started by Doc
 - **WHEN** a test generates a Compose file in an OS temp directory with an image that has no exact version tag or uses `latest`, and runs the pinning check on it
 - **THEN** the pinning check exits non-zero and names the offending image
 
-### Requirement: Compose scope
-The Compose file SHALL define only the PostgreSQL service and its data volume; backend and frontend services are added by later tickets.
+### Requirement: Compose defines the database and the app services
+The Compose file SHALL define the PostgreSQL service with its data volume, a one-shot `migrate` service, and the `backend` and `frontend` services, and no others. The Playwright gate SHALL start only the `postgres` service.
 
-#### Scenario: Only the database service exists
-- **WHEN** `docker compose config --services` is run
-- **THEN** the output is exactly `postgres`
+#### Scenario: Expected services exist
+- **WHEN** `docker compose config --services` is run with the required variables set
+- **THEN** the output is exactly `postgres`, `migrate`, `backend` and `frontend` (in any order)
+
+#### Scenario: E2E gate starts only the database
+- **WHEN** `scripts/e2e.mjs` starts its throwaway stack
+- **THEN** it names the `postgres` service in its `docker compose up` command
 
 ### Requirement: Environment files hold no secrets
 `.env` files SHALL be git-ignored, and `.env.example` SHALL be tracked and contain placeholder values only.

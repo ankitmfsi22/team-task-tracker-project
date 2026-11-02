@@ -59,6 +59,10 @@ export default async function setup(project: TestProject): Promise<() => void> {
     POSTGRES_PORT: String(port),
     POSTGRES_USER: 'tasktracker',
     POSTGRES_DB: 'tasktracker',
+    // Compose interpolates the whole file; only the postgres service is started.
+    JWT_ACCESS_SECRET: 'test-only-access',
+    JWT_REFRESH_SECRET: 'test-only-refresh',
+    SEED_DEMO_PASSWORD: 'test-only-demo',
   };
   const compose = (args: string) =>
     spawnSync(`docker compose -p ${name} ${args}`, {
@@ -73,7 +77,7 @@ export default async function setup(project: TestProject): Promise<() => void> {
   };
 
   try {
-    const up = compose('up -d --wait');
+    const up = compose('up -d --wait postgres');
     if (up.status !== 0) {
       throw new Error(`compose up failed:\n${up.stdout}${up.stderr}`);
     }

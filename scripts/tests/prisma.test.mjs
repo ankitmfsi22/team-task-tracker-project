@@ -246,6 +246,9 @@ test('Prisma reaches the database (throwaway Compose project)', { timeout: 18000
   const composeEnv = {
     ...process.env,
     POSTGRES_PASSWORD: 'test-only-pw',
+    JWT_ACCESS_SECRET: 'test-only-access',
+    JWT_REFRESH_SECRET: 'test-only-refresh',
+    SEED_DEMO_PASSWORD: 'test-only-demo',
     POSTGRES_PORT: String(port),
     POSTGRES_USER: 'tasktracker',
     POSTGRES_DB: 'tasktracker',
@@ -260,7 +263,7 @@ test('Prisma reaches the database (throwaway Compose project)', { timeout: 18000
     });
   let down;
   try {
-    const up = compose('up -d --wait');
+    const up = compose('up -d --wait postgres');
     if (up.status !== 0) {
       const logs = compose('logs --no-color --tail 40');
       assert.fail(

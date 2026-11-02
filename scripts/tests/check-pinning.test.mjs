@@ -114,7 +114,7 @@ for (const image of ['postgres:latest', 'postgres', 'postgres:16', 'postgres:16-
 }
 
 // (d) workflow actions
-for (const ref of ['main', 'latest', 'v4']) {
+for (const ref of ['main', 'latest', 'v4', 'v7', 'v7.0.1']) {
   test(`workflow action ref @${ref} is rejected, naming file and action`, () => {
     expectFail(
       (d) => write(d, '.github/workflows/ci.yml', WORKFLOW(`actions/checkout@${ref}`)),
@@ -124,10 +124,27 @@ for (const ref of ['main', 'latest', 'v4']) {
 }
 
 // (e) clean passes
-test('exact workflow tag @v4.2.2 passes', () => {
+const SHA = '3d3c42e5aac5ba805825da76410c181273ba90b1';
+const SHA2 = 'ea17c68df8912ef543352723c149a84f56e3d413';
+
+test('SHA-pinned actions with version comments pass', () => {
   withProject(
-    (d) => write(d, '.github/workflows/ci.yml', WORKFLOW('actions/checkout@v4.2.2')),
+    (d) =>
+      write(
+        d,
+        '.github/workflows/ci.yml',
+        WORKFLOW(
+          `actions/checkout@${SHA} # v7.0.1\n      - uses: pnpm/action-setup@${SHA2} # v6.1.0`,
+        ),
+      ),
     (r) => assert.equal(r.status, 0, `output:\n${r.out}`),
+  );
+});
+
+test('tag-only exact version @v4.2.2 is no longer accepted', () => {
+  expectFail(
+    (d) => write(d, '.github/workflows/ci.yml', WORKFLOW('actions/checkout@v4.2.2')),
+    ['actions/checkout'],
   );
 });
 
@@ -145,7 +162,7 @@ test('clean directory with exact package.json, compose image and workflow exits 
         }),
       );
       write(d, 'docker-compose.yml', COMPOSE_OK('postgres:16.4-alpine'));
-      write(d, '.github/workflows/ci.yml', WORKFLOW('actions/checkout@v4.2.2'));
+      write(d, '.github/workflows/ci.yml', WORKFLOW(`actions/checkout@${SHA} # v4.2.2`));
     },
     (r) => assert.equal(r.status, 0, `output:\n${r.out}`),
   );
@@ -166,7 +183,7 @@ test('git ls-files contains no fixture files for the pinning tests', () => {
 
 // (h) floating runner labels (DEV-1001 task 3.5 follow-up)
 const WORKFLOW_RUNS_ON = (runsOn) =>
-  `name: CI\non: [push]\njobs:\n  build:\n    runs-on: ${runsOn}\n    steps:\n      - uses: actions/checkout@v4.2.2\n`;
+  `name: CI\non: [push]\njobs:\n  build:\n    runs-on: ${runsOn}\n    steps:\n      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1\n`;
 
 for (const [value, label] of [
   ['ubuntu-latest', 'ubuntu-latest'],
@@ -210,3 +227,40 @@ for (const spec of ['workspace:^1.0.0', 'workspace:~1.0.0']) {
     );
   });
 }
+
+// (j) Dockerfile FROM pinning (DEV-1018 task 3.1)
+const DF = (...lines) => `${lines.join('\n')}\n`;
+
+for (const from of ['node:latest', 'node:22', 'node']) {
+  test(`Dockerfile FROM ${from} is rejected, naming the file`, () => {
+    expectFail(
+      (d) => write(d, 'backend/Dockerfile', DF(`FROM ${from}`, 'RUN true')),
+      [join('backend', 'Dockerfile')],
+    );
+  });
+}
+
+test('Dockerfile with exact tag, stage alias and scratch passes', () => {
+  withProject(
+    (d) =>
+      write(
+        d,
+        'backend/Dockerfile',
+        DF(
+          'FROM node:22.23.3-slim AS build',
+          'RUN true',
+          'FROM build AS x',
+          'FROM scratch',
+          'FROM nginxinc/nginx-unprivileged:1.30.6-alpine',
+        ),
+      ),
+    (r) => assert.equal(r.status, 0, `output:\n${r.out}`),
+  );
+});
+
+test('Dockerfile under node_modules is ignored', () => {
+  withProject(
+    (d) => write(d, 'node_modules/x/Dockerfile', DF('FROM node:latest')),
+    (r) => assert.equal(r.status, 0, `output:\n${r.out}`),
+  );
+});
