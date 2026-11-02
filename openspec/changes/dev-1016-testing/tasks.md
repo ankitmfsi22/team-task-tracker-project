@@ -12,7 +12,7 @@
 
 - [x] 3.1 Test-writer first: replace the placeholder case in `scripts/tests/placeholders.test.mjs` and the `test:e2e` entry in `agents-doc.test.mjs` for the "Placeholder is gone" scenario; confirm they fail.
 - [x] 3.2 Add `@playwright/test` 1.61.1 (after approval), `e2e/playwright.config.ts` (backend and `vite preview` web servers, Chromium) and `test:e2e`; record the version in `docs/VERSIONS.md`.
-- [ ] 3.3 Write the journey test (register, project, add member, task, filter, comment, activity) and make "User journey passes" and "Failure is reported" pass.
+- [x] 3.3 Write the journey test (register, project, add member, task, filter, comment, activity) and make "User journey passes" and "Failure is reported" pass.
 
 ## 4. Scenario-to-test map
 
