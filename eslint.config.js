@@ -35,6 +35,7 @@ export default defineConfig(
       '**/generated/**',
       '**/playwright-report/**',
       '**/test-results/**',
+      '**/.fixture-*/**',
     ],
   },
   tseslint.configs.recommended,

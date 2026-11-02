@@ -16,3 +16,9 @@ Findings:
 - No skip or weaker assertion was added.
 
 Follow-up: post-submission. Reproduce on the hook path (`.husky/pre-commit` and the Claude hooks) with the original failure output, and decide whether the validate test should ignore changes that are not yet at Gate 1.
+
+## Addendum: a confirmed concurrency cause (found while adding the gate tests)
+
+`node --test` runs the root test files in parallel. The new `scripts/tests/e2e-coverage-gates.test.mjs` creates throwaway fixtures inside the repo (`e2e/.fixture-*`, `packages/shared/.fixture-*`), and `agents-doc.test.mjs` runs `pnpm format:check` (`prettier --check .`) at the same time. Prettier listed a fixture file, the fixture was deleted, and the test failed with `ENOENT` (`pnpm format:check exit 2`). Any root test that writes into the working tree while another one scans it can fail the same way, which is an intermittent failure that no assertion explains.
+
+Fix (no skip, no weaker assertion): `.fixture-*/` is git-ignored (Prettier honours `.gitignore`) and excluded from ESLint. `.prettierignore` has no fixture entry, because `workspace-quality-gates` forbids one. Three consecutive `pnpm test` runs passed afterwards. This is the same shape as the earlier `openspec validate` observation (shared working-tree state) and is the best-supported explanation for the reported intermittent failures; the original hook failure output was never captured, so it stays unconfirmed for that case.
