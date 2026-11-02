@@ -22,11 +22,11 @@ Both tools SHALL be installed by the method in their official documentation at e
 - **THEN** no git hook, `~/.claude` file, `CLAUDE.md`, `AGENTS.md` or `.claude/settings.json` is changed, and the only project config change is the `code-review-graph` entry in `.mcp.json`
 
 ### Requirement: MCP entry is project-scoped and safe
-`.mcp.json` SHALL contain a `code-review-graph` stdio entry whose `--tools` allowlist names only read-only tools, and which holds no literal credential. `scripts/tests/mcp-config.test.mjs` MUST assert this, in addition to every assertion it already has.
+`.mcp.json` SHALL contain a `code-review-graph` stdio entry that launches the pinned version (`uvx --from code-review-graph==2.3.9`) and whose `--tools` allowlist names only read-only tools, and which holds no literal credential. `scripts/tests/mcp-config.test.mjs` MUST assert this, in addition to every assertion it already has.
 
 #### Scenario: Entry is present and read-only
 - **WHEN** `scripts/tests/mcp-config.test.mjs` runs
-- **THEN** it finds a `code-review-graph` server with `command` `code-review-graph`, `serve` in `args`, and a `--tools` list that contains no build, embed, register or other write tool
+- **THEN** it finds a `code-review-graph` server with `command` `uvx`, `--from code-review-graph==2.3.9` and `serve` in `args`, and a `--tools` list that contains no build, embed, register or other write tool
 
 #### Scenario: Literal credential is rejected
 - **WHEN** the `code-review-graph` entry has a literal `env` or `headers` value

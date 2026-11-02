@@ -110,3 +110,56 @@ test('Write tools ask for approval', () => {
     assert.ok(!allow.includes(rule), `allow does not contain ${rule}`);
   }
 });
+
+// Spec: DEV-1015 codebase-graph - "MCP entry is project-scoped and safe".
+const CRG_READ_ONLY_TOOLS = [
+  'get_minimal_context_tool',
+  'query_graph_tool',
+  'get_impact_radius_tool',
+  'get_review_context_tool',
+  'detect_changes_tool',
+];
+const CRG_WRITE_PATTERN = /build|embed|register|apply|refactor|generate|postprocess/;
+
+test('Entry is present and read-only', () => {
+  const crg = servers['code-review-graph'];
+  assert.ok(crg, 'mcpServers contains code-review-graph');
+  assert.equal(crg.command, 'uvx', 'command is uvx');
+  const args = crg.args ?? [];
+  assert.ok(Array.isArray(args), 'args is an array');
+
+  const fromIdx = args.indexOf('--from');
+  assert.ok(fromIdx >= 0, 'args include --from');
+  assert.equal(
+    args[fromIdx + 1],
+    'code-review-graph==2.3.9',
+    '--from is followed by the pinned package',
+  );
+  assert.ok(args.includes('serve'), 'args include serve');
+
+  const toolsIdx = args.indexOf('--tools');
+  assert.ok(toolsIdx >= 0, 'args include --tools');
+  const list = args[toolsIdx + 1];
+  assert.equal(typeof list, 'string', '--tools is followed by a comma-separated list');
+  const tools = list.split(',').map((t) => t.trim());
+  assert.ok(tools.length > 0 && tools.every((t) => t.length > 0), 'tools list is non-empty');
+  for (const tool of tools) {
+    assert.ok(CRG_READ_ONLY_TOOLS.includes(tool), `${tool} is in the read-only set`);
+    assert.ok(!CRG_WRITE_PATTERN.test(tool), `${tool} is not a build/embed/write tool`);
+  }
+
+  assert.ok(!('env' in crg) && !('headers' in crg), 'no env or headers keys');
+});
+
+test('Literal credential is rejected', () => {
+  assert.deepEqual(
+    findLiteralCredentials({
+      'code-review-graph': { command: 'uvx', env: { API_KEY: 'literal-secret' } },
+    }),
+    ['code-review-graph.env.API_KEY'],
+    'helper flags a literal env value on the code-review-graph server',
+  );
+  assert.ok(servers['code-review-graph'], 'code-review-graph is in the real servers map');
+  const literals = findLiteralCredentials(servers);
+  assert.deepEqual(literals, [], `literal credential(s) in .mcp.json: ${literals.join(', ')}`);
+});

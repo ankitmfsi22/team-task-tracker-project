@@ -6,7 +6,7 @@
 
 ## 2. MCP entry
 
-- [ ] 2.1 Test-writer first: extend `scripts/tests/mcp-config.test.mjs` with the "MCP entry is project-scoped and safe" scenarios and confirm they fail; then run `code-review-graph install --platform claude-code --dry-run`, add only the `code-review-graph` entry to `.mcp.json`, and make the tests pass without weakening any existing assertion. STOP after the commit: Claude Code restart and server approval by the human.
+- [x] 2.1 Test-writer first: extend `scripts/tests/mcp-config.test.mjs` with the "MCP entry is project-scoped and safe" scenarios and confirm they fail; then run `code-review-graph install --platform claude-code --dry-run`, add only the `code-review-graph` entry to `.mcp.json`, and make the tests pass without weakening any existing assertion. STOP after the commit: Claude Code restart and server approval by the human.
 
 ## 3. Build graphs
 

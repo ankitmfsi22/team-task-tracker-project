@@ -39,3 +39,38 @@ The tools can also install their own git hooks, rules-file edits and user-wide s
 uv tool uninstall code-review-graph
 uv tool uninstall graphifyy
 ```
+
+## MCP entry (project scope)
+
+`code-review-graph install --platform claude-code --dry-run` was run once to see what the installer would write
+(real output, nothing was modified):
+
+```text
+Installing MCP server config...
+  [dry-run] Claude Code: would write /Users/ankitsingh/team-task-tracker-project/.mcp.json
+
+Configured 1 platform(s): Claude Code
+
+Graph instructions will be injected into:
+  CLAUDE.md (append)
+
+[dry-run] Would ensure .gitignore ignores .code-review-graph/.
+[dry-run] No files were modified.
+```
+
+Only the `.mcp.json` entry is used; the `CLAUDE.md` injection was skipped. The installer's own default entry is the unpinned
+`uvx code-review-graph serve`, and a `code-review-graph` shim command cannot start because `~/.local/bin` is not on PATH.
+The committed entry therefore launches the pinned version through `uvx` (in `/opt/homebrew/bin`) and exposes five
+read-only tools with `--tools` (all five exist in 2.3.9):
+
+```json
+"code-review-graph": {
+  "type": "stdio",
+  "command": "uvx",
+  "args": ["--python", "3.12", "--from", "code-review-graph==2.3.9", "code-review-graph", "serve",
+           "--tools", "get_minimal_context_tool,query_graph_tool,get_impact_radius_tool,get_review_context_tool,detect_changes_tool"]
+}
+```
+
+No `env` or `headers`, so no secret. `scripts/tests/mcp-config.test.mjs` checks the entry. A Claude Code restart and the
+human's approval of the server are needed before any MCP query.
