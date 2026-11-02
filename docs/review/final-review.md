@@ -3,7 +3,7 @@
 - Ticket: DEV-1017 (Linear DEV-21). Change: `openspec/changes/dev-1017-independent-review`.
 - Scope: the whole of `main` (backend, `packages/shared`, frontend, `e2e`, `scripts`, docs), reviewed at commit `d2f5bde` (source identical to `main` at `c8b5535`).
 - Reviewers: `reviewer` and `security-auditor` sub-agents, read-only, fresh contexts, run in parallel. Findings verbatim: `review-log.md` (reviewer) and `docs/evidence/DEV-1017/security-audit.md` (security).
-- Result: 17 findings (13 from the first review, 4 from a second fresh-context review of this change itself), 1 blocking (fixed), 16 non-blocking (accepted in `docs/deviations.md` D-135 to D-143, or fixed in documentation).
+- Result: 17 findings (13 from the first review, 4 from a second fresh-context review of this change itself), 3 blocking (all fixed), 14 non-blocking (accepted in `docs/deviations.md` D-135 to D-142, or fixed in documentation).
 
 ## 1. Spec compliance
 
@@ -24,18 +24,18 @@ No blocking security finding. `pnpm audit --prod`: no known vulnerabilities.
 
 ## 3. Test coverage
 
-- Gates at the reviewed state, run on this branch: `pnpm lint`, `pnpm typecheck`, `pnpm build` pass; `pnpm test` passes: root 256, shared 110, frontend 151, backend 247 (includes the 2 tests added by this change).
+- Gates at the reviewed state, run on this branch: `pnpm lint`, `pnpm typecheck`, `pnpm build` pass; `pnpm test` passes: root 256, shared 110, frontend 151, backend 258 (includes the 13 tests added by this change).
 - Coverage (DEV-1016 evidence, `docs/evidence/DEV-1016/coverage.md`): backend 97.62% lines, frontend 92.08%, shared 100%, threshold 80%. Not re-measured in this change.
-- Gaps found: 401 tests missing on comments GET list and DELETE (blocking, fixed in `f871252`); on tasks get, patch, status, assignee, archive and projects member routes (accepted, D-067 and D-135); 409 on archived project for task patch, status, assignee and comment delete (accepted, D-135).
+- Gaps found: 401 tests missing on comments GET list and DELETE (blocking, fixed in `f871252`), on tasks get, patch, status, assignee, archive and on the projects routes (blocking on the approver's decision, fixed in `790e3dc`, one `it.each` per group); 409 on archived project for task patch, status, assignee and comment delete (non-blocking, accepted, D-135).
 
 ### Authorization-denied matrix (from the reviewer, spot-checked)
 
-| Route group | 401                                                                              | 403                                                     | 404                                                            |
-| ----------- | -------------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------- |
-| projects    | POST and GET tested; other routes share the router-level guard                   | PATCH, archive, add and remove member tested            | get, archive, members list, add, remove tested                 |
-| tasks       | create and list tested; get, patch, status, assignee, archive not (D-067, D-135) | none by design (any member writes tasks)                | create, get, list, update, assign, status, archive tested      |
-| comments    | POST and PATCH tested; GET and DELETE added by this change                       | non-author edit and non-author, non-OWNER delete tested | add, list, edit, delete tested                                 |
-| activity    | tested                                                                           | none (read-only, any member)                            | non-member, other project, nonexistent task and project tested |
+| Route group | 401                                                                                            | 403                                                     | 404                                                            |
+| ----------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------- |
+| projects    | all routes tested (members, patch, archive and list added in `790e3dc`)                        | PATCH, archive, add and remove member tested            | get, archive, members list, add, remove tested                 |
+| tasks       | all routes tested (create, list, and get, patch, status, assignee, archive added in `790e3dc`) | none by design (any member writes tasks)                | create, get, list, update, assign, status, archive tested      |
+| comments    | POST and PATCH tested; GET and DELETE added by this change                                     | non-author edit and non-author, non-OWNER delete tested | add, list, edit, delete tested                                 |
+| activity    | tested                                                                                         | none (read-only, any member)                            | non-member, other project, nonexistent task and project tested |
 
 ## 4. Graph-assisted impact
 
@@ -45,11 +45,11 @@ Code Review Graph 2.3.9 rebuilt at `d2f5bde` (the earlier index was stale). Deta
 - Auth and refresh: 34 impacted nodes, 26 files; `authenticate` gates all five routers; `AuthService` reaches only the auth controller, router and two auth test files.
 - Comment permissions: 25 impacted nodes, 22 files; owner and author rules at `comments.service.ts:78-80` and `:99-105`.
 - Graph limits: 62 unresolved call sites for the comments service (tests found by reading files), and the graph's call-site lines for the auth query pointed at parameter lines, so source lines were used.
-- Finding found while confirming impact: the per-route `auth` on comments and tasks is redundant with the router-level `authenticate` in `projects.routes.ts:26` (D-069), which is why the blocking gap was a missing test and not a live hole (D-142).
+- Finding found while confirming impact: the per-route `auth` on comments and tasks is redundant with the router-level `authenticate` in `projects.routes.ts:26` (D-069), which is why the blocking gaps were missing tests and not live holes (D-142).
 
 ## 5. Blocking finding
 
-R2: no 401 test for comments GET list and DELETE. Fixed by two tests (`comments.add-list.integration.test.ts`, `comments.edit-delete.integration.test.ts`), commit `f871252`. They pass at once because the code was already correct; the test-writer's mutation check shows they fail when both authentication guards are removed (this mutation result is the test-writer's report; the second reviewer did not re-run it).
+R1, R2, R3: no 401 test for the comments GET list and DELETE (R2), the tasks get, patch, status, assignee and archive routes (R1) and the projects routes (R3). The reviewer marked all three non-blocking; the approver decided they are blocking under design decision 4 (an untested authorization path). Fixed by tests only: R2 in `f871252` (two tests), R1 and R3 in `790e3dc` (one `it.each` per route group, 11 cases). They pass at once because the code was already correct (D-142); the test-writer's mutation check shows they fail when both authentication guards are removed (this mutation result is the test-writer's report; the second reviewer did not re-run it).
 
 ## 6. Accepted and follow-up
 
