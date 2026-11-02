@@ -2,7 +2,7 @@
 
 ## 1. Fresh-context reviews
 
-- [ ] 1.1 Invoke `reviewer` and `security-auditor` in parallel, fresh contexts, over whole `main` (scope in design decision 1); require severity, `file:line`, issue, fix, blocking yes/no. Save the reviewer output verbatim in `review-log.md` (template table, "Context: fresh") and the security output in `docs/evidence/DEV-1017/security-audit.md`; send back any finding missing `file:line` or severity.
+- [x] 1.1 Invoke `reviewer` and `security-auditor` in parallel, fresh contexts, over whole `main` (scope in design decision 1); require severity, `file:line`, issue, fix, blocking yes/no. Save the reviewer output verbatim in `review-log.md` (template table, "Context: fresh") and the security output in `docs/evidence/DEV-1017/security-audit.md`; send back any finding missing `file:line` or severity.
 
 ## 2. Graph-assisted impact
 
