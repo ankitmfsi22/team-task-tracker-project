@@ -51,6 +51,7 @@ Tickets: DEV-1008
 - DECISION: Any project member may archive tasks; archive is a soft delete (`archivedAt`).
 - DECISION: A new task always starts with status `TODO`; the create request has no status field. (Approved by Ankit Singh, DEV-1008 Gate 1.)
 - DECISION: `dueDate` is a UTC ISO 8601 timestamp (for example `2026-12-31T17:00:00Z`). (Approved by Ankit Singh, DEV-1008 Gate 1.)
+- DECISION: Frontend sends a date-only due date as end of that day in UTC, so today is accepted; past dates are rejected (Approved by Ankit Singh, DEV-1013 Gate 1)
 
 ## 4. Task filtering
 Tickets: DEV-1009
