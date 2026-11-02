@@ -1,6 +1,6 @@
 # Submission index (ASSIGNMENT.md §9)
 
-Each item links evidence that exists in this repository. Status: **met** or **partial** (with the reason). Pull request for the last ticket: DEV-1018 (link in the PR list on GitHub; every ticket DEV-1001 to DEV-1018 has a row in [`traceability.md`](traceability.md)). Gate 2 for DEV-1018 is recorded in its `approvals.md` by the human approver.
+Each item links evidence that exists in this repository. Status: **met** or **partial** (with the reason). Pull request for the last ticket: [DEV-1018 (PR #20)](https://github.com/ankitmfsi22/team-task-tracker-project/pull/20); every ticket DEV-1001 to DEV-1018 has a row in [`traceability.md`](traceability.md). Gate 2 for DEV-1018 is recorded in its archived `approvals.md` (approved by Ankit Singh).
 
 - [x] **1. Working application, database schema, migrations, seed data, Docker configuration** (met)
   - Backend: [`backend/`](../backend/), schema [`backend/prisma/schema.prisma`](../backend/prisma/schema.prisma), migrations [`backend/prisma/migrations/`](../backend/prisma/migrations/), seed [`backend/src/seed.ts`](../backend/src/seed.ts).
@@ -27,8 +27,8 @@ Each item links evidence that exists in this repository. Status: **met** or **pa
   - Final gate output on the integrated branch: [`evidence/DEV-1018/gates.md`](evidence/DEV-1018/gates.md).
   - Coverage and flakiness: [`evidence/DEV-1016/coverage.md`](evidence/DEV-1016/coverage.md), [`evidence/DEV-1016/flaky.md`](evidence/DEV-1016/flaky.md); Lighthouse: [`evidence/DEV-1016/lighthouse.md`](evidence/DEV-1016/lighthouse.md); Playwright journey: [`e2e/journey.spec.ts`](../e2e/journey.spec.ts) and its report in [`evidence/DEV-1016/playwright-report/`](evidence/DEV-1016/playwright-report/).
   - Security: [`evidence/DEV-1017/security-audit.md`](evidence/DEV-1017/security-audit.md), [`review/final-review.md`](review/final-review.md), earlier audits in [`evidence/DEV-1006/09-security-auditor.md`](evidence/DEV-1006/09-security-auditor.md), [`evidence/DEV-1008/security-auditor.md`](evidence/DEV-1008/security-auditor.md), [`evidence/DEV-1011/03-security-audit.md`](evidence/DEV-1011/03-security-audit.md).
-- [x] **9. Pull request with ticket, spec, test and review traceability** (met, Gate 2 pending for DEV-1018)
-  - PR template: [`.github/pull_request_template.md`](../.github/pull_request_template.md); every PR links its Linear ticket, change, FRS IDs, scenario-to-test map, `review-log.md` and deviations. Index of all tickets, branches and PRs: [`traceability.md`](traceability.md). DEV-1018 change: [`openspec/changes/dev-1018-final-integration/`](../openspec/changes/dev-1018-final-integration/).
+- [x] **9. Pull request with ticket, spec, test and review traceability** (met)
+  - PR template: [`.github/pull_request_template.md`](../.github/pull_request_template.md); every PR links its Linear ticket, change, FRS IDs, scenario-to-test map, `review-log.md` and deviations. Index of all tickets, branches and PRs: [`traceability.md`](traceability.md). DEV-1018 change: [`openspec/changes/archive/2026-11-02-dev-1018-final-integration/`](../openspec/changes/archive/2026-11-02-dev-1018-final-integration/).
   - Accepted deviations: [`deviations.md`](deviations.md).
 - [x] **10. Workflow demonstration and retrospective** (met)
   - [`DEMO.md`](DEMO.md) (commands for the app and for one ticket through the SDD flow) and [`RETROSPECTIVE.md`](RETROSPECTIVE.md). The demonstration is a written command walkthrough, not a screen recording.

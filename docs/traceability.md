@@ -40,3 +40,4 @@ Notes:
 Add the new ticket's row when the change is archived: assignment ID, Linear key (`docs/tickets/README.md`), archive path, branch, PR number, the commit that added the Gate 1 entry, the first implementation commit and the commit that added the Gate 2 entry, each with its time. If implementation started before Gate 1, say so in a note and add a deviation.
 | DEV-1016 | DEV-20 | `openspec/changes/archive/2026-11-02-dev-1016-testing` | `feature/infra/DEV-1016-testing` | #17 | `12c6a1b` 17:36 | `3aee334` 17:41 | `80a004c` 18:21 |
 | DEV-1017 | DEV-21 | `openspec/changes/archive/2026-11-02-dev-1017-independent-review` | `feature/infra/DEV-1017-independent-review` | #19 | `d2f5bde` 18:48 | `07b06f3` 18:51 | `a7dd065` 19:08 |
+| DEV-1018 | DEV-22 | `openspec/changes/archive/2026-11-02-dev-1018-final-integration` | `feature/infra/DEV-1018-final-integration` | #20 | `44e2d45` 19:35 (amendment `b6135d5` 20:26) | `99ce9e3` 19:39 | `ad83c31` 20:26 |

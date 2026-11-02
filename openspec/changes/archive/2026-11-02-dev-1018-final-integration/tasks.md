@@ -22,4 +22,4 @@
 
 ## 6. Verification and close
 
-- [ ] 6.1 `openspec validate dev-1018-final-integration --strict`, `/opsx:verify` (including the documentation scenarios by reading), reviewer sub-agent in a fresh context with findings saved verbatim in `review-log.md`, fix blocking findings, open the PR with links to issue, change, requirements, tests, review findings and deviations; after Gate 2, `/opsx:sync`, `/opsx:archive` and the traceability row on the branch.
+- [x] 6.1 `openspec validate dev-1018-final-integration --strict`, `/opsx:verify` (including the documentation scenarios by reading), reviewer sub-agent in a fresh context with findings saved verbatim in `review-log.md`, fix blocking findings, open the PR with links to issue, change, requirements, tests, review findings and deviations; after Gate 2, `/opsx:sync`, `/opsx:archive` and the traceability row on the branch.
