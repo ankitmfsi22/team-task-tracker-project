@@ -58,14 +58,14 @@ No Blocking findings.
 
 ## Disposition (main session)
 
-Blocking findings: none. Non-blocking findings are not fixed (CLAUDE.md); each is carried to `docs/deviations.md` and the PR as an accepted deviation. The lint, typecheck, build, format and `openspec validate` runs the reviewer did not do were run by the main session before review and passed.
+Blocking findings: none. Non-blocking findings are carried to `docs/deviations.md` and the PR as accepted deviations; before Gate 2 the human asked for three of them to be fixed (the two citations and the missing wall-clock and tool-call counts), which are marked Fixed with their commits. The lint, typecheck, build, format and `openspec validate` runs the reviewer did not do were run by the main session before review and passed.
 
 | Severity | file:line | Issue | Fix | Status |
 | -------- | --------- | ----- | --- | ------ |
-| Non-blocking (Major) | docs/TOKEN-REPORT.md:41-52 | File, Grep/Glob and graph-call counts and wall-clock seconds are not reproducible from committed evidence | Commit tool_use extract and `.wall` values | Accepted, D-123 |
+| Non-blocking (Major) | docs/TOKEN-REPORT.md:41-52 | File, Grep/Glob and graph-call counts and wall-clock seconds are not reproducible from committed evidence | Commit tool_use extract and `.wall` values | Fixed (411e719) |
 | Non-blocking | docs/evidence/DEV-1015/runs/run.sh:3-8 | Launcher hard-codes scratchpad path; MCP configs and tool strings not committed | Commit configs and strings | Accepted, D-123 |
-| Non-blocking | docs/GRAPH-TOOLS.md:115 | `comments.routes.ts:46-52` should be `47-53` | Edit citation | Accepted, D-124 |
-| Non-blocking | docs/GRAPH-TOOLS.md:157 | `task-comments-actions.test.tsx` line 224 is not a delete test; real ones at 281, 300, 315, 331, 343, 372, 382 | Edit citation | Accepted, D-124 |
+| Non-blocking | docs/GRAPH-TOOLS.md:115 | `comments.routes.ts:46-52` should be `47-53` | Edit citation | Fixed (ff25dc2) |
+| Non-blocking | docs/GRAPH-TOOLS.md:157 | `task-comments-actions.test.tsx` line 224 is not a delete test; real ones at 281, 300, 315, 331, 343, 372, 382 | Edit citation | Fixed (ff25dc2) |
 | Non-blocking | docs/TOKEN-REPORT.md:78-79 | "`ToolSearch` overhead predicted in design.md" is not in design.md | Reword | Accepted, D-125 |
 | Non-blocking | docs/TOKEN-REPORT.md:35-37 | Only the listed citations were checked, not every cited line | None | Accepted, no action |
 | Non-blocking | docs/VERSIONS.md:9-60 | Prettier re-padded about 45 unchanged rows | Note in PR | Accepted, D-125 |
