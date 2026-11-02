@@ -72,7 +72,7 @@ const pinnedDep = (name) => {
 
 const ciUsesTag = (action) => {
   const m = readText('.github/workflows/ci.yml').match(
-    new RegExp(`uses:\\s*${action.replace('/', '\\/')}@(\\S+)`),
+    new RegExp(`uses:\\s*${action.replace('/', '\\/')}@[0-9a-f]{40}\\s+#\\s*(\\S+)`),
   );
   return m?.[1];
 };
@@ -190,7 +190,7 @@ test('PostgreSQL image matches docker-compose.yml', () => {
 });
 
 for (const action of ['actions/checkout', 'actions/setup-node', 'pnpm/action-setup']) {
-  test(`${action} matches the tag in ci.yml`, () => {
+  test(`${action} matches the version comment of the SHA-pinned ref in ci.yml`, () => {
     expectDoc(action, ciUsesTag(action));
   });
 }

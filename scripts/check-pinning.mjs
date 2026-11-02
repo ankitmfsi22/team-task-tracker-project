@@ -1,5 +1,5 @@
 // Pinning check (DEV-1001): rejects version ranges, `latest`/`next` tags, floating Docker image
-// tags and floating GitHub Actions refs. Usage: node scripts/check-pinning.mjs [rootDir]
+// tags (compose files and Dockerfiles) and GitHub Actions not pinned to a commit SHA. Usage: node scripts/check-pinning.mjs [rootDir]
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,7 +10,8 @@ const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/
 const EXACT_IMAGE_TAG = /^\d+\.\d+(?:\.\d+)?(?:-[0-9A-Za-z.]+)*$/;
 // In-repo workspace links are pinned by the workspace itself (DEV-1006).
 const WORKSPACE_LINK = /^workspace:\*$/;
-const EXACT_ACTION_REF = /^v?\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
+// Actions are pinned to an immutable full commit SHA (DEV-1018, D-009); the version goes in a comment.
+const ACTION_SHA_REF = /^[0-9a-f]{40}$/;
 
 const walk = (dir, files = []) => {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -25,6 +26,7 @@ const walk = (dir, files = []) => {
 const isPackageJson = (file) =>
   file.endsWith('package.json') && /(^|[\\/])package\.json$/.test(file);
 const isCompose = (file) => /(^|[\\/])(docker-)?compose(\.[\w-]+)?\.ya?ml$/.test(file);
+const isDockerfile = (file) => /(^|[\\/])Dockerfile(\.[\w-]+)?$/.test(file);
 const isWorkflow = (file) => /[\\/]\.github[\\/]workflows[\\/][^\\/]+\.ya?ml$/.test(file);
 
 const stripYamlValue = (raw) =>
@@ -57,6 +59,23 @@ const checkCompose = (file, text, violations) => {
   }
 };
 
+const checkDockerfile = (file, text, violations) => {
+  const stages = new Set();
+  for (const line of text.replace(/\\\r?\n/g, ' ').split(/\r?\n/)) {
+    const match = /^\s*FROM\s+(?:--\S+\s+)?(\S+)(?:\s+AS\s+(\S+))?/i.exec(line);
+    if (!match) continue;
+    const image = match[1];
+    if (image !== 'scratch' && !stages.has(image)) {
+      const lastSegment = image.split('@')[0].split('/').pop() ?? image;
+      const tag = lastSegment.includes(':') ? lastSegment.split(':').pop() : undefined;
+      if (tag === undefined || !EXACT_IMAGE_TAG.test(tag)) {
+        violations.push(`${file}: image "${image}" is not pinned to an exact tag`);
+      }
+    }
+    if (match[2]) stages.add(match[2]);
+  }
+};
+
 const checkWorkflow = (file, text, violations) => {
   for (const line of text.split(/\r?\n/)) {
     const runsOn = /^\s*runs-on:\s*(.+)$/.exec(line);
@@ -73,9 +92,9 @@ const checkWorkflow = (file, text, violations) => {
     const ref = stripYamlValue(match[1]);
     if (ref.startsWith('./') || ref.startsWith('docker://')) continue;
     const [action, version] = ref.split('@');
-    if (version === undefined || !EXACT_ACTION_REF.test(version)) {
+    if (version === undefined || !ACTION_SHA_REF.test(version)) {
       violations.push(
-        `${file}: action "${action}" ref "${version ?? ''}" is not an exact version tag`,
+        `${file}: action "${action}" ref "${version ?? ''}" is not a full commit SHA`,
       );
     }
   }
@@ -88,6 +107,7 @@ export const checkPinning = (rootDir) => {
     const file = relative(root, path);
     if (isPackageJson(path)) checkPackageJson(file, readFileSync(path, 'utf8'), violations);
     else if (isCompose(path)) checkCompose(file, readFileSync(path, 'utf8'), violations);
+    else if (isDockerfile(path)) checkDockerfile(file, readFileSync(path, 'utf8'), violations);
     else if (isWorkflow(path)) checkWorkflow(file, readFileSync(path, 'utf8'), violations);
   }
   return violations;

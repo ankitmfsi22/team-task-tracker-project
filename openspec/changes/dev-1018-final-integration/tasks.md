@@ -10,7 +10,7 @@
 
 ## 3. Cleanup (infra)
 
-- [ ] 3.1 Test-writer first, from the `dependency-pinning` scenarios; then make `check-pinning` accept SHA refs and check Dockerfile `FROM`, pin the three Actions to the SHAs in design decision 7, add `timeout-minutes`, remove `minimumReleaseAgeExclude` and re-run `pnpm install --frozen-lockfile`, update `docs/VERSIONS.md`; one commit.
+- [x] 3.1 Test-writer first, from the `dependency-pinning` scenarios; then make `check-pinning` accept SHA refs and check Dockerfile `FROM`, pin the three Actions to the SHAs in design decision 7, add `timeout-minutes`, remove `minimumReleaseAgeExclude` and re-run `pnpm install --frozen-lockfile`, update `docs/VERSIONS.md`; one commit.
 
 ## 4. Submission documents (docs)
 

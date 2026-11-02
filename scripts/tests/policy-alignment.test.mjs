@@ -45,10 +45,13 @@ test('Install scripts are decided, not ignored', () => {
 });
 
 test('Release-age exclusions are documented', () => {
-  const entries = section(read('pnpm-workspace.yaml'), 'minimumReleaseAgeExclude')
+  const text = read('pnpm-workspace.yaml');
+  // DEV-1018: exclusions are removed unless still needed; zero entries is valid.
+  const entries = (
+    text.includes('minimumReleaseAgeExclude:') ? section(text, 'minimumReleaseAgeExclude') : []
+  )
     .filter((l) => l.startsWith('-'))
     .map((l) => unquote(l.slice(1)));
-  assert.ok(entries.length > 0, 'at least one exclusion');
   const doc = read('docs/VERSIONS.md');
   for (const e of entries) {
     assert.match(e, /^@?[^@\s]+@\d+\.\d+\.\d+$/, `${e} is an exact name@version`);

@@ -6,57 +6,59 @@ floating versions, and `scripts/tests/versions-doc.test.mjs` fails if this table
 
 Registry and image tags were checked against the npm registry, GitHub and Docker Hub on 2026-10-31.
 
-| Component                   | Version               | Where pinned                                   |
-| --------------------------- | --------------------- | ---------------------------------------------- |
-| Node.js                     | 22.23.3               | `.nvmrc` (`engines.node` is `22`)              |
-| pnpm                        | 12.11.2               | `package.json` `packageManager`                |
-| TypeScript                  | 6.0.3                 | `backend`, `frontend`, `packages/shared`       |
-| ESLint                      | 10.14.0               | root `package.json`                            |
-| typescript-eslint           | 8.72.1                | root `package.json`                            |
-| Prettier                    | 3.9.10                | root `package.json`                            |
-| Husky                       | 9.1.7                 | root `package.json`                            |
-| lint-staged                 | 17.6.0                | root `package.json`                            |
-| Vitest                      | 5.0.5                 | `backend`, `frontend`, `packages/shared`       |
-| Prisma                      | 7.10.1                | `backend/package.json`                         |
-| @prisma/client              | 7.10.1                | `backend/package.json`                         |
-| @prisma/adapter-pg          | 7.10.1                | `backend/package.json`                         |
-| Zod                         | 4.6.7                 | `packages/shared/package.json`                 |
-| @types/node                 | 22.20.5               | `backend`, `frontend`, `packages/shared`       |
-| React                       | 19.3.1                | `frontend/package.json`                        |
-| React DOM                   | 19.3.1                | `frontend/package.json`                        |
-| React Router                | 8.5.1                 | `frontend/package.json`                        |
-| TanStack Query              | 5.105.0               | `frontend/package.json`                        |
-| Vite                        | 8.3.5                 | `frontend/package.json`                        |
-| @vitejs/plugin-react        | 6.1.2                 | `frontend/package.json`                        |
-| Tailwind CSS                | 4.3.3                 | `frontend/package.json`                        |
-| @tailwindcss/vite           | 4.3.3                 | `frontend/package.json`                        |
-| class-variance-authority    | 0.7.1                 | `frontend/package.json`                        |
-| clsx                        | 2.1.1                 | `frontend/package.json`                        |
-| tailwind-merge              | 3.7.0                 | `frontend/package.json`                        |
-| lucide-react                | 1.66.0                | `frontend/package.json`                        |
-| @radix-ui/react-slot        | 1.5.0                 | `frontend/package.json`                        |
-| @radix-ui/react-label       | 2.1.17                | `frontend/package.json`                        |
-| @radix-ui/react-dialog      | 1.3.1                 | `frontend/package.json`                        |
-| @types/react                | 19.3.0                | `frontend/package.json`                        |
-| @types/react-dom            | 19.3.0                | `frontend/package.json`                        |
-| jsdom                       | 30.1.3                | `frontend/package.json`                        |
-| @testing-library/react      | 16.3.3                | `frontend/package.json`                        |
-| @testing-library/dom        | 10.4.2                | `frontend/package.json`                        |
-| @testing-library/user-event | 14.6.8                | `frontend/package.json`                        |
-| @testing-library/jest-dom   | 7.0.1                 | `frontend/package.json`                        |
-| Lighthouse                  | 13.6.0                | root `package.json`                            |
-| chrome-launcher             | 1.2.2                 | root `package.json`                            |
-| @playwright/test            | 1.61.1                | root `package.json` (E2E, DEV-1016)            |
-| OpenSpec CLI                | 1.16.0                | root `package.json` (`@fission-ai/openspec`)   |
-| PostgreSQL image            | postgres:16.15-alpine | `docker-compose.yml`                           |
-| actions/checkout            | v7.0.1                | `.github/workflows/ci.yml`                     |
-| actions/setup-node          | v7.1.0                | `.github/workflows/ci.yml`                     |
-| pnpm/action-setup           | v6.1.0                | `.github/workflows/ci.yml`                     |
-| GitHub runner               | ubuntu-24.04          | `.github/workflows/ci.yml`                     |
-| uv                          | 0.13.6                | Homebrew (machine-level, DEV-1015)             |
-| Python (uv-managed)         | 3.12.16               | `uv tool install --python 3.12` (DEV-1015)     |
-| Code Review Graph           | 2.3.9                 | `uv tool install` (`code-review-graph==2.3.9`) |
-| Graphify (`graphifyy`)      | 0.9.100               | `uv tool install` (`graphifyy==0.9.100`)       |
+| Component                   | Version                                   | Where pinned                                                                       |
+| --------------------------- | ----------------------------------------- | ---------------------------------------------------------------------------------- |
+| Node.js                     | 22.23.3                                   | `.nvmrc` (`engines.node` is `22`)                                                  |
+| pnpm                        | 12.11.2                                   | `package.json` `packageManager`                                                    |
+| TypeScript                  | 6.0.3                                     | `backend`, `frontend`, `packages/shared`                                           |
+| ESLint                      | 10.14.0                                   | root `package.json`                                                                |
+| typescript-eslint           | 8.72.1                                    | root `package.json`                                                                |
+| Prettier                    | 3.9.10                                    | root `package.json`                                                                |
+| Husky                       | 9.1.7                                     | root `package.json`                                                                |
+| lint-staged                 | 17.6.0                                    | root `package.json`                                                                |
+| Vitest                      | 5.0.5                                     | `backend`, `frontend`, `packages/shared`                                           |
+| Prisma                      | 7.10.1                                    | `backend/package.json`                                                             |
+| @prisma/client              | 7.10.1                                    | `backend/package.json`                                                             |
+| @prisma/adapter-pg          | 7.10.1                                    | `backend/package.json`                                                             |
+| Zod                         | 4.6.7                                     | `packages/shared/package.json`                                                     |
+| @types/node                 | 22.20.5                                   | `backend`, `frontend`, `packages/shared`                                           |
+| React                       | 19.3.1                                    | `frontend/package.json`                                                            |
+| React DOM                   | 19.3.1                                    | `frontend/package.json`                                                            |
+| React Router                | 8.5.1                                     | `frontend/package.json`                                                            |
+| TanStack Query              | 5.105.0                                   | `frontend/package.json`                                                            |
+| Vite                        | 8.3.5                                     | `frontend/package.json`                                                            |
+| @vitejs/plugin-react        | 6.1.2                                     | `frontend/package.json`                                                            |
+| Tailwind CSS                | 4.3.3                                     | `frontend/package.json`                                                            |
+| @tailwindcss/vite           | 4.3.3                                     | `frontend/package.json`                                                            |
+| class-variance-authority    | 0.7.1                                     | `frontend/package.json`                                                            |
+| clsx                        | 2.1.1                                     | `frontend/package.json`                                                            |
+| tailwind-merge              | 3.7.0                                     | `frontend/package.json`                                                            |
+| lucide-react                | 1.66.0                                    | `frontend/package.json`                                                            |
+| @radix-ui/react-slot        | 1.5.0                                     | `frontend/package.json`                                                            |
+| @radix-ui/react-label       | 2.1.17                                    | `frontend/package.json`                                                            |
+| @radix-ui/react-dialog      | 1.3.1                                     | `frontend/package.json`                                                            |
+| @types/react                | 19.3.0                                    | `frontend/package.json`                                                            |
+| @types/react-dom            | 19.3.0                                    | `frontend/package.json`                                                            |
+| jsdom                       | 30.1.3                                    | `frontend/package.json`                                                            |
+| @testing-library/react      | 16.3.3                                    | `frontend/package.json`                                                            |
+| @testing-library/dom        | 10.4.2                                    | `frontend/package.json`                                                            |
+| @testing-library/user-event | 14.6.8                                    | `frontend/package.json`                                                            |
+| @testing-library/jest-dom   | 7.0.1                                     | `frontend/package.json`                                                            |
+| Lighthouse                  | 13.6.0                                    | root `package.json`                                                                |
+| chrome-launcher             | 1.2.2                                     | root `package.json`                                                                |
+| @playwright/test            | 1.61.1                                    | root `package.json` (E2E, DEV-1016)                                                |
+| OpenSpec CLI                | 1.16.0                                    | root `package.json` (`@fission-ai/openspec`)                                       |
+| PostgreSQL image            | postgres:16.15-alpine                     | `docker-compose.yml`                                                               |
+| Node image (backend, build) | node:22.23.3-slim                         | `backend/Dockerfile`, `frontend/Dockerfile` (DEV-1018)                             |
+| nginx image (frontend)      | nginxinc/nginx-unprivileged:1.30.6-alpine | `frontend/Dockerfile` (DEV-1018)                                                   |
+| actions/checkout            | v7.0.1                                    | `.github/workflows/ci.yml` (SHA `3d3c42e5aac5ba805825da76410c181273ba90b1`, D-009) |
+| actions/setup-node          | v7.1.0                                    | `.github/workflows/ci.yml` (SHA `949feb2413d6458794dcd2491c4babbbce0c15c1`, D-009) |
+| pnpm/action-setup           | v6.1.0                                    | `.github/workflows/ci.yml` (SHA `ea17c68df8912ef543352723c149a84f56e3d413`, D-009) |
+| GitHub runner               | ubuntu-24.04                              | `.github/workflows/ci.yml`                                                         |
+| uv                          | 0.13.6                                    | Homebrew (machine-level, DEV-1015)                                                 |
+| Python (uv-managed)         | 3.12.16                                   | `uv tool install --python 3.12` (DEV-1015)                                         |
+| Code Review Graph           | 2.3.9                                     | `uv tool install` (`code-review-graph==2.3.9`)                                     |
+| Graphify (`graphifyy`)      | 0.9.100                                   | `uv tool install` (`graphifyy==0.9.100`)                                           |
 
 ## Codebase graph tools (DEV-1015)
 
@@ -87,5 +89,6 @@ installed typescript-eslint package.
 
 - Install scripts are denied for `prisma` and `@prisma/engines` (`allowBuilds` in `pnpm-workspace.yaml`); validate and
   `db execute` work without them.
-- `minimumReleaseAgeExclude` in `pnpm-workspace.yaml` lists `eslint@10.14.0` and `@fission-ai/openspec@1.16.0`, which
-  were newer than pnpm's default release-age policy when installed.
+- `minimumReleaseAgeExclude` is no longer used: the former entries (`eslint@10.14.0`, `@fission-ai/openspec@1.16.0`) aged past
+  pnpm's release-age window, and `pnpm install --frozen-lockfile` passes without them (DEV-1018, D-001). Any future
+  entry must be an exact `name@version` and be listed here with its reason.

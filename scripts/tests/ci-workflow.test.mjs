@@ -85,15 +85,16 @@ test('Node comes from .nvmrc with no hard-coded node-version or pnpm version inp
   assert.ok(!lines.some((l) => /^\s*version\s*:/.test(l)), 'a version: input (pnpm) is set');
 });
 
-test('every uses: ref is an exact version tag', () => {
+test('every uses: ref is a full commit SHA with a version comment', () => {
   const refs = codeLines()
-    .map((l) => /^\s*(?:-\s*)?uses:\s*(.+?)\s*$/.exec(l))
+    .map((l) => /^\s*(?:-\s*)?uses:\s*(\S+)(\s+#.*)?$/.exec(l))
     .filter(Boolean)
-    .map((m) => m[1].replace(/^['"]|['"]$/g, ''));
+    .map((m) => [m[1].replace(/^['"]|['"]$/g, ''), m[2] ?? '']);
   assert.ok(refs.length > 0, 'no uses: references found');
-  for (const ref of refs) {
+  for (const [ref, comment] of refs) {
     const version = ref.split('@')[1] ?? '';
-    assert.match(version, /^v?\d+\.\d+\.\d+$/, `action ref "${ref}" is not an exact version tag`);
+    assert.match(version, /^[0-9a-f]{40}$/, `action ref "${ref}" is not a 40-hex commit SHA`);
+    assert.match(comment, /#\s*v\d+\.\d+\.\d+/, `action ref "${ref}" lacks a "# vX.Y.Z" comment`);
   }
 });
 
@@ -141,4 +142,22 @@ test('actions/checkout step has a with: block containing fetch-depth: 0', () => 
     withBlock.some((l) => /^\s*fetch-depth:\s*['"]?0['"]?\s*$/.test(l)),
     `fetch-depth: 0 missing in checkout with: block; found ${JSON.stringify(withBlock)}`,
   );
+});
+
+test('every job in ci.yml sets timeout-minutes', () => {
+  const lines = codeLines();
+  const jobsIdx = lines.findIndex((l) => /^jobs:\s*$/.test(l));
+  assert.notEqual(jobsIdx, -1, 'jobs: missing');
+  const jobIdxs = [];
+  for (let i = jobsIdx + 1; i < lines.length; i++) {
+    if (/^ {2}[\w-]+:\s*$/.test(lines[i])) jobIdxs.push(i);
+  }
+  assert.ok(jobIdxs.length > 0, 'no jobs found');
+  jobIdxs.forEach((start, n) => {
+    const block = lines.slice(start + 1, jobIdxs[n + 1] ?? lines.length);
+    assert.ok(
+      block.some((l) => /^ {4}timeout-minutes:\s*\d+\s*$/.test(l)),
+      `job "${lines[start].trim()}" has no timeout-minutes`,
+    );
+  });
 });
