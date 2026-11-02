@@ -9,6 +9,8 @@ export default defineConfig({
   workers: 1,
   fullyParallel: false,
   retries: 0,
+  // Playwright reads and diffs git state when it detects CI; the suite must not touch the repository.
+  captureGitInfo: { commit: false, diff: false },
   reporter: [['list'], ['html', { outputFolder: '../playwright-report', open: 'never' }]],
   outputDir: '../test-results',
   use: {

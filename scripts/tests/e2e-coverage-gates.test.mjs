@@ -26,6 +26,7 @@ test('Failure is reported: a failing journey step exits non-zero and writes the 
 export default defineConfig({
   testDir: '.',
   retries: 0,
+  captureGitInfo: { commit: false, diff: false },
   reporter: [['html', { outputFolder: './report', open: 'never' }]],
   outputDir: './results',
 });
