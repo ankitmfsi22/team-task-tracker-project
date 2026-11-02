@@ -1,9 +1,11 @@
 import {
   TaskListResponseSchema,
   TaskResponseSchema,
+  type CreateTaskRequest,
   type TaskListResponse,
   type TaskResponse,
   type TaskStatus,
+  type UpdateTaskRequest,
 } from '@team-task-tracker/shared';
 import { apiFetch } from './client';
 
@@ -20,6 +22,26 @@ export function listTasks(
 
 export function getTask(projectId: string, taskId: string): Promise<TaskResponse> {
   return apiFetch(taskPath(projectId, taskId), { schema: TaskResponseSchema });
+}
+
+export function createTask(projectId: string, body: CreateTaskRequest): Promise<TaskResponse> {
+  return apiFetch(`${projectPath(projectId)}/tasks`, {
+    method: 'POST',
+    body,
+    schema: TaskResponseSchema,
+  });
+}
+
+export function updateTask(
+  projectId: string,
+  taskId: string,
+  body: UpdateTaskRequest,
+): Promise<TaskResponse> {
+  return apiFetch(taskPath(projectId, taskId), {
+    method: 'PATCH',
+    body,
+    schema: TaskResponseSchema,
+  });
 }
 
 export function changeTaskStatus(

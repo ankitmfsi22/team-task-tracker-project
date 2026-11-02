@@ -8,7 +8,10 @@ import {
 } from '@team-task-tracker/shared';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
+import { ActivityPanel } from '@/components/activity-panel';
+import { CommentsPanel } from '@/components/comments-panel';
 import { ErrorState, LoadingState } from '@/components/states';
+import { TaskFormDialog } from '@/components/task-form-dialog';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,12 +25,7 @@ import { Label } from '@/components/ui/label';
 import { ApiError } from '@/lib/api/client';
 import { archiveTask, assignTask, changeTaskStatus, getTask } from '@/lib/api/tasks';
 import { getProject, listMembers, projectDetailKeys } from '@/lib/api/projects';
-
-// "IN_PROGRESS" -> "In progress"
-function humanize(value: string): string {
-  const text = value.toLowerCase().replaceAll('_', ' ');
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
+import { humanize } from '@/lib/humanize';
 
 function assigneeName(task: TaskResponse, members: MemberResponse[]): string {
   if (task.assigneeId === null) return 'Unassigned';
@@ -54,6 +52,7 @@ export function TaskDetailPage() {
   const queryClient = useQueryClient();
   const [actionError, setActionError] = useState<string | null>(null);
   const [confirmingArchive, setConfirmingArchive] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   const taskQuery = useQuery({
     queryKey: ['task', projectId, taskId],
@@ -76,13 +75,17 @@ export function TaskDetailPage() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['task', projectId, taskId] }),
         queryClient.invalidateQueries({ queryKey: ['tasks', projectId] }),
+        queryClient.invalidateQueries({ queryKey: ['activity', projectId, taskId] }),
       ]);
     },
   });
 
-  if (taskQuery.isPending) return <LoadingState label="Loading task…" />;
   if (taskQuery.isError) {
     return <ErrorState error={taskQuery.error} onRetry={() => void taskQuery.refetch()} />;
+  }
+  // Wait for the project and members too, so the actions and assignee do not shift the page in later.
+  if (taskQuery.isPending || projectQuery.isPending || membersQuery.isPending) {
+    return <LoadingState label="Loading task…" />;
   }
 
   const task = taskQuery.data;
@@ -153,7 +156,10 @@ export function TaskDetailPage() {
               ))}
             </select>
           </div>
-          <div>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" onClick={() => setEditing(true)}>
+              Edit
+            </Button>
             <Button
               type="button"
               variant="destructive"
@@ -188,6 +194,21 @@ export function TaskDetailPage() {
           </Dialog>
         </div>
       ) : null}
+      <CommentsPanel
+        projectId={projectId}
+        taskId={taskId}
+        archived={task.archivedAt !== null || (project?.archivedAt ?? null) !== null}
+        role={project?.role}
+      />
+      <ActivityPanel projectId={projectId} taskId={taskId} members={members} />
+      {/* Outside the editable block so a 409 message stays visible after the task reloads. */}
+      <TaskFormDialog
+        mode="edit"
+        open={editing}
+        onOpenChange={setEditing}
+        projectId={projectId}
+        task={task}
+      />
     </div>
   );
 }
