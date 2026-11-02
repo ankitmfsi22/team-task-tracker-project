@@ -20,7 +20,7 @@
 
 ## 5. Coverage
 
-- [ ] 5.1 Add `@vitest/coverage-v8` 5.0.5 (approved), coverage config with `lines: 80` and `coverage` scripts for backend, frontend, shared and root; run them, save the reports in `docs/evidence/DEV-1016/coverage/`; for any package below 80% add tests only for real uncovered application code (test-writer first), never lowering the threshold or excluding files.
+- [x] 5.1 Add `@vitest/coverage-v8` 5.0.5 (approved), coverage config with `lines: 80` and `coverage` scripts for backend, frontend, shared and root; run them, save the reports in `docs/evidence/DEV-1016/coverage/`; for any package below 80% add tests only for real uncovered application code (test-writer first), never lowering the threshold or excluding files.
 
 ## 6. Evidence and deviations
 

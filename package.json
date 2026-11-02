@@ -17,7 +17,8 @@
     "lint": "eslint . && node scripts/check-pinning.mjs",
     "prepare": "husky",
     "test:e2e": "node scripts/e2e.mjs",
-    "lighthouse": "node scripts/lighthouse.mjs"
+    "lighthouse": "node scripts/lighthouse.mjs",
+    "coverage": "pnpm -r run coverage"
   },
   "devDependencies": {
     "@fission-ai/openspec": "1.16.0",
