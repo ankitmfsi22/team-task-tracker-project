@@ -1,5 +1,7 @@
 # Submission index (ASSIGNMENT.md §9)
 
+Project overview and quick start: [`README.md`](../README.md).
+
 Each item links evidence that exists in this repository. Status: **met** or **partial** (with the reason). Pull request for the last ticket: [DEV-1018 (PR #20)](https://github.com/ankitmfsi22/team-task-tracker-project/pull/20); every ticket DEV-1001 to DEV-1018 has a row in [`traceability.md`](traceability.md). Gate 2 for DEV-1018 is recorded in its archived `approvals.md` (approved by Ankit Singh).
 
 - [x] **1. Working application, database schema, migrations, seed data, Docker configuration** (met)
