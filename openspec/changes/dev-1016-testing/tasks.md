@@ -16,7 +16,7 @@
 
 ## 4. Scenario-to-test map
 
-- [ ] 4.1 Test-writer first: a `node:test` in `scripts/tests/` for the "Unmapped scenario fails the check" and "Row pointing to a missing test fails the check" scenarios (using temporary fixtures, not edits to real specs); confirm it fails; then write `docs/testing/scenario-test-map.md` for every scenario in `openspec/specs/` and this change and make it pass.
+- [x] 4.1 Test-writer first: a `node:test` in `scripts/tests/` for the "Unmapped scenario fails the check" and "Row pointing to a missing test fails the check" scenarios (using temporary fixtures, not edits to real specs); confirm it fails; then write `docs/testing/scenario-test-map.md` for every scenario in `openspec/specs/` and this change and make it pass.
 
 ## 5. Coverage
 
