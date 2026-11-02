@@ -21,6 +21,7 @@ import { ApiError } from '@/lib/api/client';
 import { createComment, deleteComment, listComments, updateComment } from '@/lib/api/comments';
 import { useAuth } from '@/lib/auth/auth-context';
 import { commentPermissions } from '@/lib/comment-permissions';
+import { formatTimestamp } from '@/lib/humanize';
 
 const PAGE_SIZE = 20;
 
@@ -31,11 +32,6 @@ function describeAddError(error: unknown): string {
     if (error.status === 404) return 'Not found';
   }
   return 'Something went wrong';
-}
-
-function formatTimestamp(value: string): string {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : date.toLocaleString();
 }
 
 function describeChangeError(error: unknown): string {

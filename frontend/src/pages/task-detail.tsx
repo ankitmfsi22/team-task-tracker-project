@@ -8,6 +8,7 @@ import {
 } from '@team-task-tracker/shared';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router';
+import { ActivityPanel } from '@/components/activity-panel';
 import { CommentsPanel } from '@/components/comments-panel';
 import { ErrorState, LoadingState } from '@/components/states';
 import { TaskFormDialog } from '@/components/task-form-dialog';
@@ -24,12 +25,7 @@ import { Label } from '@/components/ui/label';
 import { ApiError } from '@/lib/api/client';
 import { archiveTask, assignTask, changeTaskStatus, getTask } from '@/lib/api/tasks';
 import { getProject, listMembers, projectDetailKeys } from '@/lib/api/projects';
-
-// "IN_PROGRESS" -> "In progress"
-function humanize(value: string): string {
-  const text = value.toLowerCase().replaceAll('_', ' ');
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
+import { humanize } from '@/lib/humanize';
 
 function assigneeName(task: TaskResponse, members: MemberResponse[]): string {
   if (task.assigneeId === null) return 'Unassigned';
@@ -79,6 +75,7 @@ export function TaskDetailPage() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['task', projectId, taskId] }),
         queryClient.invalidateQueries({ queryKey: ['tasks', projectId] }),
+        queryClient.invalidateQueries({ queryKey: ['activity', projectId, taskId] }),
       ]);
     },
   });
@@ -200,6 +197,7 @@ export function TaskDetailPage() {
         archived={task.archivedAt !== null || (project?.archivedAt ?? null) !== null}
         role={project?.role}
       />
+      <ActivityPanel projectId={projectId} taskId={taskId} members={members} />
       {/* Outside the editable block so a 409 message stays visible after the task reloads. */}
       <TaskFormDialog
         mode="edit"

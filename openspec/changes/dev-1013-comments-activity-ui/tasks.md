@@ -13,7 +13,7 @@ Per task: the test-writer sub-agent writes failing tests from the spec scenarios
 
 ## 3. Activity history
 
-- [ ] 3.1 Add the activity API client and `ActivityPanel` with `describeActivity` (newest first, pagination, member names, states) and invalidate it after task mutations; verify the "Activity history" scenarios pass.
+- [x] 3.1 Add the activity API client and `ActivityPanel` with `describeActivity` (newest first, pagination, member names, states) and invalidate it after task mutations; verify the "Activity history" scenarios pass.
 
 ## 4. Lighthouse and docs
 
