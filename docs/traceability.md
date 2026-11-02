@@ -38,3 +38,4 @@ Notes:
 ## Append rule
 
 Add the new ticket's row when the change is archived: assignment ID, Linear key (`docs/tickets/README.md`), archive path, branch, PR number, the commit that added the Gate 1 entry, the first implementation commit and the commit that added the Gate 2 entry, each with its time. If implementation started before Gate 1, say so in a note and add a deviation.
+| DEV-1016 | DEV-20 | `openspec/changes/archive/2026-11-02-dev-1016-testing` | `feature/infra/DEV-1016-testing` | #17 | `12c6a1b` 17:36 | `3aee334` 17:41 | `80a004c` 18:21 |

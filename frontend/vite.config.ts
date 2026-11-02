@@ -20,5 +20,13 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     testTimeout: 15_000,
+    coverage: {
+      provider: 'v8',
+      include: ['src/**'],
+      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.d.ts', 'src/test/**'],
+      reporter: ['text-summary', 'json-summary', 'html'],
+      reportsDirectory: '../docs/evidence/DEV-1016/coverage/frontend',
+      thresholds: { lines: 80 },
+    },
   },
 });

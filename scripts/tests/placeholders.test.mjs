@@ -1,25 +1,15 @@
-// Spec: workspace-quality-gates / "Placeholder scripts" (scenarios "E2E placeholder",
-// "Lighthouse placeholder") (DEV-1001 task 3.4).
-// Observable behaviour only: runs `pnpm test:e2e` / `pnpm lighthouse` from the repo root.
+// Spec: workspace-quality-gates / "Lighthouse placeholder" (DEV-1001 task 3.4) and
+// "End-to-end suite" / "Placeholder is gone" (DEV-1016 task 3.1).
+// Static checks on the root package.json scripts; test:e2e is NOT run here (it needs
+// Docker, a browser and a build).
 // Dependency-free: node:test + node:assert + node:child_process only.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
-
-const runPnpm = (script) => {
-  const r = spawnSync(`pnpm ${script}`, {
-    shell: true,
-    cwd: repoRoot,
-    encoding: 'buffer',
-  });
-  const out = `${r.stdout?.toString('utf8') ?? ''}${r.stderr?.toString('utf8') ?? ''}`;
-  return { status: r.status, out };
-};
 
 const rootScripts = () =>
   JSON.parse(readFileSync(resolve(repoRoot, 'package.json'), 'utf8')).scripts ?? {};
@@ -30,10 +20,20 @@ test('root package.json defines test:e2e and lighthouse scripts', () => {
   assert.equal(typeof scripts['lighthouse'], 'string', 'missing script lighthouse');
 });
 
-test('E2E placeholder: pnpm test:e2e prints "not implemented — DEV-1016" and exits 0', () => {
-  const { status, out } = runPnpm('test:e2e');
-  assert.equal(status, 0, `expected exit 0, got ${status}\n${out}`);
-  assert.ok(out.includes('not implemented — DEV-1016'), `unexpected output:\n${out}`);
+test('E2E placeholder is gone: test:e2e script runs Playwright, not the not-implemented placeholder', () => {
+  const script = rootScripts()['test:e2e'];
+  assert.equal(typeof script, 'string', 'missing script test:e2e');
+  assert.ok(!script.includes('not-implemented'), 'test:e2e must not reference not-implemented');
+  assert.ok(
+    !script.includes('scripts/not-implemented.mjs'),
+    'test:e2e must not name scripts/not-implemented.mjs',
+  );
+  const runner = script.match(/node\s+(\S+\.mjs)/)?.[1];
+  assert.ok(runner, `test:e2e must run a node script, got: ${script}`);
+  assert.ok(
+    readFileSync(resolve(repoRoot, runner), 'utf8').includes('playwright test'),
+    `${runner} must run playwright test`,
+  );
 });
 
 test('Lighthouse is a real gate: root lighthouse script runs scripts/lighthouse.mjs, not the placeholder', () => {

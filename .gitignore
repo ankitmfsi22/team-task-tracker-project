@@ -13,3 +13,6 @@ backend/src/generated
 # Codebase graph tool output (DEV-1015)
 .code-review-graph/
 graphify-out/
+
+# Throwaway fixtures made by scripts/tests (DEV-1016)
+.fixture-*/
