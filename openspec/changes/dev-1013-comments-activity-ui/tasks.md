@@ -21,7 +21,7 @@ Per task: the test-writer sub-agent writes failing tests from the spec scenarios
 
 ## 5. Verification
 
-- [ ] 5.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1013-comments-activity-ui --strict`; verify all pass.
+- [x] 5.1 Run `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` and `openspec validate dev-1013-comments-activity-ui --strict`; verify all pass.
 
 ## Workflow follow-up
 
